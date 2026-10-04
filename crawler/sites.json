@@ -1,22 +1,121 @@
 [
- {"id":"amazon","name":"Amazon India","url":"https://www.amazon.in","start":"https://www.amazon.in/s?k=motorcycle+riding+gear","kind":"marketplace"},
- {"id":"flipkart","name":"Flipkart","url":"https://www.flipkart.com","start":"https://www.flipkart.com/search?q=motorcycle%20riding%20gear","kind":"marketplace"},
- {"id":"royal-enfield","name":"Royal Enfield","url":"https://www.royalenfield.com","start":"https://www.royalenfield.com/in/en/apparel/","brand":"Royal Enfield"},
- {"id":"rynox","name":"Rynox Gear","url":"https://rynoxgear.com","brand":"Rynox"},
- {"id":"bandidos","name":"Bandidos Pitstop","url":"https://bandidospitstop.com"},
- {"id":"lrl","name":"LRL Motors","url":"https://lrlmotors.com"},
- {"id":"motocentral","name":"Moto Central","url":"https://motocentral.in"},
- {"id":"powersports","name":"PowerSports","url":"https://powersports.in"},
- {"id":"bikester","name":"Bikester Global","url":"https://bikesterglobal.com"},
- {"id":"custom-elements","name":"Custom Elements","url":"https://www.customelements.in"},
- {"id":"store4riders","name":"Store4Riders","url":"https://www.store4riders.com"},
- {"id":"viaterra","name":"ViaTerra","url":"https://viaterragear.com","brand":"ViaTerra"},
- {"id":"axor","name":"Axor Helmets","url":"https://axorhelmets.com","brand":"Axor"},
- {"id":"vega","name":"Vega Helmets","url":"https://vegaauto.com","brand":"Vega"},
- {"id":"steelbird","name":"Steelbird Helmets","url":"https://www.steelbirdhelmet.com","brand":"Steelbird"},
- {"id":"smk","name":"SMK Helmets","url":"https://smkhelmets.com","brand":"SMK"},
- {"id":"solace","name":"Solace Riding Gear","url":"https://solacegears.com","brand":"Solace"},
- {"id":"planet-dsg","name":"Planet DSG","url":"https://planetdsg.com"},
- {"id":"reisemoto","name":"ReiseMoto","url":"https://www.reisemoto.com"},
- {"id":"raida","name":"Raida Gears","url":"https://raidagears.com","brand":"Raida"}
+  {
+    "id": "amazon",
+    "name": "Amazon India",
+    "url": "https://www.amazon.in",
+    "start": "https://www.amazon.in/s?k=motorcycle+riding+gear",
+    "kind": "marketplace"
+  },
+  {
+    "id": "flipkart",
+    "name": "Flipkart",
+    "url": "https://www.flipkart.com",
+    "start": "https://www.flipkart.com/search?q=motorcycle%20riding%20gear",
+    "kind": "marketplace"
+  },
+  {
+    "id": "royal-enfield",
+    "name": "Royal Enfield",
+    "url": "https://royalenfield.store",
+    "start": "https://royalenfield.store/in/en/riding",
+    "brand": "Royal Enfield"
+  },
+  {
+    "id": "rynox",
+    "name": "Rynox Gear",
+    "url": "https://rynoxgear.com",
+    "brand": "Rynox"
+  },
+  {
+    "id": "bandidos",
+    "name": "Bandidos Pitstop",
+    "url": "https://bandidospitstop.com"
+  },
+  {
+    "id": "lrl",
+    "name": "LRL Motors",
+    "url": "https://lrlmotors.com"
+  },
+  {
+    "id": "motocentral",
+    "name": "Moto Central",
+    "url": "https://motocentral.in"
+  },
+  {
+    "id": "powersports",
+    "name": "PowerSports",
+    "url": "https://powersports.in"
+  },
+  {
+    "id": "bikester",
+    "name": "Bikester Global",
+    "url": "https://bikesterglobal.com"
+  },
+  {
+    "id": "custom-elements",
+    "name": "Custom Elements",
+    "url": "https://www.customelements.in"
+  },
+  {
+    "id": "store4riders",
+    "name": "Store4Riders",
+    "url": "https://www.store4riders.com"
+  },
+  {
+    "id": "viaterra",
+    "name": "ViaTerra",
+    "url": "https://viaterragear.com",
+    "brand": "ViaTerra"
+  },
+  {
+    "id": "axor",
+    "name": "Axor Helmets",
+    "url": "https://axorhelmets.com",
+    "brand": "Axor"
+  },
+  {
+    "id": "vega",
+    "name": "Vega Helmets",
+    "url": "https://vegaauto.com",
+    "brand": "Vega"
+  },
+  {
+    "id": "steelbird",
+    "name": "Steelbird Helmets",
+    "url": "https://www.steelbirdhelmet.com",
+    "brand": "Steelbird"
+  },
+  {
+    "id": "smk",
+    "name": "SMK Helmets",
+    "url": "https://smkhelmets.com",
+    "brand": "SMK"
+  },
+  {
+    "id": "solace",
+    "name": "Solace Riding Gear",
+    "url": "https://solacegears.com",
+    "brand": "Solace"
+  },
+  {
+    "id": "planet-dsg",
+    "name": "Planet DSG",
+    "url": "https://planetdsg.com"
+  },
+  {
+    "id": "reisemoto",
+    "name": "ReiseMoto",
+    "url": "https://www.reisemoto.com"
+  },
+  {
+    "id": "raida",
+    "name": "Raida Gears",
+    "url": "https://raidagears.com",
+    "brand": "Raida"
+  },
+  {
+    "id": "slickshop",
+    "name": "Slickshop",
+    "url": "https://slickshop.in"
+  }
 ]

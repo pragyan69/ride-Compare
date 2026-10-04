@@ -114,6 +114,26 @@ def json_products(html,page_url,site,checked):
    rows.append({'sourceId':hashlib.sha1(url.encode()).hexdigest()[:16],'name':title,'brand':brand('',title,site.get('brand','')),'category':cat,'variant':'Check size / colour at store','image':image,'price':price,'shipping':None,'inStock':None,'url':url,'checkedAt':checked,'variantCount':None,'options':[],'barcode':''})
  return rows
 
+def slickshop_products(html,page_url,checked):
+ soup=BeautifulSoup(html,'html.parser');rows={}
+ for card in soup.select('li.ssx2-card, a.ssh-card, a.ssh-hero-tile'):
+  a=card if card.name=='a' else card.select_one('a.ssx2-card-in')
+  title=card.select_one('.ssx2-name, .ssh-card-name, .ssh-hero-tile-name')
+  price_node=card.select_one('.ssx2-price-now, .ssh-now')
+  vendor=card.select_one('.ssx2-brand, .ssh-card-brand');img=card.select_one('img')
+  if not a or not title or not price_node:continue
+  price_text=price_node.get_text(' ',strip=True)
+  if '₹' not in price_text:continue
+  amounts=re.findall(r'[0-9][0-9,]*(?:\.[0-9]{1,2})?',price_text)
+  price=money(amounts[0]) if amounts else None;name=clean(title.get_text());category=categorize(name)
+  if not price or not category:continue
+  url=urljoin(page_url,a.get('href',''))
+  if urlparse(url).hostname!='slickshop.in' or '/product/' not in url:continue
+  classes=card.get('class',[]);stock=True if 'instock' in classes else False if 'outofstock' in classes else None
+  # These cards expose product-level prices, not a selected size or colour.
+  rows[url]={'sourceId':hashlib.sha1(url.encode()).hexdigest()[:16],'name':name,'brand':brand(vendor.get_text() if vendor else '',name),'category':category,'variant':'Check size / colour at store','image':urljoin(page_url,img.get('src','')) if img else '', 'price':price,'shipping':None,'inStock':stock,'url':url,'checkedAt':checked,'variantCount':None,'options':[],'barcode':''}
+ return list(rows.values())
+
 class RobotsRules(RobotFileParser):
  def can_fetch(self, agent, url):
   if self.disallow_all:return False
@@ -134,7 +154,7 @@ class RobotsRules(RobotFileParser):
 class CrawlBlocked(Exception):pass
 class Crawler:
  def __init__(self,context,site,args):
-  self.ctx=context;self.site=site;self.args=args;self.robots=None;self.last=0;self.started=time.monotonic();self.delay=1.0;self.report={'id':site['id'],'name':site['name'],'website':site['url'],'startedAt':now(),'status':'running','method':'','pages':0,'productCount':0,'brands':[],'notes':[],'complete':False};self.rows=[]
+  self.ctx=context;self.site=site;self.args=args;self.robots=None;self.last=0;self.started=time.monotonic();self.delay=1.0;self.report={'id':site['id'],'name':site['name'],'website':site.get('start',site['url']),'startedAt':now(),'status':'running','method':'','pages':0,'productCount':0,'brands':[],'notes':[],'complete':False};self.rows=[]
  async def request(self,url,robots=False):
   if time.monotonic()-self.started>self.args.max_seconds:raise CrawlBlocked('Collection time limit reached; an additional crawl may find more listings.')
   if not robots and self.robots and not self.robots.can_fetch(BOT,url):raise CrawlBlocked('robots.txt disallows this URL')
@@ -147,6 +167,7 @@ class Crawler:
   body=await response.text();await response.dispose()
   if not robots:self.report['pages']+=1
   if status in [401,403,429]:raise CrawlBlocked(f'HTTP {status}: retailer access restriction')
+  if status==202:raise CrawlBlocked('HTTP 202: retailer did not return a readable catalog page')
   if status>=500:raise CrawlBlocked(f'HTTP {status}: retailer temporarily unavailable')
   if len(body)>12*1024*1024:raise CrawlBlocked('Page exceeds the 12 MB response limit')
   return status,body
@@ -168,7 +189,10 @@ class Crawler:
    if re.search(r'<title>[^<]*(just a moment|access denied|robot check|captcha)',home,re.I):raise CrawlBlocked('The store requires a browser verification or CAPTCHA')
    if status>=400:raise CrawlBlocked(f'Listing page returned HTTP {status}')
    soup=BeautifulSoup(home,'html.parser');shopify='cdn.shopify.com' in home or 'Shopify.theme' in home or 'myshopify.com' in home
-   if shopify:
+   if self.site['id']=='slickshop':
+    self.report['method']='Public storefront HTML via Python Playwright'
+    await self.slickshop(start,home)
+   elif shopify:
     self.report['method']='Shopify public catalog via Playwright'
     await self.shopify(home)
    elif 'woocommerce' in home.lower():
@@ -183,10 +207,37 @@ class Crawler:
    self.report['status']='partial' if self.rows else 'restricted';self.report['notes'].append(str(e))
   except Exception as e:
    self.report['status']='partial' if self.rows else 'failed';self.report['notes'].append(str(e).split('\n')[0][:200])
-  self.report['finishedAt']=now();self.report['productCount']=len(self.rows);self.report['brands']=sorted(set(r['brand'] for r in self.rows if r['brand']!='Unspecified'))
+  self.report['finishedAt']=now();self.report['productCount']=len(self.rows);self.report['brands']=sorted(set([r['brand'] for r in self.rows if r['brand']!='Unspecified']+self.report.get('listedBrands',[])))
   payload={'report':self.report,'products':self.rows};path.write_text(json.dumps(payload,ensure_ascii=False),encoding='utf-8')
   print(json.dumps({k:self.report[k] for k in ['id','status','pages','productCount','notes']},ensure_ascii=False),flush=True)
   return payload
+ async def slickshop(self,start,home):
+  self.rows=slickshop_products(home,start,now());by_url={r['url']:r for r in self.rows}
+  status,html=await self.request(self.site['url']+'/shop/')
+  if status!=200:raise CrawlBlocked(f'Shop page returned HTTP {status}')
+  by_url.update((r['url'],r) for r in slickshop_products(html,self.site['url']+'/shop/',now()))
+  config_node=BeautifulSoup(html,'html.parser').select_one('#ssx-shop[data-config]')
+  config=json.loads(config_node['data-config']) if config_node else {}
+  self.report['retailerReportedProducts']=config.get('total')
+  self.report['listedBrands']=[BeautifulSoup(b['name'],'html.parser').get_text() for b in config.get('brandsAll',[])]
+  self.rows=list(by_url.values());restricted=0;consecutive_restricted=0
+  for i,b in enumerate(config.get('brandsAll',[])[:self.args.max_html_pages]):
+   url=self.site['url']+'/brands/'+b['slug']+'/'
+   try:status,html=await self.request(url)
+   except CrawlBlocked as e:
+    if time.monotonic()-self.started>self.args.max_seconds:raise
+    restricted+=1;consecutive_restricted+=1
+    if consecutive_restricted>=5:
+     self.report['notes'].append('Stopped checking brand pages after five consecutive access restrictions.');break
+    continue
+   if status!=200:continue
+   consecutive_restricted=0
+   by_url.update((r['url'],r) for r in slickshop_products(html,url,now()));self.rows=list(by_url.values())
+   if (i+1)%10==0:print(f"slickshop: {len(self.rows)} listings from {i+1} brand pages",flush=True)
+  self.rows=list(by_url.values())
+  self.report['complete']=False
+  self.report['notes'].append('Only accessible homepage, shop and brand listings are included. Full catalog pagination is not included in this snapshot.')
+  if restricted:self.report['notes'].append(f'{restricted} brand pages also restricted automated access.')
  async def shopify(self,home):
   # Verify the currency from the public storefront instead of a cart endpoint.
   match=re.search(r'Shopify\.currency\s*=\s*(\{[^;]+?\})',home)

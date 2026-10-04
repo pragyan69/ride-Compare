@@ -40,7 +40,7 @@ async def main():
   print('Mobile filters',await page.get_by_role('dialog').is_visible())
   await page.get_by_role('button',name='Close',exact=True).click()
   await page.get_by_role('tab',name='Stores & sources',exact=True).click()
-  assert await page.locator('.source-card').count()==20
+  assert await page.locator('.source-card').count()==len(json.loads(Path('crawler/sites.json').read_text()))
   print('Source cards',await page.locator('.source-card').count())
   print('Errors',errors)
   assert not errors

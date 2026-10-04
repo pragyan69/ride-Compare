@@ -16,9 +16,9 @@ python3 -m venv .venv
 .venv/bin/python crawler/export.py
 ```
 
-The 20 retailer URLs are in `crawler/sites.json`. Use `--sites rynox,axor` to refresh selected retailers, `--resume` to retain existing checkpoints, or `--browser /absolute/path/to/chromium` to use an installed browser. `--max-seconds` bounds each store's collection time; the default is 1,200 seconds. Each retailer gets its own checkpoint in the ignored `data/crawl/raw/` directory. Re-export and republish after a crawl to update the hosted catalog. The website's reload button reloads that published snapshot; it does not start Python on the hosting server.
+The 21 retailer URLs are in `crawler/sites.json`. Use `--sites rynox,axor` to refresh selected retailers, `--resume` to retain existing checkpoints, or `--browser /absolute/path/to/chromium` to use an installed browser. `--max-seconds` bounds each store's collection time; the default is 1,200 seconds. Each retailer gets its own checkpoint in the ignored `data/crawl/raw/` directory. Re-export and republish after a crawl to update the hosted catalog. The website's reload button reloads that published snapshot; it does not start Python on the hosting server.
 
-The crawler uses Playwright's request client for public catalog feeds and Chromium for script-rendered link discovery. It checks robots.txt, uses one-second per-host pacing or the longer declared crawl delay, and stops on restrictions. It does not sign in, solve CAPTCHAs, or rotate proxies. Public Shopify and WooCommerce feeds are preferred; HTML/JSON-LD parsers cover remaining stores.
+The crawler uses Playwright's request client for public catalog feeds and Chromium for script-rendered link discovery. It checks robots.txt, uses one-second per-host pacing or the longer declared crawl delay, and stops on restrictions. It does not sign in, solve CAPTCHAs, or rotate proxies. Public Shopify and WooCommerce feeds are preferred; HTML/JSON-LD parsers cover remaining stores. Slickshop uses a dedicated parser for its public storefront cards; five consecutive brand-page restrictions stop that branch. Its retailer-declared brand directory is shown separately on the source card.
 
 ## Coverage and data quality
 
@@ -29,7 +29,7 @@ The crawler uses Playwright's request client for public catalog feeds and Chromi
 - Prices are snapshots in INR. Unknown shipping and availability stay unknown. Prices older than 24 hours and offers without confirmed stock cannot receive a lowest-price badge.
 - Only exact brand/name/variant matches or validated, nonconflicting barcodes are grouped. A single-store listing is not claimed to be a market-wide best offer.
 - Categories use title rules and brands use retailer metadata plus explicit leading brand names. Unnamed products remain “Unspecified”; car-only parts, gift cards and toy models are excluded. The brand directory reflects collected listings, not every brand sold in India.
-- An exhausted public feed does not prove complete website coverage. Amazon and Royal Enfield restricted this crawl; SMK exposed no extractable INR offers. Flipkart and Store4Riders have partial coverage.
+- An exhausted public feed does not prove complete website coverage. Amazon and Royal Enfield (including the corrected royalenfield.store/in/en/riding URL) restricted this crawl; SMK exposed no extractable INR offers. Flipkart, Store4Riders and Slickshop have partial coverage.
 
 Approved retailer feeds can be imported through “Add a store.” The JSON format is in `public/feed-example.json`; imports require sign-in, INR currency, positive prices, same-retailer product URLs, and consistent product variants. D1 persists added stores and imported offers.
 

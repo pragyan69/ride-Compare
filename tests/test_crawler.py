@@ -1,7 +1,7 @@
 import sys,unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'crawler'))
-from crawl import RobotsRules,categorize,shopify_products,json_products
+from crawl import RobotsRules,categorize,shopify_products,json_products,slickshop_products
 from export import gtin,product_key
 class CrawlerTests(unittest.TestCase):
  def test_robots_specific_rule_beats_allow_root(self):
@@ -35,4 +35,12 @@ class CrawlerTests(unittest.TestCase):
   a,_=product_key({'id':'raida'},row,set(),{('raida','None'):'another-product'})
   b,_=product_key({'id':'raida'},{**row,'sourceId':'101'},set(),{})
   self.assertEqual(a,'raida-100');self.assertNotEqual(a,b)
+ def test_slickshop_uses_sale_price_and_preserves_unknown_size(self):
+  html='<li class="ssx2-card product instock"><a class="ssx2-card-in" href="/product/shoei-helmet/"><span class="ssx2-brand">Shoei</span><span class="ssx2-name">Shoei Helmet</span><span class="ssx2-price-now">₹47,300</span><span class="ssx2-price-was">₹69,758</span></a></li>'
+  row=slickshop_products(html,'https://slickshop.in/shop/','2026-10-04T18:00:00Z')[0]
+  self.assertEqual(row['price'],47300);self.assertTrue(row['inStock']);self.assertEqual(row['variant'],'Check size / colour at store')
+ def test_slickshop_without_stock_signal_remains_unknown(self):
+  html='<a class="ssh-card" href="https://slickshop.in/product/gloves/"><span class="ssh-card-brand">Spidi</span><span class="ssh-card-name">Gloves</span><span class="ssh-now">₹4,500</span></a>'
+  row=slickshop_products(html,'https://slickshop.in/','now')[0]
+  self.assertIsNone(row['inStock']);self.assertEqual(row['category'],'Gloves')
 if __name__=='__main__':unittest.main()
