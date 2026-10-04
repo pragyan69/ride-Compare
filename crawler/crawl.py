@@ -4,6 +4,7 @@ Run python crawler/crawl.py --max-feed-pages 40 --max-html-pages 120
 Every retailer is checkpointed; --resume preserves completed source results.
 """
 import argparse, asyncio, hashlib, json, re, time
+from html import unescape
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urljoin, urlparse, unquote
@@ -219,7 +220,7 @@ class Crawler:
   config_node=BeautifulSoup(html,'html.parser').select_one('#ssx-shop[data-config]')
   config=json.loads(config_node['data-config']) if config_node else {}
   self.report['retailerReportedProducts']=config.get('total')
-  self.report['listedBrands']=[BeautifulSoup(b['name'],'html.parser').get_text() for b in config.get('brandsAll',[])]
+  self.report['listedBrands']=[unescape(b['name']) for b in config.get('brandsAll',[])]
   self.rows=list(by_url.values());restricted=0;consecutive_restricted=0
   for i,b in enumerate(config.get('brandsAll',[])[:self.args.max_html_pages]):
    url=self.site['url']+'/brands/'+b['slug']+'/'
