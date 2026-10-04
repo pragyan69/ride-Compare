@@ -1,0 +1,13 @@
+import snapshot from "./catalog-data.json";
+export type Offer={storeId:string;storeName:string;price:number;shipping:number|null;inStock:boolean|null;url:string;checkedAt:string;source:"retailer"|"import"|"crawl";fetchUrl?:string;variantId?:number};
+export type Product={id:string;name:string;brand:string;category:string;variant:string;image:string;offers:Offer[];variantCount?:number|null;matchType?:string};
+export type Retailer={id:string;name:string;website:string;feedUrl?:string;lastSync?:string;builtin?:boolean};
+export const products=snapshot.products as Product[];
+export const stores=snapshot.stores as Retailer[];
+export const categories=["All gear","Helmets","Jackets","Gloves","Pants","Boots","Luggage","Riding Apparel","Protection","Electronics","Helmet Accessories","Bike Accessories","Maintenance & Parts"];
+export const money=(v:number)=>new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:Number.isInteger(v)?0:2}).format(v);
+export const isFresh=(o:Offer,now=Date.now())=>Number.isFinite(Date.parse(o.checkedAt))&&now-Date.parse(o.checkedAt)<24*60*60*1000;
+export const rankedOffers=(p:Product,mode="listed")=>[...p.offers].sort((a,b)=>Number(b.inStock&&isFresh(b))-Number(a.inStock&&isFresh(a))||Number(b.inStock)-Number(a.inStock)||(mode==="delivered"?((a.shipping===null?Infinity:a.price+a.shipping)-(b.shipping===null?Infinity:b.price+b.shipping)):a.price-b.price)||a.price-b.price);
+export const bestOffer=(p:Product,mode="listed")=>rankedOffers(p,mode).find(o=>o.inStock&&isFresh(o)&&(mode!=="delivered"||o.shipping!==null));
+export const priceSpread=(p:Product)=>{const os=p.offers.filter(o=>o.inStock&&isFresh(o));return os.length>1?Math.max(...os.map(o=>o.price))-Math.min(...os.map(o=>o.price)):0;};
+export const checkedLabel=(d:string)=>new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(d))+" IST";

@@ -1,0 +1,48 @@
+import asyncio,json,os
+from pathlib import Path
+from playwright.async_api import async_playwright
+async def main():
+ async with async_playwright() as p:
+  browser=await p.chromium.launch(headless=True,executable_path=os.environ.get('BROWSER_EXECUTABLE'))
+  page=await browser.new_page(viewport={'width':1440,'height':1000},device_scale_factor=1)
+  errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+  await page.add_init_script("window.registeredTools={}; document.modelContext={registerTool:(tool,options)=>{window.registeredTools[tool.name]=tool;options.signal.addEventListener('abort',()=>delete window.registeredTools[tool.name])}}")
+  await page.goto(os.environ.get('BASE_URL','http://127.0.0.1:5173'),wait_until='domcontentloaded',timeout=60000)
+  await page.get_by_role('heading',name='Find your next upgrade').wait_for()
+  await page.wait_for_function("!document.querySelector('.results-heading p').textContent.includes('Loading')",timeout=30000)
+  try: await page.wait_for_function("Array.from(document.querySelectorAll('.product-card img')).slice(0,3).every(i=>i.complete)",timeout=15000)
+  except: pass
+  print('Loaded product images',await page.locator('.product-card img').evaluate_all('(images)=>images.filter(i=>i.naturalWidth>0).length'))
+  await page.screenshot(path='/tmp/ridecompare-desktop.png',full_page=False)
+  await page.get_by_role('textbox',name='Search motorcycle gear',exact=True).fill('Apex Hunter')
+  await page.wait_for_timeout(500)
+  print('Apex search cards',await page.locator('.product-card').count())
+  await page.get_by_role('button',name='Compare 3 offers',exact=True).first.click()
+  assert await page.locator('.offer-row').count()==3
+  print('Comparison rows',await page.locator('.offer-row').count())
+  await page.get_by_role('button',name='Close',exact=True).click()
+  await page.get_by_role('tab',name='Brands').click()
+  await page.get_by_role('textbox',name='Search all brands').fill('Rynox')
+  print('Brand tiles',await page.locator('.brand-tile').count())
+  await page.locator('.brand-tile').first.click()
+  await page.wait_for_timeout(300)
+  print('Brand filtered',await page.locator('.filter-chips').inner_text())
+  print('WebMCP',await page.evaluate("async()=>{const t=window.registeredTools.search_ridecompare_catalog;const valid=await t.execute({query:'gloves',brand:'Rynox'});let invalid=false;try{await t.execute({category:'not-real'})}catch{invalid=true}return {names:Object.keys(window.registeredTools),valid,invalid}}"))
+  await page.wait_for_timeout(300)
+  print('State after tool',await page.get_by_role('textbox',name='Search motorcycle gear',exact=True).input_value())
+  await page.set_viewport_size({'width':390,'height':844})
+  await page.locator('.site-header > .brand').click()
+  await page.wait_for_timeout(300)
+  await page.screenshot(path='/tmp/ridecompare-mobile.png',full_page=False)
+  assert not await page.evaluate('document.documentElement.scrollWidth > window.innerWidth')
+  print('Mobile overflow',False)
+  await page.get_by_role('button',name='Filters',exact=True).click()
+  print('Mobile filters',await page.get_by_role('dialog').is_visible())
+  await page.get_by_role('button',name='Close',exact=True).click()
+  await page.get_by_role('tab',name='Stores & sources',exact=True).click()
+  assert await page.locator('.source-card').count()==20
+  print('Source cards',await page.locator('.source-card').count())
+  print('Errors',errors)
+  assert not errors
+  await browser.close()
+asyncio.run(main())
