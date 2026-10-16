@@ -1,61 +1,620 @@
 "use client";
-import { useEffect, useMemo, useState, useDeferredValue } from 'react';
-import { Search, Layers3, Store, SlidersHorizontal, ShieldCheck, X, RefreshCw, Package, Check, Tag, Plus, CircleHelp } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Empty, EmptyTitle, EmptyDescription } from '@/components/ui/empty';
-import { Pagination, PaginationContent, PaginationItem } from '@/components/ui/pagination';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Toaster } from '@/components/ui/sonner';
-import { toast } from 'sonner';
-import { products as starters, stores as starterStores, money, rankedOffers, bestOffer, isFresh, checkedLabel, categories, type Product, type Retailer } from '@/lib/catalog';
+import { useEffect, useMemo, useState, useDeferredValue } from "react";
+import { Search, SlidersHorizontal, X, Package, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
+import { products as starters, stores as starterStores, money, rankedOffers, checkedLabel, categories, type Product, type Retailer } from "@/lib/catalog";
 
-type Brand={name:string;count:number;stores:string[];categories:string[]};
-type Report={id:string;name:string;website:string;status:string;productCount:number;complete:boolean;notes:string[];finishedAt?:string;method?:string;listedBrands?:string[];retailerReportedProducts?:number};
-type CatalogData={products:Product[];stores:Retailer[];brands:Brand[];reports:Report[];summary?:{generatedAt:string;attemptedStores:number;requestedStores:number;collectedStores:number;productCount:number;brandCount:number;matchedProducts:number}};
-const initial:CatalogData={products:starters,stores:starterStores,brands:[],reports:[]};
-const size=24;
-function adminToken(){try{return localStorage.getItem('rc-admin')||''}catch{return ''}}
-function askAdminToken(){const t=window.prompt('Admin token');if(t===null)return;try{localStorage.setItem('rc-admin',t.trim())}catch{}}
-async function api<T=Record<string,any>>(path:string,body?:unknown):Promise<T>{const r=await fetch(path,{method:body?'POST':'GET',headers:body?{'Content-Type':'application/json',Authorization:`Bearer ${adminToken()}`}:undefined,body:body?JSON.stringify(body):undefined});const d=await r.json() as T & {error?:string};if(!r.ok)throw new Error(d.error||'Could not complete this request.');return d;}
-function ProductImage({p}:{p:Product}){const [broken,setBroken]=useState(false);return p.image&&!broken?<img src={p.image} alt={p.name} loading="lazy" referrerPolicy="no-referrer" onError={()=>setBroken(true)}/>:<div className="image-placeholder"><Package size={45} strokeWidth={1}/><span>Image unavailable</span></div>;}
-function sourceNote(note:string){return note.replace(/ Rerun with a larger --max-html-pages limit\./,' More pages can be collected in a future run.').replace(/ Increase --max-feed-pages to collect the remaining catalog\./,' More feed pages remain to be collected.');}
-function stockLabel(value:boolean|null){return value===true?'In stock':value===false?'Out of stock':'Check availability';}
-function Dropdown({label,value,onChange,items}:{label:string;value:string;onChange:(v:string)=>void;items:{value:string;label:string}[]}){return <Select value={value} onValueChange={onChange}><SelectTrigger aria-label={label}><SelectValue/></SelectTrigger><SelectContent>{items.map(i=><SelectItem value={i.value} key={i.value}>{i.label}</SelectItem>)}</SelectContent></Select>;}
+type Brand = { name: string; count: number };
+type CatalogData = { products: Product[]; stores: Retailer[]; summary?: { generatedAt: string } };
 
-export default function Home(){
- const [data,setData]=useState<CatalogData>(initial),[loading,setLoading]=useState(true),[loadError,setLoadError]=useState('');
- const [view,setView]=useState('gear'),[query,setQuery]=useState(''),[category,setCategory]=useState('All gear'),[sort,setSort]=useState('featured'),[brands,setBrands]=useState<string[]>([]),[storeFilter,setStoreFilter]=useState('all'),[stockOnly,setStockOnly]=useState(false),[comparisonOnly,setComparisonOnly]=useState(false),[maxPrice,setMaxPrice]=useState(''),[brandSearch,setBrandSearch]=useState(''),[directorySearch,setDirectorySearch]=useState(''),[letter,setLetter]=useState('All'),[page,setPage]=useState(1),[filterOpen,setFilterOpen]=useState(false),[selectedId,setSelectedId]=useState<string|null>(null),[priceMode,setPriceMode]=useState('listed'),[busy,setBusy]=useState(false),[manage,setManage]=useState(false),[how,setHow]=useState(false);
- const [retailerName,setRetailerName]=useState(''),[website,setWebsite]=useState(''),[feedUrl,setFeedUrl]=useState(''),[importStore,setImportStore]=useState(''),[feedText,setFeedText]=useState(''),[formError,setFormError]=useState('');
- const deferred=useDeferredValue(query);
- async function load(){setLoading(true);setLoadError('');try{const r=await fetch('/data/catalog.json');if(!r.ok)throw new Error('The collected catalog could not be loaded.');const snapshot:CatalogData=await r.json();try{const saved=await api('/api/catalog');const map=new Map(snapshot.products.map(p=>[p.id,p]));for(const p of saved.products){const current=map.get(p.id);if(current){for(const o of p.offers){const old=current.offers.findIndex(x=>x.storeId===o.storeId);if(old<0)current.offers.push(o);else if(Date.parse(o.checkedAt)>Date.parse(current.offers[old].checkedAt))current.offers[old]=o;}}else map.set(p.id,p);}snapshot.products=[...map.values()];const sm=new Map(snapshot.stores.map(s=>[s.id,s]));for(const s of saved.stores)sm.set(s.id,{...sm.get(s.id),...s});snapshot.stores=[...sm.values()];}catch{/* The committed crawl snapshot remains usable while storage recovers. */}setData(snapshot);}catch(e){setLoadError(e instanceof Error?e.message:'Could not load the catalog.');}finally{setLoading(false);}}
- useEffect(()=>{void load()},[]);
- const allBrands=useMemo(()=>{const map=new Map<string,Brand>();for(const p of data.products){if(p.brand==='Unspecified')continue;const b=map.get(p.brand)||{name:p.brand,count:0,stores:[],categories:[]};b.count++;for(const o of p.offers)if(!b.stores.includes(o.storeName))b.stores.push(o.storeName);if(!b.categories.includes(p.category))b.categories.push(p.category);map.set(p.brand,b);}return [...map.values()].sort((a,b)=>a.name.localeCompare(b.name));},[data]);
- const counts=useMemo(()=>data.products.reduce((a,p)=>{a[p.category]=(a[p.category]||0)+1;return a},{} as Record<string,number>),[data]);
- const visible=useMemo(()=>{const q=deferred.toLowerCase().trim();const rows=data.products.filter(p=>(category==='All gear'||p.category===category)&&(!brands.length||brands.includes(p.brand))&&(storeFilter==='all'||p.offers.some(o=>o.storeId===storeFilter))&&(!stockOnly||p.offers.some(o=>o.inStock===true))&&(!comparisonOnly||p.offers.length>1)&&(!maxPrice||p.offers.some(o=>o.price<=Number(maxPrice)))&&(!q||`${p.name} ${p.brand} ${p.category} ${p.variant}`.toLowerCase().includes(q)));if(sort==='low')rows.sort((a,b)=>rankedOffers(a)[0].price-rankedOffers(b)[0].price);if(sort==='high')rows.sort((a,b)=>rankedOffers(b)[0].price-rankedOffers(a)[0].price);if(sort==='stores')rows.sort((a,b)=>b.offers.length-a.offers.length);return rows;},[data,deferred,category,brands,storeFilter,stockOnly,comparisonOnly,maxPrice,sort]);
- useEffect(()=>setPage(1),[deferred,category,brands,storeFilter,stockOnly,comparisonOnly,maxPrice,sort]);
- const totalPages=Math.max(1,Math.ceil(visible.length/size)),currentPage=Math.min(page,totalPages),shown=visible.slice((currentPage-1)*size,currentPage*size),selected=data.products.find(p=>p.id===selectedId);
- const directory=allBrands.filter(b=>b.name.toLowerCase().includes(directorySearch.toLowerCase())&&(letter==='All'||(letter==='#'?!/^[a-z]/i.test(b.name):b.name.toUpperCase().startsWith(letter))));
- function reset(){setQuery('');setBrands([]);setCategory('All gear');setStoreFilter('all');setStockOnly(false);setComparisonOnly(false);setMaxPrice('');}
- function selectBrand(b:string){reset();setBrands([b]);setView('gear');setPage(1);window.scrollTo({top:0,behavior:'smooth'});}
- function movePage(p:number){setPage(p);document.getElementById('results')?.scrollIntoView({behavior:'smooth',block:'start'});}
- async function saveRetailer(e:React.FormEvent){e.preventDefault();setBusy(true);setFormError('');try{const s=await api<Retailer>('/api/stores',{name:retailerName,website,feedUrl});setImportStore(s.id);setData(d=>({...d,stores:[...d.stores,s]}));setRetailerName('');setWebsite('');setFeedUrl('');toast.success('Retailer saved. You can now import its product feed.');}catch(e){setFormError(e instanceof Error?e.message:'Could not save retailer.')}finally{setBusy(false);}}
- async function importProducts(){setBusy(true);setFormError('');try{const d=await api('/api/import',{storeId:importStore,feed:JSON.parse(feedText)});toast.success(`${d.imported} offers imported.`);await load();setFeedText('');}catch(e){setFormError(e instanceof Error?e.message:'Could not import offers.')}finally{setBusy(false);}}
- async function syncFeed(){setBusy(true);setFormError('');try{const d=await api('/api/stores/sync',{storeId:importStore});toast.success(`${d.imported} offers updated.`);await load();}catch(e){setFormError(e instanceof Error?e.message:'Feed unavailable.')}finally{setBusy(false);}}
- useEffect(()=>{const context=(document as Document&{modelContext?:{registerTool:(t:unknown,o:{signal:AbortSignal})=>unknown}}).modelContext;if(!context)return;const abort=new AbortController();try{Promise.resolve(context.registerTool({name:'search_ridecompare_catalog',description:'Search the collected motorcycle catalog and update its visible filters.',inputSchema:{type:'object',properties:{query:{type:'string'},brand:{type:'string'},category:{type:'string'}},additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:true},execute:async(input:unknown)=>{if(!input||typeof input!=='object')throw Error('Expected search fields.');const i=input as Record<string,unknown>;if(Object.values(i).some(v=>typeof v!=='string'))throw Error('Search fields must be text.');if(i.category&&!categories.includes(i.category as string))throw Error('Unknown category.');if(i.brand&&!allBrands.some(b=>b.name===i.brand))throw Error('Unknown brand.');reset();setQuery((i.query as string)||'');setBrands(i.brand?[i.brand as string]:[]);setCategory((i.category as string)||'All gear');setView('gear');return {applied:true,query:i.query||'',brand:i.brand||null,category:i.category||'All gear'};}},{signal:abort.signal})).catch(()=>{});Promise.resolve(context.registerTool({name:'list_ridecompare_brands',description:'List all brand names currently represented in this catalog.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:true},execute:()=>({brands:allBrands.map(b=>({name:b.name,products:b.count}))})},{signal:abort.signal})).catch(()=>{});}catch{}return()=>abort.abort();},[allBrands]);
- const filters=<><div className="filter-title"><SlidersHorizontal size={17}/><strong>Refine your ride</strong><button className="text-button" onClick={reset}>Reset</button></div><div className="filter-group"><h3>RETAILER</h3><Dropdown label="Filter by retailer" value={storeFilter} onChange={setStoreFilter} items={[{value:'all',label:'All retailers'},...data.stores.map(s=>({value:s.id,label:s.name}))]}/></div><div className="filter-group"><h3>YOUR BUDGET</h3><label className="budget-input"><span>₹</span><input aria-label="Maximum price in rupees" placeholder="Maximum price" inputMode="numeric" type="number" min="0" value={maxPrice} onChange={e=>setMaxPrice(e.target.value)}/></label><label className="check-row"><Checkbox checked={stockOnly} onCheckedChange={v=>setStockOnly(v===true)}/>In stock only</label><label className="check-row"><Checkbox checked={comparisonOnly} onCheckedChange={v=>setComparisonOnly(v===true)}/>Multiple stores</label></div><div className="filter-group"><h3>BRANDS <span>{allBrands.length}</span></h3><input className="small-search" aria-label="Find a brand in filters" placeholder="Find a brand…" value={brandSearch} onChange={e=>setBrandSearch(e.target.value)}/><div className="brand-filter-list">{allBrands.filter(b=>b.name.toLowerCase().includes(brandSearch.toLowerCase())).map(b=><label className="check-row" key={b.name}><Checkbox checked={brands.includes(b.name)} onCheckedChange={v=>setBrands(v?[...brands,b.name]:brands.filter(x=>x!==b.name))}/>{b.name}<span>{b.count}</span></label>)}</div><button className="text-button" onClick={()=>{setView('brands');setFilterOpen(false)}}>View all brands</button></div><div className="filter-tip"><ShieldCheck size={24}/><strong>Compare like for like.</strong><p>Offers are matched by exact variant or a valid product barcode. Other sizes stay separate.</p></div></>;
- return <><Toaster richColors position="bottom-right"/><div className="announcement">GOOD GEAR. BETTER PRICES. <span>Made for the Indian rider.</span></div><Tabs value={view} onValueChange={setView}><header className="site-header"><button className="brand" onClick={()=>{reset();setView('gear')}}><span className="brand-mark"><Layers3 size={24}/></span>ride<span>compare</span><sup>IN</sup></button><TabsList className="main-tabs" variant="line"><TabsTrigger value="gear">Explore gear</TabsTrigger><TabsTrigger value="brands">Brands <span className="tab-count">{allBrands.length||'—'}</span></TabsTrigger><TabsTrigger value="stores">Stores & sources</TabsTrigger></TabsList><button className="outline-button manage-button" onClick={()=>setManage(true)}><Plus size={17}/> Add a store</button></header>
- <main className="page-shell"><TabsContent value="gear"><section className="intro"><div><div className="eyebrow">THE SMARTER WAY TO GEAR UP</div><h1>Your next ride. <em>A better deal.</em></h1><p>Find your gear. Compare the stores. Make every rupee count.</p></div><div className="intro-note"><strong>{data.products.length.toLocaleString('en-IN')}</strong> gear listings<br/><span>{data.summary?.collectedStores||5} retailers · {allBrands.length||4} brands</span></div></section><div className="search-bar"><Search size={22}/><input aria-label="Search motorcycle gear" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search helmets, jackets, gloves, brands…"/>{query&&<button aria-label="Clear search" onClick={()=>setQuery('')}><X size={18}/></button>}<span>India · ₹ INR</span></div><div className="category-row" aria-label="Product categories">{categories.map(c=><button key={c} className={category===c?'category active':'category'} aria-pressed={category===c} onClick={()=>setCategory(c)}>{c==='All gear'&&<Layers3 size={16}/>} {c}</button>)}</div><div className="shopping-layout"><aside className="filters">{filters}</aside><section className="results" id="results"><div className="results-heading"><div><h2>{category==='All gear'?'Find your next upgrade':category}<span>{visible.length.toLocaleString('en-IN')}</span></h2><p>{loading?'Loading the collected catalog…':'Public retailer prices, with the variant shown on every listing.'}</p></div><Dropdown label="Sort products" value={sort} onChange={setSort} items={[{value:'featured',label:'Featured gear'},{value:'low',label:'Price: low to high'},{value:'high',label:'Price: high to low'},{value:'stores',label:'Most stores'}]}/></div><div className="mobile-filter-line"><button className="outline-button" onClick={()=>setFilterOpen(true)}><SlidersHorizontal size={16}/> Filters</button><span>{brands.length>0?`${brands.length} brand selected`:category}</span></div><div className="data-notice"><span><b>RETAILER SNAPSHOT</b> {data.summary?`Collected ${checkedLabel(data.summary.generatedAt)}.`:'Last checked prices.'} Shipping and checkout discounts may change the total.</span><button aria-label="How comparisons work" onClick={()=>setHow(true)}><CircleHelp size={17}/></button></div>{loadError&&<div role="alert" className="error-notice">{loadError} <button onClick={()=>void load()}>Retry</button></div>}{brands.length>0&&<div className="filter-chips">{brands.map(b=><button key={b} onClick={()=>setBrands(brands.filter(x=>x!==b))}>{b}<X size={13}/></button>)}</div>}
- <div className="product-grid">{shown.map(p=>{const offers=rankedOffers(p);const best=bestOffer(p);const o=best||offers[0];return <article className="product-card" key={p.id}><button className="product-visual" onClick={()=>setSelectedId(p.id)} aria-label={`View ${p.name}`}><span className="product-tag">{p.category}</span><ProductImage p={p}/><span className="offer-count">{offers.length} {offers.length===1?'store':'stores'}</span></button><div className="product-info"><button className="product-brand" onClick={()=>selectBrand(p.brand)}>{p.brand}</button><h3 title={p.name}>{p.name}</h3><p className="variant" title={p.variant}>{p.variant}</p><div className="price-row"><div><span className="price-label">{!best?'LAST LISTED PRICE':offers.length>1?'LOWEST LISTED PRICE':'LISTED PRICE'}</span><strong>{money(o.price)}</strong></div><span className="price-store">at {o.storeName}</span></div><div className={`stock-label ${o.inStock===false?'unavailable':''}`}>{isFresh(o)?stockLabel(o.inStock):'Price needs a fresh check'}</div><button className="compare-button" onClick={()=>setSelectedId(p.id)}>{offers.length>1?`Compare ${offers.length} offers`:'View retailer offer'}<Layers3 size={16}/></button></div></article>})}</div>{!visible.length&&<Empty><Search size={32}/><EmptyTitle>No matching gear</EmptyTitle><EmptyDescription>Try another search, brand or retailer.</EmptyDescription><button className="outline-button" onClick={reset}>Clear filters</button></Empty>}
- {visible.length>0&&<Pagination className="catalog-pagination"><PaginationContent><PaginationItem><button className="outline-button" disabled={currentPage===1} onClick={()=>movePage(currentPage-1)}>Previous</button></PaginationItem><PaginationItem><span aria-live="polite">Page {currentPage} of {totalPages}</span></PaginationItem><PaginationItem><button className="outline-button" disabled={currentPage===totalPages} onClick={()=>movePage(currentPage+1)}>Next</button></PaginationItem></PaginationContent></Pagination>}</section></div></TabsContent>
- <TabsContent value="brands"><section className="section-intro"><div className="eyebrow">THE BRANDS BEHIND YOUR RIDE</div><h1>Find your <em>favourites.</em></h1><p>Every brand found in this catalog. Choose one to explore its gear.</p></section><div className="search-bar"><Search size={21}/><input aria-label="Search all brands" value={directorySearch} onChange={e=>setDirectorySearch(e.target.value)} placeholder={`Search ${allBrands.length} brands…`}/><span>{directory.length} brands</span></div><div className="alphabet">{['All','#',...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].map(l=><button aria-pressed={letter===l} className={letter===l?'active':''} key={l} onClick={()=>setLetter(l)}>{l}</button>)}</div><div className="brands-grid">{directory.map(b=><button key={b.name} className="brand-tile" onClick={()=>selectBrand(b.name)}><span className="brand-initial">{b.name.slice(0,2).toUpperCase()}</span><strong>{b.name}</strong><span>{b.count.toLocaleString('en-IN')} listings · {b.stores.length} {b.stores.length===1?'retailer':'retailers'}</span><small>{b.categories.slice(0,3).join(' · ')}</small></button>)}</div>{directory.length===0&&<Empty><EmptyTitle>No brands found</EmptyTitle><EmptyDescription>Try a different name or letter.</EmptyDescription></Empty>}<a className="download-link" href="/data/brands.json" download="ridecompare-brands.json">Download the full brand list</a></TabsContent>
- <TabsContent value="stores"><section className="section-intro"><div className="eyebrow">KNOW WHERE YOUR PRICES COME FROM</div><h1>The stores. <em>The full picture.</em></h1><p>Coverage, collection times and limitations are shown for every source.</p></section><div className="crawl-stats"><div><strong>{data.summary?.attemptedStores||0}/{data.summary?.requestedStores||20}</strong><span>stores attempted</span></div><div><strong>{data.summary?.collectedStores||0}</strong><span>stores with collected listings</span></div><div><strong>{data.products.length.toLocaleString('en-IN')}</strong><span>catalog listings</span></div><div><strong>{allBrands.length}</strong><span>brands discovered</span></div></div><div className="data-notice">A collected feed covers the products returned by that public endpoint. It does not guarantee that every product on the retailer website is exposed. Prices are snapshots, not a continuous live feed.</div><div className="store-grid">{data.reports.map(s=><article className="source-card" key={s.id}><div className="source-top"><span className="store-monogram">{s.name[0]}</span><h3>{s.name}</h3><span className={`source-status ${s.productCount?'ok':''}`}>{s.status==='collected'?'Catalog collected':s.status==='partial'?'Partial coverage':s.status==='pending'?'Pending':s.status==='restricted'?'Access restricted':'Feed needed'}</span></div><p>{s.productCount.toLocaleString('en-IN')} collected listings</p>{s.finishedAt&&<small>Checked {checkedLabel(s.finishedAt)}</small>}{s.notes.map((n,i)=><p className="source-note" key={i}>{sourceNote(n)}</p>)}{s.listedBrands&&<details className="source-brands"><summary>{s.listedBrands.length} brands listed by this retailer</summary><p>Retailer directory; some products could not be collected.</p><p>{s.listedBrands.join(' · ')}</p></details>}<div className="source-actions"><a className="outline-button" href={s.website} target="_blank" rel="noreferrer">Visit website</a>{s.productCount>0&&<button className="text-button" onClick={()=>{reset();setStoreFilter(s.id);setView('gear')}}>Browse products</button>}</div></article>)}</div><div className="integration-panel"><div><h2>Add another retailer</h2><p>Import a retailer-provided INR feed to add products and comparable offers.</p></div><button className="primary-button" onClick={()=>setManage(true)}><Plus size={17}/> Connect a store</button></div></TabsContent>
- <footer><span className="brand">ride<span>compare</span></span><p>One rider. More options.</p><button className="text-button" onClick={()=>setHow(true)}>How we compare</button><span>Prices in INR · Confirm the final price at checkout.</span></footer></main></Tabs>
- <Dialog open={filterOpen} onOpenChange={setFilterOpen}><DialogContent className="filter-dialog"><DialogTitle>Filter your gear</DialogTitle><DialogDescription>Narrow the catalog by store, brand and price.</DialogDescription>{filters}<button className="primary-button" onClick={()=>setFilterOpen(false)}>Show {visible.length.toLocaleString('en-IN')} results</button></DialogContent></Dialog>
- <Dialog open={!!selected} onOpenChange={open=>!open&&setSelectedId(null)}><DialogContent className="offer-dialog"><DialogTitle>{selected?.name}</DialogTitle><DialogDescription>{selected?.brand} · {selected?.variant}</DialogDescription>{selected&&<><div className="detail-heading"><div className="detail-image"><ProductImage p={selected}/></div><div><p className="product-brand">{selected.category}</p><h3>{selected.offers.length>1?'Compare retailer offers':'Retailer listing'}</h3><p>Prices below apply to the displayed variant. Confirm size and colour at checkout.</p>{(selected.variantCount||0)>1&&<p className="variant">The source lists {selected.variantCount} variants. Other sizes and colours may have different prices.</p>}</div></div><Dropdown label="Compare price basis" value={priceMode} onChange={setPriceMode} items={[{value:'listed',label:'Compare listed price'},{value:'delivered',label:'Compare price + known shipping'}]}/>{priceMode==='delivered'&&!bestOffer(selected,priceMode)&&<div className="data-notice">Shipping is unknown for these offers. A delivered-price winner cannot be determined.</div>}<div className="offer-list">{rankedOffers(selected,priceMode).map(o=>{const best=bestOffer(selected,priceMode);return <div className={`offer-row ${best?.storeId===o.storeId&&selected.offers.length>1?'best-offer':''}`} key={o.storeId}><div><strong>{o.storeName}</strong>{best?.storeId===o.storeId&&selected.offers.length>1&&<span className="best-badge"><Check size={12}/>{priceMode==='listed'?'Lowest listed price':'Lowest known total'}</span>}<p>{stockLabel(o.inStock)} · {o.shipping===null?'Shipping at checkout':o.shipping===0?'Free shipping':`${money(o.shipping)} shipping`}</p><p>Checked {checkedLabel(o.checkedAt)}{!isFresh(o)&&' · Needs refresh'}</p></div><strong>{money(o.price+(priceMode==='delivered'?(o.shipping||0):0))}</strong><a className="outline-button" href={o.url} target="_blank" rel="noreferrer">View at store</a></div>})}</div><p className="detail-note">Bank offers, coupons and delivery charges are excluded unless the retailer supplies them. Listings with unknown stock or old prices are not marked as best offers.</p><p className="detail-note">Product key: <code>{selected.id}</code></p></>}</DialogContent></Dialog>
- <Dialog open={how} onOpenChange={setHow}><DialogContent className="offer-dialog"><DialogTitle>How RideCompare works</DialogTitle><DialogDescription>Compare the offer, then confirm it with the retailer.</DialogDescription><ul className="help-list"><li>Each listing shows an observed variant, source website, INR price and collection time.</li><li>Products are compared only when an exact variant, validated barcode, or manually verified match connects the offers. Similar names alone do not establish a match.</li><li>“Lowest listed price” means the lowest current, in-stock price among the stores displayed. It is not a claim about every website in India.</li><li>Shipping is kept separate. Unknown delivery costs and conditional coupons never count as free shipping or guaranteed savings.</li><li>The catalog is a crawl snapshot. Check “Stores & sources” for restricted stores and partial coverage. Prices older than 24 hours need a fresh check.</li></ul><button disabled={busy} className="outline-button" onClick={()=>void load()}><RefreshCw size={16}/>{loading?'Loading…':'Reload latest catalog'}</button><p className="detail-note">Reloading checks for a newly published catalog. The collection timestamp shows when retailers were last crawled.</p></DialogContent></Dialog>
- <Dialog open={manage} onOpenChange={setManage}><DialogContent className="manage-dialog"><DialogTitle>Connect a retailer</DialogTitle><DialogDescription>Add a website, then import its product feed. Existing stores can receive more offers too.</DialogDescription>{formError&&<div className="error-notice" role="alert">{formError}</div>}<form className="retailer-form" onSubmit={saveRetailer}><label>Store name<input required maxLength={60} value={retailerName} onChange={e=>setRetailerName(e.target.value)} placeholder="Your retailer"/></label><label>Website<input required type="url" value={website} onChange={e=>setWebsite(e.target.value)} placeholder="https://retailer.in"/></label><label>Public JSON feed URL <span>(optional)</span><input type="url" value={feedUrl} onChange={e=>setFeedUrl(e.target.value)} placeholder="https://retailer.in/ridecompare-feed.json"/></label><button className="primary-button" disabled={busy}>Save retailer</button></form><hr/><h3>Import product offers</h3><Dropdown label="Retailer to import" value={importStore||'choose'} onChange={setImportStore} items={[{value:'choose',label:'Choose a retailer'},...data.stores.map(s=>({value:s.id,label:s.name}))]}/><label className="file-picker">Upload a JSON feed<input type="file" accept=".json,application/json" onChange={async e=>{const f=e.target.files?.[0];if(!f)return;if(f.size>1024*1024){setFormError('Choose a file smaller than 1 MB.');return;}setFeedText(await f.text());}}/></label><textarea aria-label="Product feed JSON" value={feedText} onChange={e=>setFeedText(e.target.value)} placeholder='{"currency":"INR","offers":[…]}' rows={6}/><div className="source-actions"><button className="primary-button" disabled={busy||!importStore||importStore==='choose'||!feedText.trim()} onClick={()=>void importProducts()}>Import offers</button><button className="outline-button" disabled={busy||!data.stores.find(s=>s.id===importStore)?.feedUrl} onClick={()=>void syncFeed()}>Refresh connected feed</button><a className="text-button" href="/feed-example.json" download>Download feed example</a></div><p className="detail-note">Use the same product key, name, brand and variant for matching offers. Imported rows update individual offers; omitted rows are retained with their previous timestamps.</p><button type="button" className="text-button" onClick={askAdminToken}>Enter admin token to manage retailer feeds</button></DialogContent></Dialog>
- </>;
+const initial: CatalogData = { products: starters, stores: starterStores };
+const pageSize = 24;
+
+function adminToken() {
+  try {
+    return localStorage.getItem("rc-admin") || "";
+  } catch {
+    return "";
+  }
+}
+function askAdminToken() {
+  const t = window.prompt("Admin token");
+  if (t === null) return;
+  try {
+    localStorage.setItem("rc-admin", t.trim());
+  } catch {}
+}
+async function api<T = Record<string, unknown>>(path: string, body?: unknown): Promise<T> {
+  const r = await fetch(path, {
+    method: body ? "POST" : "GET",
+    headers: body ? { "Content-Type": "application/json", Authorization: `Bearer ${adminToken()}` } : undefined,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const d = (await r.json()) as T & { error?: string };
+  if (!r.ok) throw new Error(d.error || "Could not complete this request.");
+  return d;
+}
+
+function ProductImage({ p }: { p: Product }) {
+  const [broken, setBroken] = useState(false);
+  return p.image && !broken ? (
+    <img src={p.image} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setBroken(true)} />
+  ) : (
+    <Package className="image-missing" size={40} strokeWidth={1} aria-hidden />
+  );
+}
+
+function Dropdown({ label, value, onChange, items }: { label: string; value: string; onChange: (v: string) => void; items: { value: string; label: string }[] }) {
+  return (
+    <Select value={value} onValueChange={(v) => onChange(v as string)}>
+      <SelectTrigger aria-label={label} className="dropdown">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {items.map((i) => (
+          <SelectItem value={i.value} key={i.value}>
+            {i.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
+function Logo() {
+  return (
+    <span className="logo">
+      <svg viewBox="0 0 40 40" aria-hidden>
+        <rect width="40" height="40" rx="10" />
+        <path d="m9 15 11-6 11 6-11 6zm0 6 11 6 11-6M9 27l11 6 11-6" />
+      </svg>
+      <span>
+        ride<b>compare</b>
+      </span>
+    </span>
+  );
+}
+
+export default function Home() {
+  const [data, setData] = useState<CatalogData>(initial),
+    [loading, setLoading] = useState(true),
+    [loadError, setLoadError] = useState("");
+  const [view, setView] = useState<"gear" | "brands">("gear"),
+    [query, setQuery] = useState(""),
+    [category, setCategory] = useState("All gear"),
+    [sort, setSort] = useState("featured"),
+    [brands, setBrands] = useState<string[]>([]),
+    [storeFilter, setStoreFilter] = useState("all"),
+    [stockOnly, setStockOnly] = useState(false),
+    [comparisonOnly, setComparisonOnly] = useState(false),
+    [maxPrice, setMaxPrice] = useState(""),
+    [brandSearch, setBrandSearch] = useState(""),
+    [directorySearch, setDirectorySearch] = useState(""),
+    [page, setPage] = useState(1),
+    [filterOpen, setFilterOpen] = useState(false),
+    [selectedId, setSelectedId] = useState<string | null>(null),
+    [busy, setBusy] = useState(false),
+    [manage, setManage] = useState(false);
+  const [retailerName, setRetailerName] = useState(""),
+    [website, setWebsite] = useState(""),
+    [feedUrl, setFeedUrl] = useState(""),
+    [importStore, setImportStore] = useState(""),
+    [feedText, setFeedText] = useState(""),
+    [formError, setFormError] = useState("");
+  const deferred = useDeferredValue(query);
+
+  async function load() {
+    setLoading(true);
+    setLoadError("");
+    try {
+      const r = await fetch("/data/catalog.json");
+      if (!r.ok) throw new Error("The catalog could not be loaded.");
+      const snapshot: CatalogData = await r.json();
+      try {
+        const saved = await api<{ products: Product[]; stores: Retailer[] }>("/api/catalog");
+        const map = new Map(snapshot.products.map((p) => [p.id, p]));
+        for (const p of saved.products) {
+          const current = map.get(p.id);
+          if (current) {
+            for (const o of p.offers) {
+              const old = current.offers.findIndex((x) => x.storeId === o.storeId);
+              if (old < 0) current.offers.push(o);
+              else if (Date.parse(o.checkedAt) > Date.parse(current.offers[old].checkedAt)) current.offers[old] = o;
+            }
+          } else map.set(p.id, p);
+        }
+        snapshot.products = [...map.values()];
+        const sm = new Map(snapshot.stores.map((s) => [s.id, s]));
+        for (const s of saved.stores) sm.set(s.id, { ...sm.get(s.id), ...s });
+        snapshot.stores = [...sm.values()];
+      } catch {
+        /* Imported offers are optional; the published catalog is enough to browse. */
+      }
+      setData(snapshot);
+    } catch (e) {
+      setLoadError(e instanceof Error ? e.message : "The catalog could not be loaded.");
+    } finally {
+      setLoading(false);
+    }
+  }
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- loads the catalog once and follows the #admin hash
+    void load();
+    const openAdmin = () => setManage(location.hash === "#admin");
+    openAdmin();
+    window.addEventListener("hashchange", openAdmin);
+    return () => window.removeEventListener("hashchange", openAdmin);
+  }, []);
+
+  const allBrands = useMemo(() => {
+    const map = new Map<string, Brand>();
+    for (const p of data.products) {
+      if (p.brand === "Unspecified") continue;
+      const b = map.get(p.brand) || { name: p.brand, count: 0 };
+      b.count++;
+      map.set(p.brand, b);
+    }
+    return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
+  }, [data]);
+  const storesWithProducts = useMemo(() => {
+    const ids = new Set(data.products.flatMap((p) => p.offers.map((o) => o.storeId)));
+    return data.stores.filter((s) => ids.has(s.id)).sort((a, b) => a.name.localeCompare(b.name));
+  }, [data]);
+  const visible = useMemo(() => {
+    const q = deferred.toLowerCase().trim();
+    const rows = data.products.filter(
+      (p) =>
+        (category === "All gear" || p.category === category) &&
+        (!brands.length || brands.includes(p.brand)) &&
+        (storeFilter === "all" || p.offers.some((o) => o.storeId === storeFilter)) &&
+        (!stockOnly || p.offers.some((o) => o.inStock === true)) &&
+        (!comparisonOnly || p.offers.length > 1) &&
+        (!maxPrice || p.offers.some((o) => o.price <= Number(maxPrice))) &&
+        (!q || `${p.name} ${p.brand} ${p.category} ${p.variant}`.toLowerCase().includes(q)),
+    );
+    if (sort === "low") rows.sort((a, b) => rankedOffers(a)[0].price - rankedOffers(b)[0].price);
+    if (sort === "high") rows.sort((a, b) => rankedOffers(b)[0].price - rankedOffers(a)[0].price);
+    if (sort === "stores") rows.sort((a, b) => b.offers.length - a.offers.length);
+    return rows;
+  }, [data, deferred, category, brands, storeFilter, stockOnly, comparisonOnly, maxPrice, sort]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- any filter change starts the results over
+  useEffect(() => setPage(1), [deferred, category, brands, storeFilter, stockOnly, comparisonOnly, maxPrice, sort]);
+
+  const totalPages = Math.max(1, Math.ceil(visible.length / pageSize)),
+    currentPage = Math.min(page, totalPages),
+    shown = visible.slice((currentPage - 1) * pageSize, currentPage * pageSize),
+    selected = data.products.find((p) => p.id === selectedId),
+    directory = allBrands.filter((b) => b.name.toLowerCase().includes(directorySearch.toLowerCase())),
+    activeFilters = brands.length + (storeFilter !== "all" ? 1 : 0) + (stockOnly ? 1 : 0) + (comparisonOnly ? 1 : 0) + (maxPrice ? 1 : 0);
+
+  function reset() {
+    setQuery("");
+    setBrands([]);
+    setCategory("All gear");
+    setStoreFilter("all");
+    setStockOnly(false);
+    setComparisonOnly(false);
+    setMaxPrice("");
+  }
+  function selectBrand(b: string) {
+    reset();
+    setBrands([b]);
+    setView("gear");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  function movePage(p: number) {
+    setPage(p);
+    document.getElementById("results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  function closeManage(open: boolean) {
+    setManage(open);
+    if (!open && location.hash === "#admin") history.replaceState(null, "", location.pathname);
+  }
+  async function saveRetailer(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setFormError("");
+    try {
+      const s = await api<Retailer>("/api/stores", { name: retailerName, website, feedUrl });
+      setImportStore(s.id);
+      setData((d) => ({ ...d, stores: [...d.stores, s] }));
+      setRetailerName("");
+      setWebsite("");
+      setFeedUrl("");
+      toast.success("Retailer saved. You can now import its product feed.");
+    } catch (e) {
+      setFormError(e instanceof Error ? e.message : "Could not save retailer.");
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function importProducts() {
+    setBusy(true);
+    setFormError("");
+    try {
+      const d = await api<{ imported: number }>("/api/import", { storeId: importStore, feed: JSON.parse(feedText) });
+      toast.success(`${d.imported} offers imported.`);
+      await load();
+      setFeedText("");
+    } catch (e) {
+      setFormError(e instanceof Error ? e.message : "Could not import offers.");
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function syncFeed() {
+    setBusy(true);
+    setFormError("");
+    try {
+      const d = await api<{ imported: number }>("/api/stores/sync", { storeId: importStore });
+      toast.success(`${d.imported} offers updated.`);
+      await load();
+    } catch (e) {
+      setFormError(e instanceof Error ? e.message : "Feed unavailable.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const filters = (
+    <div className="filters-body">
+      <div className="filter-group">
+        <h3>Store</h3>
+        <Dropdown
+          label="Filter by store"
+          value={storeFilter}
+          onChange={setStoreFilter}
+          items={[{ value: "all", label: "All stores" }, ...storesWithProducts.map((s) => ({ value: s.id, label: s.name }))]}
+        />
+      </div>
+      <div className="filter-group">
+        <h3>Budget</h3>
+        <label className="budget-input">
+          <span>₹</span>
+          <input
+            aria-label="Maximum price in rupees"
+            placeholder="Max price"
+            inputMode="numeric"
+            type="number"
+            min="0"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+          />
+        </label>
+        <label className="check-row">
+          <Checkbox checked={stockOnly} onCheckedChange={(v) => setStockOnly(v === true)} />
+          In stock
+        </label>
+        <label className="check-row">
+          <Checkbox checked={comparisonOnly} onCheckedChange={(v) => setComparisonOnly(v === true)} />
+          Sold at 2+ stores
+        </label>
+      </div>
+      <div className="filter-group">
+        <h3>Brand</h3>
+        <input className="brand-search" aria-label="Find a brand" placeholder="Find a brand" value={brandSearch} onChange={(e) => setBrandSearch(e.target.value)} />
+        <div className="brand-list">
+          {allBrands
+            .filter((b) => b.name.toLowerCase().includes(brandSearch.toLowerCase()))
+            .map((b) => (
+              <label className="check-row" key={b.name}>
+                <Checkbox checked={brands.includes(b.name)} onCheckedChange={(v) => setBrands(v ? [...brands, b.name] : brands.filter((x) => x !== b.name))} />
+                <span className="check-label">{b.name}</span>
+                <span className="check-count">{b.count.toLocaleString("en-IN")}</span>
+              </label>
+            ))}
+        </div>
+      </div>
+      {activeFilters > 0 && (
+        <button className="link-button" onClick={reset}>
+          Clear all filters
+        </button>
+      )}
+    </div>
+  );
+
+  return (
+    <>
+      <Toaster position="bottom-right" />
+      <header className="site-header">
+        <div className="wrap header-inner">
+          <button
+            className="logo-button"
+            aria-label="RideCompare home"
+            onClick={() => {
+              reset();
+              setView("gear");
+            }}
+          >
+            <Logo />
+          </button>
+          <nav aria-label="Main">
+            <button aria-current={view === "gear" ? "page" : undefined} onClick={() => setView("gear")}>
+              Gear
+            </button>
+            <button aria-current={view === "brands" ? "page" : undefined} onClick={() => setView("brands")}>
+              Brands
+            </button>
+          </nav>
+        </div>
+      </header>
+
+      <main className="wrap">
+        {view === "gear" ? (
+          <>
+            <section className="hero">
+              <h1>Find motorcycle gear for less.</h1>
+              <p>
+                {data.products.length.toLocaleString("en-IN")} helmets, jackets, gloves and parts from {storesWithProducts.length} Indian stores, in one
+                search.
+              </p>
+              <div className="search">
+                <Search size={20} aria-hidden />
+                <input aria-label="Search motorcycle gear" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search a product, brand or category" />
+                {query && (
+                  <button aria-label="Clear search" onClick={() => setQuery("")}>
+                    <X size={18} />
+                  </button>
+                )}
+              </div>
+            </section>
+
+            <div className="categories" role="group" aria-label="Categories">
+              {categories.map((c) => (
+                <button key={c} aria-pressed={category === c} onClick={() => setCategory(c)}>
+                  {c}
+                </button>
+              ))}
+            </div>
+
+            <div className="shop">
+              <aside className="filters" aria-label="Filters">
+                {filters}
+              </aside>
+              <section id="results" className="results" aria-busy={loading}>
+                <div className="results-bar">
+                  <p className="results-count">
+                    <strong>{visible.length.toLocaleString("en-IN")}</strong> {visible.length === 1 ? "product" : "products"}
+                    {category !== "All gear" && <> in {category}</>}
+                  </p>
+                  <button className="filters-toggle" onClick={() => setFilterOpen(true)}>
+                    <SlidersHorizontal size={16} /> Filters{activeFilters > 0 && <span className="pill">{activeFilters}</span>}
+                  </button>
+                  <Dropdown
+                    label="Sort products"
+                    value={sort}
+                    onChange={setSort}
+                    items={[
+                      { value: "featured", label: "Featured" },
+                      { value: "low", label: "Price: low to high" },
+                      { value: "high", label: "Price: high to low" },
+                      { value: "stores", label: "Most stores" },
+                    ]}
+                  />
+                </div>
+
+                {brands.length > 0 && (
+                  <div className="chips">
+                    {brands.map((b) => (
+                      <button key={b} onClick={() => setBrands(brands.filter((x) => x !== b))} aria-label={`Remove ${b}`}>
+                        {b}
+                        <X size={13} />
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {loadError && (
+                  <div role="alert" className="notice">
+                    {loadError} <button onClick={() => void load()}>Try again</button>
+                  </div>
+                )}
+
+                <div className="grid">
+                  {shown.map((p) => {
+                    const offers = rankedOffers(p);
+                    const o = offers[0];
+                    return (
+                      <button className="card" key={p.id} onClick={() => setSelectedId(p.id)}>
+                        <span className="card-image">
+                          <ProductImage p={p} />
+                        </span>
+                        <span className="card-body">
+                          <span className="card-brand">{p.brand === "Unspecified" ? p.category : p.brand}</span>
+                          <span className="card-name">{p.name}</span>
+                          <span className="card-variant">{p.variant}</span>
+                          <span className="card-price">
+                            <strong>{money(o.price)}</strong>
+                            {o.inStock === false && <em>Out of stock</em>}
+                          </span>
+                          <span className="card-store">{offers.length > 1 ? `Lowest of ${offers.length} stores` : o.storeName}</span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {!loading && !visible.length && (
+                  <div className="empty">
+                    <h2>Nothing matches that</h2>
+                    <p>Try a shorter search or remove a filter.</p>
+                    <button className="secondary-button" onClick={reset}>
+                      Clear search and filters
+                    </button>
+                  </div>
+                )}
+
+                {totalPages > 1 && (
+                  <nav className="pager" aria-label="Pages">
+                    <button aria-label="Previous page" disabled={currentPage === 1} onClick={() => movePage(currentPage - 1)}>
+                      <ChevronLeft size={18} />
+                    </button>
+                    <span aria-live="polite">
+                      Page {currentPage} of {totalPages.toLocaleString("en-IN")}
+                    </span>
+                    <button aria-label="Next page" disabled={currentPage === totalPages} onClick={() => movePage(currentPage + 1)}>
+                      <ChevronRight size={18} />
+                    </button>
+                  </nav>
+                )}
+              </section>
+            </div>
+          </>
+        ) : (
+          <>
+            <section className="hero hero-small">
+              <h1>Brands</h1>
+              <p>{allBrands.length.toLocaleString("en-IN")} brands across every store we cover.</p>
+              <div className="search">
+                <Search size={20} aria-hidden />
+                <input aria-label="Search brands" value={directorySearch} onChange={(e) => setDirectorySearch(e.target.value)} placeholder="Search brands" />
+              </div>
+            </section>
+            <ul className="brand-index">
+              {directory.map((b) => (
+                <li key={b.name}>
+                  <button onClick={() => selectBrand(b.name)}>
+                    <span>{b.name}</span>
+                    <small>{b.count.toLocaleString("en-IN")}</small>
+                  </button>
+                </li>
+              ))}
+            </ul>
+            {directory.length === 0 && (
+              <div className="empty">
+                <h2>No brand by that name</h2>
+                <p>Check the spelling or try fewer letters.</p>
+              </div>
+            )}
+          </>
+        )}
+
+        <footer className="site-footer">
+          <Logo />
+          <p>
+            Prices are taken from each store&apos;s public listings{data.summary ? `, last updated ${checkedLabel(data.summary.generatedAt)}` : ""}. Shipping,
+            coupons and bank offers aren&apos;t included, so confirm the final price at the store.
+          </p>
+        </footer>
+      </main>
+
+      <Dialog open={filterOpen} onOpenChange={setFilterOpen}>
+        <DialogContent className="sheet">
+          <DialogTitle>Filters</DialogTitle>
+          <DialogDescription className="sr-only">Narrow products by store, budget and brand.</DialogDescription>
+          {filters}
+          <button className="primary-button" onClick={() => setFilterOpen(false)}>
+            Show {visible.length.toLocaleString("en-IN")} products
+          </button>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!selected} onOpenChange={(open) => !open && setSelectedId(null)}>
+        <DialogContent className="product-dialog">
+          {selected && (
+            <>
+              <div className="detail">
+                <div className="detail-image">
+                  <ProductImage p={selected} />
+                </div>
+                <div className="detail-text">
+                  <span className="card-brand">{selected.brand === "Unspecified" ? selected.category : selected.brand}</span>
+                  <DialogTitle className="detail-name">{selected.name}</DialogTitle>
+                  <DialogDescription className="detail-variant">{selected.variant}</DialogDescription>
+                </div>
+              </div>
+              <h3 className="offers-title">{selected.offers.length > 1 ? `${selected.offers.length} stores sell this` : "Where to buy"}</h3>
+              <ol className="offers">
+                {rankedOffers(selected).map((o, i) => (
+                  <li key={o.storeId} className={i === 0 && selected.offers.length > 1 ? "lowest" : undefined}>
+                    <div>
+                      <strong>{o.storeName}</strong>
+                      <span>
+                        {o.inStock === true ? "In stock" : o.inStock === false ? "Out of stock" : "Check stock at store"}
+                        {i === 0 && selected.offers.length > 1 && " · Lowest price"}
+                      </span>
+                    </div>
+                    <b>{money(o.price)}</b>
+                    <a className="primary-button" href={o.url} target="_blank" rel="noreferrer">
+                      Go to store <ArrowUpRight size={16} />
+                    </a>
+                  </li>
+                ))}
+              </ol>
+              <p className="fine-print">Price for the size and colour shown. Other sizes and colours can cost more or less.</p>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={manage} onOpenChange={closeManage}>
+        <DialogContent className="admin-dialog">
+          <DialogTitle>Connect a retailer</DialogTitle>
+          <DialogDescription>Add a website, then import its product feed. Existing stores can receive more offers too.</DialogDescription>
+          {formError && (
+            <div className="notice" role="alert">
+              {formError}
+            </div>
+          )}
+          <form className="admin-form" onSubmit={saveRetailer}>
+            <label>
+              Store name
+              <input required maxLength={60} value={retailerName} onChange={(e) => setRetailerName(e.target.value)} placeholder="Your retailer" />
+            </label>
+            <label>
+              Website
+              <input required type="url" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://retailer.in" />
+            </label>
+            <label className="full">
+              Public JSON feed URL (optional)
+              <input type="url" value={feedUrl} onChange={(e) => setFeedUrl(e.target.value)} placeholder="https://retailer.in/ridecompare-feed.json" />
+            </label>
+            <button className="primary-button full" disabled={busy}>
+              Save retailer
+            </button>
+          </form>
+          <h3>Import product offers</h3>
+          <Dropdown
+            label="Retailer to import"
+            value={importStore || "choose"}
+            onChange={setImportStore}
+            items={[{ value: "choose", label: "Choose a retailer" }, ...data.stores.map((s) => ({ value: s.id, label: s.name }))]}
+          />
+          <input
+            type="file"
+            aria-label="Upload a JSON feed"
+            accept=".json,application/json"
+            onChange={async (e) => {
+              const f = e.target.files?.[0];
+              if (!f) return;
+              if (f.size > 1024 * 1024) {
+                setFormError("Choose a file smaller than 1 MB.");
+                return;
+              }
+              setFeedText(await f.text());
+            }}
+          />
+          <textarea aria-label="Product feed JSON" value={feedText} onChange={(e) => setFeedText(e.target.value)} placeholder='{"currency":"INR","offers":[…]}' rows={6} />
+          <div className="admin-actions">
+            <button className="primary-button" disabled={busy || !importStore || importStore === "choose" || !feedText.trim()} onClick={() => void importProducts()}>
+              Import offers
+            </button>
+            <button className="secondary-button" disabled={busy || !data.stores.find((s) => s.id === importStore)?.feedUrl} onClick={() => void syncFeed()}>
+              Refresh connected feed
+            </button>
+            <a className="link-button" href="/feed-example.json" download>
+              Feed example
+            </a>
+            <button type="button" className="link-button" onClick={askAdminToken}>
+              Admin token
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 }
