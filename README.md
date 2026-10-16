@@ -1,48 +1,67 @@
 # RideCompare India
 
-Motorcycle accessories and riding gear catalog, with INR offers, categories, a searchable brand directory, exact-variant comparisons, and per-retailer collection status.
+Price comparison for motorcycle helmets, riding gear, luggage and bike accessories across Indian online stores. Prices are read from each store's public catalog, matched by exact brand, model and variant (or barcode), stored in Cloudflare D1 and refreshed automatically.
+
+## How it is built
+
+- **Next.js app on Cloudflare Workers** (Sites Vinext starter). Pages are server-rendered from D1: home, `/gear` (search and filters), `/product/[id]` (all store prices, MRP saving, price history, brand-mixed "complete the set" kits and add-ons), `/build` (budget kit builder), `/fit` (3D fit check for jackets and pants), `/brands`, `/deals`, `/bikes` (shop by motorcycle), `/compare` (side-by-side, kept in the browser).
+- **Collection engine in the Worker** (`lib/refresh.ts`, `lib/ingest.ts`). Retailer adapters in `lib/adapters/` read public catalog endpoints: Shopify `products.json`, WooCommerce Store API, Magento GraphQL, the BikeGear OpenCart listing and the KYT India JSON API. `crawler/sites.json` is the store registry (platform, brand-owned flag, blocked stores with the reason).
+- **Rules** in `lib/rules.ts`: categories, brand normalisation (`crawler/brand-aliases.json`), bike-model detection, product identity.
+- **Schedule**: `vite.config.ts` declares a cron trigger every 5 minutes; `build/sites-worker.ts` runs the engine with a page budget each time. A store is re-read once its last successful pass is older than 2 hours (`REFRESH_INTERVAL_MINUTES`), and the budget per firing is `REFRESH_PAGE_BUDGET` (default 40 pages). Stores that need more pages than one firing allows resume where they stopped, so the whole catalog turns over continuously. If the host does not run cron triggers, `.github/workflows/refresh.yml` can call `POST /api/refresh` with a `REFRESH_TOKEN` instead.
 
 ## Run locally
 
-Use Node 22.13+ and Python 3.12+. Install JavaScript dependencies with `npm ci`, then run `npm run dev` and open the printed loopback URL. The app uses the Sites Vinext starter and Cloudflare D1. Local sign-in is available at `/signin-with-chatgpt?return_to=/`; production sign-in is handled by Sites.
-
-## Collect retailer catalogs with Python Playwright
+Use Node 22.13+.
 
 ```sh
-python3 -m venv .venv
-.venv/bin/python -m pip install -r crawler/requirements.txt
-.venv/bin/python -m playwright install chromium
-.venv/bin/python crawler/crawl.py --max-feed-pages 200 --max-html-pages 120
-.venv/bin/python crawler/export.py
+npm ci
+npm run dev                      # http://127.0.0.1:5173
+node scripts/refresh-local.mjs   # collects every store into the local D1 (takes a while the first time)
 ```
 
-The 21 retailer URLs are in `crawler/sites.json`. Use `--sites rynox,axor` to refresh selected retailers, `--resume` to retain existing checkpoints, or `--browser /absolute/path/to/chromium` to use an installed browser. `--max-seconds` bounds each store's collection time; the default is 1,200 seconds. Each retailer gets its own checkpoint in the ignored `data/crawl/raw/` directory. Re-export and republish after a crawl to update the hosted catalog. The website's reload button reloads that published snapshot; it does not start Python on the hosting server.
+The dev server creates the D1 tables itself (`lib/schema.ts`); the same statements are in `drizzle/` for the hosted database. `scripts/refresh-local.mjs --stores rynox,axor --pages 40` refreshes selected stores. The owner endpoints need the local sign-in (`/signin-with-chatgpt?return_to=/`):
 
-The crawler uses Playwright's request client for public catalog feeds and Chromium for script-rendered link discovery. It checks robots.txt, uses one-second per-host pacing or the longer declared crawl delay, and stops on restrictions. It does not sign in, solve CAPTCHAs, or rotate proxies. Public Shopify and WooCommerce feeds are preferred; HTML/JSON-LD parsers cover remaining stores. Slickshop uses a dedicated parser for its public storefront cards; five consecutive brand-page restrictions stop that branch. Its retailer-declared brand directory is shown separately on the source card.
+- `POST /api/refresh` body `{ "pages": 40, "stores": ["axor"], "force": false }` — run the engine now.
+- `GET /api/status` — per-store state (status, offer count, pages, notes, last success) and recent runs. This is the owner's coverage view; nothing about collection is shown publicly.
+- `POST /api/stores`, `POST /api/import`, `POST /api/stores/sync` — add a retailer feed manually (`public/feed-example.json`).
 
-## Coverage and data quality
+## Adding a store
 
-- `data/crawl/report.json` records every attempted source, timestamps, page counts, and limitations.
-- `public/data/catalog.json` contains the published product snapshot; `public/data/brands.json` contains all named brands represented in that snapshot.
-- `lib/crawl-index.json` contains compact identities used to validate imported comparison offers.
-- Every card represents one observed variant, not every available size and colour. Where a source does not expose a variant, the card asks the shopper to check it at the store.
-- Prices are snapshots in INR. Unknown shipping and availability stay unknown. Prices older than 24 hours and offers without confirmed stock cannot receive a lowest-price badge.
-- Only exact brand/name/variant matches or validated, nonconflicting barcodes are grouped. A single-store listing is not claimed to be a market-wide best offer.
-- Categories use title rules and brands use retailer metadata plus explicit leading brand names. Unnamed products remain “Unspecified”; car-only parts, gift cards and toy models are excluded. The brand directory reflects collected listings, not every brand sold in India.
-- An exhausted public feed does not prove complete website coverage. Amazon and Royal Enfield (including the corrected royalenfield.store/in/en/riding URL) restricted this crawl; SMK exposed no extractable INR offers. Flipkart, Store4Riders and Slickshop have partial coverage.
+1. Find its public catalog: `https://store/products.json?limit=1` (Shopify), `https://store/wp-json/wc/store/v1/products?per_page=1` (WooCommerce), `POST https://store/graphql` (Magento). Other platforms need an adapter in `lib/adapters/` that implements `Adapter` from `lib/adapters/types.ts`.
+2. Add it to `crawler/sites.json` with `id`, `name`, `url`, `platform`, and `brand` when the store sells only its own brand. Add the store's own name to `crawler/brand-aliases.json` as `"Unspecified"` so it is never shown as a brand.
+3. Run `node scripts/refresh-local.mjs --stores <id>` and check `/api/status`.
 
-Approved retailer feeds can be imported through “Add a store.” The JSON format is in `public/feed-example.json`; imports require sign-in, INR currency, positive prices, same-retailer product URLs, and consistent product variants. D1 persists added stores and imported offers.
+Stores that return HTTP 403 to automated requests (Amazon, Flipkart, Royal Enfield) are listed with `enabled: false` and are skipped.
+
+## Shopper tools
+
+- **Kit builder (`/build`)**: budget + riding style (track, touring, urban) + the pieces wanted. `lib/kit.ts` splits the budget by style weights, scores candidates per piece (style keywords, certification marks, brand tier, stores, stock) and composes four sets with different objectives. Every set mixes brands; a piece is never empty, and when nothing fits the nearest sets are shown with the overshoot. One piece selected gives ranked picks within budget plus the closest above it.
+- **Complete the set** on product pages uses the same engine with the product as the fixed anchor and an implied kit budget derived from its price.
+- **Fit check (`/fit`)**: `lib/fit.ts` holds the size charts and per-zone verdicts; `components/fit-scene.ts` builds the three.js mannequin and garment shell on the client only (loaded on demand, never bundled into the Worker). Measurements stay in `localStorage` (`rc-body`). Jackets and pants link to it with `?product=<id>`.
+
+## Data rules
+
+- Every card is one observed variant; other sizes and colours stay on the store page.
+- Products are grouped only on an exact brand + normalised name + variant match, or a validated GTIN. Unbranded listings stay store-specific.
+- Within a store, duplicate listings of the same variant collapse to one offer (the cheapest). When a store's pass completes, offers it no longer lists are removed.
+- "Discount" is measured against the MRP the store publishes (`compare_at_price`, `regular_price`). Shipping and coupons are never assumed.
+- Price history records every change per store and is drawn on the product page.
 
 ## Checks
 
 ```sh
-.venv/bin/python -m unittest discover -s tests
-node --test tests/feed.test.mjs
 npx tsc --noEmit
+npx eslint app lib components
+node --test tests/feed.test.mjs
+.venv/bin/python -m unittest discover -s tests            # Python crawler rules
+BASE_URL=http://127.0.0.1:5173 .venv/bin/python tests/browser_qa.py   # browser checks against a running preview
 ```
 
-Run browser checks against a running local preview with `BROWSER_EXECUTABLE=/absolute/path/to/chromium .venv/bin/python tests/browser_qa.py`. These cover catalog search, a multi-store comparison, brand filtering, source coverage, and the mobile filter dialog. The optional WebMCP check validates registration and execution against a test shim.
+## Offline crawler (optional)
+
+`crawler/crawl.py` and `crawler/export.py` are the original Python Playwright collector. They are no longer needed for the site but remain useful for checking a store's coverage offline; their output goes to `data/crawl/` (ignored).
 
 ## Publish
 
-Reuse the project ID in `.openai/hosting.json` and the Sites source/build/publish workflow. The crawl snapshot is a static asset; the Worker hosts the UI and authenticated feed APIs. D1 migrations in `drizzle/` are applied by Sites when published. Keep `.venv`, local database state, raw checkpoints, and credentials out of the source archive.
+Reuse the project ID in `.openai/hosting.json` and the Sites source/build/publish workflow. D1 migrations in `drizzle/` are applied by Sites when published; the Worker also creates missing tables on first use. After publishing, the cron trigger fills the catalog within a few hours; `POST /api/refresh` as the signed-in owner speeds up the first fill.
+# ride-Compare
