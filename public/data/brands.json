@@ -24,8 +24,9 @@
   },
   {
     "name": "66BHP",
-    "count": 103,
+    "count": 104,
     "stores": [
+      "Bikester Global",
       "LRL Motors"
     ],
     "categories": [
@@ -61,10 +62,9 @@
   },
   {
     "name": "Acerbis",
-    "count": 197,
+    "count": 173,
     "stores": [
       "Bandidos Pitstop",
-      "Custom Elements",
       "ReiseMoto"
     ],
     "categories": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "AGV",
-    "count": 98,
+    "count": 109,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
@@ -94,7 +94,8 @@
     "categories": [
       "Bike Accessories",
       "Helmet Accessories",
-      "Helmets"
+      "Helmets",
+      "Maintenance & Parts"
     ]
   },
   {
@@ -123,7 +124,7 @@
   },
   {
     "name": "Akrapovic",
-    "count": 282,
+    "count": 285,
     "stores": [
       "Bandidos Pitstop",
       "Custom Elements",
@@ -158,22 +159,19 @@
   },
   {
     "name": "Alpinestars",
-    "count": 113,
+    "count": 89,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
-      "Custom Elements",
       "Moto Central",
       "Planet DSG",
-      "ReiseMoto",
-      "Slickshop"
+      "ReiseMoto"
     ],
     "categories": [
       "Bike Accessories",
       "Boots",
       "Gloves",
       "Jackets",
-      "Luggage",
       "Pants",
       "Protection",
       "Riding Apparel"
@@ -181,17 +179,15 @@
   },
   {
     "name": "AMAROQ",
-    "count": 23,
+    "count": 19,
     "stores": [
       "LRL Motors",
       "Moto Central",
-      "ReiseMoto",
-      "Store4Riders"
+      "ReiseMoto"
     ],
     "categories": [
       "Bike Accessories",
-      "Boots",
-      "Protection"
+      "Boots"
     ]
   },
   {
@@ -228,16 +224,6 @@
     ]
   },
   {
-    "name": "Arai",
-    "count": 1,
-    "stores": [
-      "Slickshop"
-    ],
-    "categories": [
-      "Helmets"
-    ]
-  },
-  {
     "name": "ARK",
     "count": 2,
     "stores": [
@@ -249,12 +235,11 @@
   },
   {
     "name": "ARROW",
-    "count": 208,
+    "count": 206,
     "stores": [
       "Bandidos Pitstop",
       "Custom Elements",
-      "Moto Central",
-      "Slickshop"
+      "Moto Central"
     ],
     "categories": [
       "Bike Accessories",
@@ -264,7 +249,7 @@
   },
   {
     "name": "ASG",
-    "count": 11,
+    "count": 10,
     "stores": [
       "Bikester Global"
     ],
@@ -329,7 +314,7 @@
   },
   {
     "name": "Axor",
-    "count": 552,
+    "count": 516,
     "stores": [
       "Axor",
       "Axor Helmets",
@@ -338,8 +323,7 @@
       "LRL Motors",
       "Moto Central",
       "ReiseMoto",
-      "Riders India",
-      "Store4Riders"
+      "Riders India"
     ],
     "categories": [
       "Bike Accessories",
@@ -371,16 +355,6 @@
     ]
   },
   {
-    "name": "Bagster",
-    "count": 1,
-    "stores": [
-      "Slickshop"
-    ],
-    "categories": [
-      "Luggage"
-    ]
-  },
-  {
     "name": "Barageness",
     "count": 18,
     "stores": [
@@ -392,7 +366,7 @@
   },
   {
     "name": "Barkbusters",
-    "count": 188,
+    "count": 197,
     "stores": [
       "Bandidos Pitstop",
       "Custom Elements",
@@ -405,7 +379,7 @@
   },
   {
     "name": "Barrel Exhaust",
-    "count": 57,
+    "count": 66,
     "stores": [
       "Custom Elements",
       "LRL Motors"
@@ -427,13 +401,12 @@
   },
   {
     "name": "BBG",
-    "count": 155,
+    "count": 113,
     "stores": [
       "Bikester Global",
       "Custom Elements",
       "LRL Motors",
-      "Moto Central",
-      "Store4Riders"
+      "Moto Central"
     ],
     "categories": [
       "Bike Accessories",
@@ -451,14 +424,13 @@
   },
   {
     "name": "BDSSP",
-    "count": 9,
+    "count": 8,
     "stores": [
       "Bandidos Pitstop"
     ],
     "categories": [
       "Bike Accessories",
       "Electronics",
-      "Helmets",
       "Maintenance & Parts"
     ]
   },
@@ -486,9 +458,8 @@
   },
   {
     "name": "Bikeratti",
-    "count": 37,
+    "count": 23,
     "stores": [
-      "Custom Elements",
       "LRL Motors",
       "Moto Central"
     ],
@@ -496,8 +467,7 @@
       "Bike Accessories",
       "Gloves",
       "Jackets",
-      "Pants",
-      "Protection"
+      "Pants"
     ]
   },
   {
@@ -554,15 +524,14 @@
   },
   {
     "name": "Bluarmor",
-    "count": 46,
+    "count": 37,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
       "Custom Elements",
       "LRL Motors",
       "Moto Central",
-      "ReiseMoto",
-      "Store4Riders"
+      "ReiseMoto"
     ],
     "categories": [
       "Helmets",
@@ -571,14 +540,13 @@
   },
   {
     "name": "BMC",
-    "count": 588,
+    "count": 581,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
       "Custom Elements",
       "LRL Motors",
-      "Moto Central",
-      "Store4Riders"
+      "Moto Central"
     ],
     "categories": [
       "Bike Accessories",
@@ -588,18 +556,19 @@
   },
   {
     "name": "Bobo",
-    "count": 109,
+    "count": 136,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
+      "Custom Elements",
       "LRL Motors",
       "Moto Central",
-      "ReiseMoto",
-      "Store4Riders"
+      "ReiseMoto"
     ],
     "categories": [
       "Bike Accessories",
-      "Electronics"
+      "Electronics",
+      "Riding Apparel"
     ]
   },
   {
@@ -614,7 +583,7 @@
   },
   {
     "name": "Bolt",
-    "count": 27,
+    "count": 24,
     "stores": [
       "Moto Central",
       "Vega Helmets"
@@ -624,19 +593,6 @@
       "Helmet Accessories",
       "Helmets",
       "Maintenance & Parts"
-    ]
-  },
-  {
-    "name": "Bonamici Racing",
-    "count": 15,
-    "stores": [
-      "Custom Elements",
-      "Slickshop"
-    ],
-    "categories": [
-      "Bike Accessories",
-      "Maintenance & Parts",
-      "Riding Apparel"
     ]
   },
   {
@@ -690,10 +646,11 @@
     ]
   },
   {
-    "name": "Byke it",
-    "count": 2,
+    "name": "Byke IT",
+    "count": 10,
     "stores": [
-      "Moto Central"
+      "Moto Central",
+      "ReiseMoto"
     ],
     "categories": [
       "Bike Accessories"
@@ -714,7 +671,7 @@
   },
   {
     "name": "Carbon Racing",
-    "count": 50,
+    "count": 52,
     "stores": [
       "Bandidos Pitstop",
       "Moto Central"
@@ -728,7 +685,7 @@
   },
   {
     "name": "Carbonado",
-    "count": 58,
+    "count": 30,
     "stores": [
       "LRL Motors",
       "Moto Central",
@@ -743,11 +700,10 @@
   },
   {
     "name": "Cardo",
-    "count": 77,
+    "count": 73,
     "stores": [
       "Custom Elements",
-      "Moto Central",
-      "Slickshop"
+      "Moto Central"
     ],
     "categories": [
       "Electronics",
@@ -768,13 +724,11 @@
   },
   {
     "name": "Clan",
-    "count": 22,
+    "count": 15,
     "stores": [
       "Bikester Global",
-      "Custom Elements",
       "LRL Motors",
-      "ReiseMoto",
-      "Store4Riders"
+      "ReiseMoto"
     ],
     "categories": [
       "Boots"
@@ -812,12 +766,11 @@
   },
   {
     "name": "Cramster",
-    "count": 52,
+    "count": 47,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
-      "Moto Central",
-      "Store4Riders"
+      "Moto Central"
     ],
     "categories": [
       "Bike Accessories",
@@ -832,7 +785,7 @@
   },
   {
     "name": "Crank1",
-    "count": 804,
+    "count": 777,
     "stores": [
       "Bikester Global",
       "Custom Elements",
@@ -840,13 +793,12 @@
     ],
     "categories": [
       "Bike Accessories",
-      "Electronics",
       "Maintenance & Parts"
     ]
   },
   {
     "name": "CRF",
-    "count": 4,
+    "count": 5,
     "stores": [
       "Bandidos Pitstop"
     ],
@@ -856,9 +808,8 @@
   },
   {
     "name": "CruzTools",
-    "count": 40,
+    "count": 29,
     "stores": [
-      "Custom Elements",
       "Moto Central"
     ],
     "categories": [
@@ -900,7 +851,7 @@
   },
   {
     "name": "Dainese",
-    "count": 364,
+    "count": 277,
     "stores": [
       "Custom Elements",
       "Moto Central"
@@ -930,12 +881,12 @@
   },
   {
     "name": "DENALI",
-    "count": 305,
+    "count": 228,
     "stores": [
       "Bandidos Pitstop",
       "Custom Elements",
       "Moto Central",
-      "Slickshop"
+      "ReiseMoto"
     ],
     "categories": [
       "Bike Accessories",
@@ -945,7 +896,7 @@
   },
   {
     "name": "Desert Fox",
-    "count": 12,
+    "count": 9,
     "stores": [
       "Custom Elements",
       "Moto Central"
@@ -953,16 +904,6 @@
     "categories": [
       "Bike Accessories",
       "Riding Apparel"
-    ]
-  },
-  {
-    "name": "DigiDock",
-    "count": 2,
-    "stores": [
-      "Moto Central"
-    ],
-    "categories": [
-      "Electronics"
     ]
   },
   {
@@ -1001,7 +942,7 @@
   },
   {
     "name": "DNA",
-    "count": 279,
+    "count": 253,
     "stores": [
       "Custom Elements",
       "LRL Motors",
@@ -1024,7 +965,7 @@
   },
   {
     "name": "DSG",
-    "count": 171,
+    "count": 143,
     "stores": [
       "Bikester Global",
       "Custom Elements",
@@ -1039,20 +980,6 @@
       "Luggage",
       "Pants",
       "Protection",
-      "Riding Apparel"
-    ]
-  },
-  {
-    "name": "Ducati Performance",
-    "count": 64,
-    "stores": [
-      "Slickshop"
-    ],
-    "categories": [
-      "Bike Accessories",
-      "Electronics",
-      "Luggage",
-      "Maintenance & Parts",
       "Riding Apparel"
     ]
   },
@@ -1089,7 +1016,7 @@
   },
   {
     "name": "Enduristan",
-    "count": 121,
+    "count": 82,
     "stores": [
       "Custom Elements",
       "Moto Central"
@@ -1115,7 +1042,7 @@
   },
   {
     "name": "Evotech",
-    "count": 273,
+    "count": 267,
     "stores": [
       "Bandidos Pitstop",
       "Custom Elements"
@@ -1138,14 +1065,12 @@
   },
   {
     "name": "Explore",
-    "count": 2,
+    "count": 1,
     "stores": [
-      "Bandidos Pitstop",
-      "Store4Riders"
+      "Bandidos Pitstop"
     ],
     "categories": [
-      "Bike Accessories",
-      "Riding Apparel"
+      "Bike Accessories"
     ]
   },
   {
@@ -1183,7 +1108,7 @@
   },
   {
     "name": "Fast Bend",
-    "count": 8,
+    "count": 10,
     "stores": [
       "Bikester Global"
     ],
@@ -1194,10 +1119,9 @@
   },
   {
     "name": "FLASH X",
-    "count": 5,
+    "count": 3,
     "stores": [
-      "Bandidos Pitstop",
-      "Store4Riders"
+      "Bandidos Pitstop"
     ],
     "categories": [
       "Bike Accessories"
@@ -1227,12 +1151,11 @@
   },
   {
     "name": "Forma",
-    "count": 62,
+    "count": 60,
     "stores": [
       "Bandidos Pitstop",
       "LRL Motors",
-      "Moto Central",
-      "Store4Riders"
+      "Moto Central"
     ],
     "categories": [
       "Bike Accessories",
@@ -1252,10 +1175,9 @@
   },
   {
     "name": "FUEL X PRO",
-    "count": 14,
+    "count": 9,
     "stores": [
-      "Bandidos Pitstop",
-      "Custom Elements"
+      "Bandidos Pitstop"
     ],
     "categories": [
       "Bike Accessories"
@@ -1263,29 +1185,26 @@
   },
   {
     "name": "Furygan",
-    "count": 97,
+    "count": 65,
     "stores": [
       "Custom Elements",
       "LRL Motors",
-      "Moto Central",
-      "Store4Riders"
+      "Moto Central"
     ],
     "categories": [
       "Bike Accessories",
       "Gloves",
       "Jackets",
       "Pants",
-      "Protection",
-      "Riding Apparel"
+      "Protection"
     ]
   },
   {
     "name": "Future Eyes",
-    "count": 12,
+    "count": 8,
     "stores": [
       "Bikester Global",
-      "LRL Motors",
-      "Store4Riders"
+      "LRL Motors"
     ],
     "categories": [
       "Bike Accessories"
@@ -1304,18 +1223,8 @@
     ]
   },
   {
-    "name": "Gaerne",
-    "count": 1,
-    "stores": [
-      "Slickshop"
-    ],
-    "categories": [
-      "Boots"
-    ]
-  },
-  {
     "name": "Gear Aid",
-    "count": 108,
+    "count": 66,
     "stores": [
       "Custom Elements",
       "Moto Central"
@@ -1324,16 +1233,6 @@
       "Bike Accessories",
       "Boots",
       "Maintenance & Parts"
-    ]
-  },
-  {
-    "name": "GEAR HUNT",
-    "count": 1,
-    "stores": [
-      "Flipkart"
-    ],
-    "categories": [
-      "Riding Apparel"
     ]
   },
   {
@@ -1348,11 +1247,10 @@
   },
   {
     "name": "Givi",
-    "count": 68,
+    "count": 55,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
-      "Custom Elements",
       "Moto Central",
       "ReiseMoto"
     ],
@@ -1432,7 +1330,7 @@
   },
   {
     "name": "Guardian Gears",
-    "count": 40,
+    "count": 41,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
@@ -1470,10 +1368,9 @@
   },
   {
     "name": "Helstons",
-    "count": 36,
+    "count": 35,
     "stores": [
-      "LRL Motors",
-      "Slickshop"
+      "LRL Motors"
     ],
     "categories": [
       "Bike Accessories",
@@ -1503,19 +1400,17 @@
       "Custom Elements",
       "LRL Motors",
       "Moto Central",
-      "PowerSports",
-      "Slickshop"
+      "PowerSports"
     ],
     "categories": [
       "Bike Accessories",
-      "Electronics",
       "Helmet Accessories",
       "Helmets"
     ]
   },
   {
     "name": "HJG",
-    "count": 87,
+    "count": 89,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
@@ -1550,7 +1445,7 @@
   },
   {
     "name": "HYPERRIDER",
-    "count": 67,
+    "count": 68,
     "stores": [
       "Moto Central"
     ],
@@ -1574,9 +1469,8 @@
   },
   {
     "name": "Ixon",
-    "count": 175,
+    "count": 164,
     "stores": [
-      "Custom Elements",
       "Moto Central",
       "ReiseMoto"
     ],
@@ -1641,27 +1535,16 @@
   },
   {
     "name": "K&N",
-    "count": 297,
+    "count": 241,
     "stores": [
       "Custom Elements",
       "LRL Motors",
-      "Moto Central",
-      "Store4Riders"
+      "Moto Central"
     ],
     "categories": [
       "Bike Accessories",
       "Electronics",
       "Maintenance & Parts"
-    ]
-  },
-  {
-    "name": "Kappa",
-    "count": 1,
-    "stores": [
-      "Slickshop"
-    ],
-    "categories": [
-      "Luggage"
     ]
   },
   {
@@ -1678,36 +1561,21 @@
     ]
   },
   {
-    "name": "Klim",
-    "count": 11,
-    "stores": [
-      "Slickshop"
-    ],
-    "categories": [
-      "Bike Accessories",
-      "Gloves",
-      "Jackets",
-      "Luggage",
-      "Pants",
-      "Riding Apparel"
-    ]
-  },
-  {
     "name": "Kolga Bros",
-    "count": 1,
+    "count": 2,
     "stores": [
       "Bikester Global"
     ],
     "categories": [
+      "Bike Accessories",
       "Luggage"
     ]
   },
   {
     "name": "Korda",
-    "count": 195,
+    "count": 194,
     "stores": [
       "Bikester Global",
-      "Custom Elements",
       "LRL Motors",
       "PowerSports"
     ],
@@ -1733,7 +1601,7 @@
   },
   {
     "name": "KYT",
-    "count": 322,
+    "count": 308,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
@@ -1771,26 +1639,20 @@
   },
   {
     "name": "Leatt",
-    "count": 20,
+    "count": 4,
     "stores": [
       "Bandidos Pitstop",
-      "Moto Central",
-      "Slickshop"
+      "Moto Central"
     ],
     "categories": [
       "Bike Accessories",
-      "Boots",
       "Gloves",
-      "Helmets",
-      "Jackets",
-      "Pants",
-      "Protection",
-      "Riding Apparel"
+      "Protection"
     ]
   },
   {
     "name": "Legundary Custom",
-    "count": 437,
+    "count": 463,
     "stores": [
       "Bandidos Pitstop"
     ],
@@ -1802,18 +1664,6 @@
       "Luggage",
       "Maintenance & Parts",
       "Riding Apparel"
-    ]
-  },
-  {
-    "name": "Leovince",
-    "count": 5,
-    "stores": [
-      "Custom Elements",
-      "Slickshop"
-    ],
-    "categories": [
-      "Bike Accessories",
-      "Maintenance & Parts"
     ]
   },
   {
@@ -1831,7 +1681,7 @@
   },
   {
     "name": "LOBOO",
-    "count": 31,
+    "count": 29,
     "stores": [
       "Bandidos Pitstop",
       "Custom Elements"
@@ -1845,10 +1695,9 @@
   },
   {
     "name": "Lone Ranger",
-    "count": 16,
+    "count": 13,
     "stores": [
-      "Bikester Global",
-      "Store4Riders"
+      "Bikester Global"
     ],
     "categories": [
       "Gloves",
@@ -1858,14 +1707,13 @@
   },
   {
     "name": "LS2",
-    "count": 212,
+    "count": 172,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
       "Custom Elements",
       "LRL Motors",
-      "Moto Central",
-      "Store4Riders"
+      "Moto Central"
     ],
     "categories": [
       "Bike Accessories",
@@ -1879,7 +1727,7 @@
   },
   {
     "name": "LV8",
-    "count": 38,
+    "count": 26,
     "stores": [
       "Custom Elements",
       "Moto Central"
@@ -1910,15 +1758,14 @@
   },
   {
     "name": "Maddog",
-    "count": 151,
+    "count": 109,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
       "Custom Elements",
       "LRL Motors",
       "Moto Central",
-      "ReiseMoto",
-      "Store4Riders"
+      "ReiseMoto"
     ],
     "categories": [
       "Bike Accessories",
@@ -1959,7 +1806,7 @@
   },
   {
     "name": "Maxima",
-    "count": 27,
+    "count": 26,
     "stores": [
       "Bikester Global",
       "Custom Elements",
@@ -2004,7 +1851,7 @@
   },
   {
     "name": "Metzeler",
-    "count": 91,
+    "count": 90,
     "stores": [
       "Custom Elements",
       "LRL Motors"
@@ -2030,17 +1877,6 @@
     ]
   },
   {
-    "name": "Mivv",
-    "count": 2,
-    "stores": [
-      "Slickshop"
-    ],
-    "categories": [
-      "Bike Accessories",
-      "Maintenance & Parts"
-    ]
-  },
-  {
     "name": "Modster",
     "count": 1,
     "stores": [
@@ -2052,7 +1888,7 @@
   },
   {
     "name": "Moto Arch",
-    "count": 10,
+    "count": 11,
     "stores": [
       "Bikester Global"
     ],
@@ -2078,16 +1914,14 @@
   },
   {
     "name": "Moto Garuda",
-    "count": 8,
+    "count": 4,
     "stores": [
       "Bikester Global",
-      "Custom Elements",
       "ReiseMoto"
     ],
     "categories": [
       "Bike Accessories",
       "Pants",
-      "Protection",
       "Riding Apparel"
     ]
   },
@@ -2135,7 +1969,7 @@
   },
   {
     "name": "Moto Torque",
-    "count": 174,
+    "count": 173,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
@@ -2151,15 +1985,12 @@
   },
   {
     "name": "MOTO VANGUARD",
-    "count": 7,
+    "count": 1,
     "stores": [
-      "Bandidos Pitstop",
-      "Store4Riders"
+      "Bandidos Pitstop"
     ],
     "categories": [
-      "Bike Accessories",
-      "Gloves",
-      "Luggage"
+      "Bike Accessories"
     ]
   },
   {
@@ -2212,11 +2043,10 @@
   },
   {
     "name": "Motorex",
-    "count": 75,
+    "count": 66,
     "stores": [
       "Custom Elements",
-      "LRL Motors",
-      "Store4Riders"
+      "LRL Motors"
     ],
     "categories": [
       "Bike Accessories",
@@ -2227,12 +2057,11 @@
   },
   {
     "name": "Mototech",
-    "count": 76,
+    "count": 70,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
-      "Moto Central",
-      "Store4Riders"
+      "Moto Central"
     ],
     "categories": [
       "Bike Accessories",
@@ -2274,7 +2103,7 @@
   },
   {
     "name": "MOTOWOLF",
-    "count": 64,
+    "count": 63,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global"
@@ -2284,7 +2113,6 @@
       "Boots",
       "Electronics",
       "Gloves",
-      "Helmets",
       "Jackets",
       "Luggage",
       "Protection",
@@ -2293,7 +2121,7 @@
   },
   {
     "name": "Motul",
-    "count": 18,
+    "count": 19,
     "stores": [
       "Bikester Global",
       "Moto Central"
@@ -2307,10 +2135,9 @@
   },
   {
     "name": "MT Helmets",
-    "count": 276,
+    "count": 262,
     "stores": [
       "Bikester Global",
-      "Custom Elements",
       "LRL Motors",
       "Moto Central",
       "ReiseMoto"
@@ -2318,7 +2145,8 @@
     "categories": [
       "Bike Accessories",
       "Helmet Accessories",
-      "Helmets"
+      "Helmets",
+      "Maintenance & Parts"
     ]
   },
   {
@@ -2333,7 +2161,7 @@
   },
   {
     "name": "Muc-Off",
-    "count": 130,
+    "count": 96,
     "stores": [
       "Custom Elements",
       "Moto Central"
@@ -2415,12 +2243,11 @@
   },
   {
     "name": "NGK",
-    "count": 54,
+    "count": 47,
     "stores": [
       "Bandidos Pitstop",
       "Custom Elements",
-      "LRL Motors",
-      "Store4Riders"
+      "LRL Motors"
     ],
     "categories": [
       "Bike Accessories",
@@ -2520,9 +2347,10 @@
   },
   {
     "name": "Oxford",
-    "count": 7,
+    "count": 17,
     "stores": [
-      "Moto Central"
+      "Moto Central",
+      "ReiseMoto"
     ],
     "categories": [
       "Bike Accessories",
@@ -2543,7 +2371,7 @@
   },
   {
     "name": "Peak Design",
-    "count": 134,
+    "count": 131,
     "stores": [
       "Custom Elements",
       "LRL Motors"
@@ -2565,7 +2393,7 @@
   },
   {
     "name": "Polisport",
-    "count": 197,
+    "count": 135,
     "stores": [
       "Bandidos Pitstop",
       "Custom Elements",
@@ -2610,13 +2438,12 @@
   },
   {
     "name": "PowerTronic",
-    "count": 358,
+    "count": 357,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
       "LRL Motors",
-      "Moto Central",
-      "Store4Riders"
+      "Moto Central"
     ],
     "categories": [
       "Bike Accessories",
@@ -2635,12 +2462,10 @@
   },
   {
     "name": "Pro-Spec",
-    "count": 24,
+    "count": 15,
     "stores": [
       "Bikester Global",
-      "Custom Elements",
-      "Moto Central",
-      "Store4Riders"
+      "Moto Central"
     ],
     "categories": [
       "Bike Accessories",
@@ -2673,20 +2498,19 @@
   },
   {
     "name": "PUIG",
-    "count": 156,
+    "count": 94,
     "stores": [
       "Bandidos Pitstop",
       "Custom Elements"
     ],
     "categories": [
       "Bike Accessories",
-      "Helmet Accessories",
-      "Maintenance & Parts"
+      "Helmet Accessories"
     ]
   },
   {
     "name": "Putoline",
-    "count": 70,
+    "count": 59,
     "stores": [
       "Custom Elements",
       "LRL Motors",
@@ -2726,19 +2550,17 @@
   },
   {
     "name": "QUIPCO",
-    "count": 4,
+    "count": 3,
     "stores": [
-      "Moto Central",
-      "Store4Riders"
+      "Moto Central"
     ],
     "categories": [
-      "Bike Accessories",
-      "Riding Apparel"
+      "Bike Accessories"
     ]
   },
   {
     "name": "R&G",
-    "count": 738,
+    "count": 735,
     "stores": [
       "Bandidos Pitstop",
       "Custom Elements",
@@ -2789,36 +2611,31 @@
   },
   {
     "name": "Rahgear",
-    "count": 28,
+    "count": 12,
     "stores": [
       "Custom Elements",
       "LRL Motors"
     ],
     "categories": [
       "Bike Accessories",
-      "Helmets",
       "Luggage"
     ]
   },
   {
     "name": "Raida",
-    "count": 643,
+    "count": 269,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
       "Custom Elements",
       "LRL Motors",
       "Moto Central",
-      "Raida Gears",
-      "ReiseMoto",
-      "Store4Riders"
+      "ReiseMoto"
     ],
     "categories": [
       "Bike Accessories",
       "Boots",
-      "Electronics",
       "Gloves",
-      "Helmet Accessories",
       "Jackets",
       "Luggage",
       "Maintenance & Parts",
@@ -2839,16 +2656,14 @@
     "categories": [
       "Bike Accessories",
       "Electronics",
-      "Maintenance & Parts",
       "Riding Apparel"
     ]
   },
   {
     "name": "Randy Sun",
-    "count": 3,
+    "count": 2,
     "stores": [
-      "Bikester Global",
-      "Store4Riders"
+      "Bikester Global"
     ],
     "categories": [
       "Riding Apparel"
@@ -2881,13 +2696,12 @@
   },
   {
     "name": "Red Rooster Performance",
-    "count": 137,
+    "count": 135,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
       "Custom Elements",
-      "LRL Motors",
-      "Store4Riders"
+      "LRL Motors"
     ],
     "categories": [
       "Bike Accessories",
@@ -2897,19 +2711,18 @@
   },
   {
     "name": "Reise",
-    "count": 181,
+    "count": 178,
     "stores": [
       "Bandidos Pitstop",
-      "Custom Elements",
       "LRL Motors",
       "Moto Central",
       "PowerSports",
-      "ReiseMoto",
-      "Store4Riders"
+      "ReiseMoto"
     ],
     "categories": [
       "Bike Accessories",
       "Gloves",
+      "Helmet Accessories",
       "Helmets",
       "Jackets",
       "Luggage",
@@ -2963,16 +2776,12 @@
   },
   {
     "name": "Rev'it",
-    "count": 18,
+    "count": 6,
     "stores": [
-      "Moto Central",
-      "Slickshop"
+      "Moto Central"
     ],
     "categories": [
-      "Bike Accessories",
       "Jackets",
-      "Pants",
-      "Protection",
       "Riding Apparel"
     ]
   },
@@ -2988,22 +2797,18 @@
   },
   {
     "name": "Revlox",
-    "count": 15,
+    "count": 2,
     "stores": [
       "Bikester Global",
-      "Custom Elements",
-      "Moto Central",
-      "Store4Riders"
+      "Moto Central"
     ],
     "categories": [
-      "Bike Accessories",
-      "Electronics",
-      "Jackets"
+      "Bike Accessories"
     ]
   },
   {
     "name": "Rhinowalk",
-    "count": 49,
+    "count": 50,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global"
@@ -3040,20 +2845,6 @@
     ]
   },
   {
-    "name": "Rizoma",
-    "count": 28,
-    "stores": [
-      "Bandidos Pitstop",
-      "Custom Elements",
-      "Slickshop"
-    ],
-    "categories": [
-      "Bike Accessories",
-      "Maintenance & Parts",
-      "Riding Apparel"
-    ]
-  },
-  {
     "name": "RLZ",
     "count": 69,
     "stores": [
@@ -3076,11 +2867,10 @@
   },
   {
     "name": "Rolon",
-    "count": 66,
+    "count": 62,
     "stores": [
       "Bandidos Pitstop",
-      "Bikester Global",
-      "Store4Riders"
+      "Bikester Global"
     ],
     "categories": [
       "Maintenance & Parts"
@@ -3098,7 +2888,7 @@
   },
   {
     "name": "ROX",
-    "count": 43,
+    "count": 47,
     "stores": [
       "Bandidos Pitstop",
       "Custom Elements",
@@ -3110,11 +2900,10 @@
   },
   {
     "name": "Royal Enfield",
-    "count": 418,
+    "count": 416,
     "stores": [
       "Bandidos Pitstop",
       "LRL Motors",
-      "Store4Riders",
       "ViaTerra"
     ],
     "categories": [
@@ -3137,12 +2926,11 @@
   },
   {
     "name": "RS Taichi",
-    "count": 244,
+    "count": 181,
     "stores": [
       "Custom Elements",
       "LRL Motors",
-      "Moto Central",
-      "Store4Riders"
+      "Moto Central"
     ],
     "categories": [
       "Bike Accessories",
@@ -3156,13 +2944,12 @@
   },
   {
     "name": "Rynox",
-    "count": 374,
+    "count": 334,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
       "Moto Central",
-      "Rynox Gear",
-      "Store4Riders"
+      "Rynox Gear"
     ],
     "categories": [
       "Bike Accessories",
@@ -3177,11 +2964,10 @@
   },
   {
     "name": "SafeTech",
-    "count": 11,
+    "count": 6,
     "stores": [
       "Bikester Global",
-      "Moto Central",
-      "Store4Riders"
+      "Moto Central"
     ],
     "categories": [
       "Bike Accessories",
@@ -3212,7 +2998,7 @@
   },
   {
     "name": "SC PROJECT",
-    "count": 138,
+    "count": 134,
     "stores": [
       "Custom Elements",
       "LRL Motors",
@@ -3226,15 +3012,12 @@
   },
   {
     "name": "Scala",
-    "count": 32,
+    "count": 4,
     "stores": [
       "Bikester Global",
-      "Custom Elements",
-      "Store4Riders"
+      "Custom Elements"
     ],
     "categories": [
-      "Bike Accessories",
-      "Gloves",
       "Jackets",
       "Pants",
       "Protection",
@@ -3242,23 +3025,10 @@
     ]
   },
   {
-    "name": "Schuberth",
-    "count": 4,
-    "stores": [
-      "Slickshop"
-    ],
-    "categories": [
-      "Bike Accessories",
-      "Electronics",
-      "Helmets"
-    ]
-  },
-  {
     "name": "Scorpion Exo",
-    "count": 31,
+    "count": 28,
     "stores": [
-      "Moto Central",
-      "Slickshop"
+      "Moto Central"
     ],
     "categories": [
       "Bike Accessories",
@@ -3301,9 +3071,8 @@
   },
   {
     "name": "SealSavers",
-    "count": 24,
+    "count": 14,
     "stores": [
-      "Custom Elements",
       "LRL Motors",
       "Moto Central"
     ],
@@ -3313,15 +3082,14 @@
   },
   {
     "name": "Sena",
-    "count": 102,
+    "count": 106,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
       "Custom Elements",
       "LRL Motors",
       "Moto Central",
-      "ReiseMoto",
-      "Slickshop"
+      "ReiseMoto"
     ],
     "categories": [
       "Bike Accessories",
@@ -3331,13 +3099,11 @@
   },
   {
     "name": "Shad",
-    "count": 44,
+    "count": 36,
     "stores": [
       "Custom Elements",
       "LRL Motors",
-      "Moto Central",
-      "Slickshop",
-      "Store4Riders"
+      "Moto Central"
     ],
     "categories": [
       "Bike Accessories",
@@ -3357,10 +3123,9 @@
   },
   {
     "name": "Shark",
-    "count": 15,
+    "count": 14,
     "stores": [
-      "Moto Central",
-      "Slickshop"
+      "Moto Central"
     ],
     "categories": [
       "Helmets"
@@ -3391,22 +3156,10 @@
     ]
   },
   {
-    "name": "Shoei",
-    "count": 3,
-    "stores": [
-      "Slickshop"
-    ],
-    "categories": [
-      "Electronics",
-      "Helmets"
-    ]
-  },
-  {
     "name": "SIDI",
-    "count": 8,
+    "count": 7,
     "stores": [
-      "Moto Central",
-      "Slickshop"
+      "Moto Central"
     ],
     "categories": [
       "Boots"
@@ -3459,20 +3212,20 @@
   },
   {
     "name": "SMK",
-    "count": 669,
+    "count": 634,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
       "LRL Motors",
       "Moto Central",
       "PowerSports",
-      "ReiseMoto",
-      "Store4Riders"
+      "ReiseMoto"
     ],
     "categories": [
       "Bike Accessories",
       "Helmet Accessories",
       "Helmets",
+      "Jackets",
       "Luggage",
       "Riding Apparel"
     ]
@@ -3502,7 +3255,7 @@
   },
   {
     "name": "Solace",
-    "count": 272,
+    "count": 267,
     "stores": [
       "Bikester Global",
       "LRL Motors",
@@ -3532,9 +3285,8 @@
   },
   {
     "name": "Spidi",
-    "count": 61,
+    "count": 46,
     "stores": [
-      "Custom Elements",
       "ReiseMoto"
     ],
     "categories": [
@@ -3618,6 +3370,16 @@
     ]
   },
   {
+    "name": "SUPER SUB",
+    "count": 1,
+    "stores": [
+      "Bandidos Pitstop"
+    ],
+    "categories": [
+      "Bike Accessories"
+    ]
+  },
+  {
     "name": "Supersprox",
     "count": 7,
     "stores": [
@@ -3628,22 +3390,11 @@
     ]
   },
   {
-    "name": "SUPERSUB",
-    "count": 1,
-    "stores": [
-      "Bandidos Pitstop"
-    ],
-    "categories": [
-      "Bike Accessories"
-    ]
-  },
-  {
     "name": "SW-Motech",
-    "count": 1450,
+    "count": 1128,
     "stores": [
       "Custom Elements",
-      "Moto Central",
-      "Slickshop"
+      "Moto Central"
     ],
     "categories": [
       "Bike Accessories",
@@ -3655,7 +3406,7 @@
   },
   {
     "name": "Tarmac",
-    "count": 135,
+    "count": 106,
     "stores": [
       "Bikester Global",
       "Custom Elements",
@@ -3670,16 +3421,6 @@
       "Pants",
       "Protection",
       "Riding Apparel"
-    ]
-  },
-  {
-    "name": "TCX",
-    "count": 1,
-    "stores": [
-      "Slickshop"
-    ],
-    "categories": [
-      "Boots"
     ]
   },
   {
@@ -3757,9 +3498,8 @@
   },
   {
     "name": "Tucano Urbano",
-    "count": 31,
+    "count": 30,
     "stores": [
-      "Custom Elements",
       "ReiseMoto"
     ],
     "categories": [
@@ -3774,6 +3514,16 @@
     "count": 1,
     "stores": [
       "Bikester Global"
+    ],
+    "categories": [
+      "Helmets"
+    ]
+  },
+  {
+    "name": "Tvarra",
+    "count": 9,
+    "stores": [
+      "ReiseMoto"
     ],
     "categories": [
       "Helmets"
@@ -3813,19 +3563,8 @@
     ]
   },
   {
-    "name": "Unit Garage",
-    "count": 3,
-    "stores": [
-      "Slickshop"
-    ],
-    "categories": [
-      "Bike Accessories",
-      "Electronics"
-    ]
-  },
-  {
     "name": "Vantora",
-    "count": 45,
+    "count": 36,
     "stores": [
       "Custom Elements",
       "Moto Central"
@@ -3837,10 +3576,9 @@
   },
   {
     "name": "Vega",
-    "count": 272,
+    "count": 268,
     "stores": [
       "Bandidos Pitstop",
-      "Bikester Global",
       "Moto Central",
       "Vega Helmets"
     ],
@@ -3856,7 +3594,7 @@
   },
   {
     "name": "Vesrah",
-    "count": 135,
+    "count": 139,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
@@ -3869,7 +3607,7 @@
   },
   {
     "name": "ViaTerra",
-    "count": 542,
+    "count": 558,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
@@ -3899,16 +3637,6 @@
     "stores": [
       "Bandidos Pitstop",
       "LRL Motors"
-    ],
-    "categories": [
-      "Electronics"
-    ]
-  },
-  {
-    "name": "Vnetphone",
-    "count": 1,
-    "stores": [
-      "Bikester Global"
     ],
     "categories": [
       "Electronics"
@@ -3972,18 +3700,17 @@
   },
   {
     "name": "Yellowfin",
-    "count": 4,
+    "count": 3,
     "stores": [
       "Bikester Global"
     ],
     "categories": [
-      "Bike Accessories",
-      "Electronics"
+      "Bike Accessories"
     ]
   },
   {
     "name": "Zana",
-    "count": 578,
+    "count": 572,
     "stores": [
       "Bikester Global",
       "LRL Motors",
@@ -3995,19 +3722,6 @@
       "Electronics",
       "Luggage",
       "Maintenance & Parts"
-    ]
-  },
-  {
-    "name": "Zard",
-    "count": 6,
-    "stores": [
-      "Custom Elements",
-      "Slickshop"
-    ],
-    "categories": [
-      "Bike Accessories",
-      "Maintenance & Parts",
-      "Riding Apparel"
     ]
   }
 ]
