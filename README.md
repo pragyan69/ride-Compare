@@ -57,11 +57,14 @@ node --test tests/feed.test.mjs
 BASE_URL=http://127.0.0.1:5173 .venv/bin/python tests/browser_qa.py   # browser checks against a running preview
 ```
 
-## Offline crawler (optional)
+## Crawler on the server
 
-`crawler/crawl.py` and `crawler/export.py` are the original Python Playwright collector. They are no longer needed for the site but remain useful for checking a store's coverage offline; their output goes to `data/crawl/` (ignored).
+`crawler/crawl.py` reads every store in `crawler/sites.json` and `crawler/export.py` turns the results into `public/data/catalog.json`, `public/data/brands.json` and `lib/crawl-index.json`. The site serves the catalog as a static file.
 
-## Publish
+On the server (`mimiq-prod`, clone at `/opt/ride-compare`) cron runs `crawler/run.sh` once a day. It crawls inside the `crawler/Dockerfile` image, refuses to publish if the catalog shrank by more than half, then commits the snapshot and pushes it; Vercel redeploys on the push. Log: `/var/log/ride-compare-crawl.log`. Run it by hand with `/opt/ride-compare/crawler/run.sh`.
 
-Reuse the project ID in `.openai/hosting.json` and the Sites source/build/publish workflow. D1 migrations in `drizzle/` are applied by Sites when published; the Worker also creates missing tables on first use. After publishing, the cron trigger fills the catalog within a few hours; `POST /api/refresh` as the signed-in owner speeds up the first fill.
+## Hosting
+
+Vercel (plain Next.js, functions in `arn1`) with Postgres on the Dokploy server. Environment: `DATABASE_URL`, `ADMIN_TOKEN`. Tables are created on first request (`lib/db.ts`). Owner routes (`/api/stores`, `/api/import`, `/api/stores/sync`) take `Authorization: Bearer <ADMIN_TOKEN>`.
+
 # ride-Compare
