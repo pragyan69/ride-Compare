@@ -110,14 +110,16 @@
   },
   {
     "name": "Airoh",
-    "count": 77,
+    "count": 78,
     "stores": [
       "LRL Motors",
       "Moto Central",
-      "ReiseMoto"
+      "ReiseMoto",
+      "Slickshop"
     ],
     "categories": [
       "Bike Accessories",
+      "Electronics",
       "Helmet Accessories",
       "Helmets"
     ]
@@ -159,19 +161,22 @@
   },
   {
     "name": "Alpinestars",
-    "count": 89,
+    "count": 106,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
       "Moto Central",
       "Planet DSG",
-      "ReiseMoto"
+      "ReiseMoto",
+      "Slickshop"
     ],
     "categories": [
       "Bike Accessories",
       "Boots",
       "Gloves",
+      "Helmets",
       "Jackets",
+      "Luggage",
       "Pants",
       "Protection",
       "Riding Apparel"
@@ -235,11 +240,12 @@
   },
   {
     "name": "ARROW",
-    "count": 206,
+    "count": 210,
     "stores": [
       "Bandidos Pitstop",
       "Custom Elements",
-      "Moto Central"
+      "Moto Central",
+      "Slickshop"
     ],
     "categories": [
       "Bike Accessories",
@@ -540,7 +546,7 @@
   },
   {
     "name": "BMC",
-    "count": 581,
+    "count": 579,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
@@ -583,7 +589,7 @@
   },
   {
     "name": "Bolt",
-    "count": 24,
+    "count": 23,
     "stores": [
       "Moto Central",
       "Vega Helmets"
@@ -703,7 +709,8 @@
     "count": 73,
     "stores": [
       "Custom Elements",
-      "Moto Central"
+      "Moto Central",
+      "Slickshop"
     ],
     "categories": [
       "Electronics",
@@ -712,7 +719,7 @@
   },
   {
     "name": "Carpuride",
-    "count": 11,
+    "count": 10,
     "stores": [
       "Bikester Global",
       "Custom Elements"
@@ -785,7 +792,7 @@
   },
   {
     "name": "Crank1",
-    "count": 777,
+    "count": 774,
     "stores": [
       "Bikester Global",
       "Custom Elements",
@@ -984,6 +991,20 @@
     ]
   },
   {
+    "name": "Ducati Performance",
+    "count": 63,
+    "stores": [
+      "Slickshop"
+    ],
+    "categories": [
+      "Bike Accessories",
+      "Electronics",
+      "Luggage",
+      "Maintenance & Parts",
+      "Riding Apparel"
+    ]
+  },
+  {
     "name": "Duckback",
     "count": 3,
     "stores": [
@@ -995,7 +1016,7 @@
   },
   {
     "name": "EBC Brakes",
-    "count": 195,
+    "count": 193,
     "stores": [
       "Bikester Global",
       "Custom Elements"
@@ -1223,6 +1244,16 @@
     ]
   },
   {
+    "name": "Gaerne",
+    "count": 3,
+    "stores": [
+      "Slickshop"
+    ],
+    "categories": [
+      "Boots"
+    ]
+  },
+  {
     "name": "Gear Aid",
     "count": 66,
     "stores": [
@@ -1247,12 +1278,13 @@
   },
   {
     "name": "Givi",
-    "count": 55,
+    "count": 58,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
       "Moto Central",
-      "ReiseMoto"
+      "ReiseMoto",
+      "Slickshop"
     ],
     "categories": [
       "Bike Accessories",
@@ -1368,9 +1400,10 @@
   },
   {
     "name": "Helstons",
-    "count": 35,
+    "count": 37,
     "stores": [
-      "LRL Motors"
+      "LRL Motors",
+      "Slickshop"
     ],
     "categories": [
       "Bike Accessories",
@@ -1394,16 +1427,18 @@
   },
   {
     "name": "HJC",
-    "count": 71,
+    "count": 77,
     "stores": [
       "Bikester Global",
       "Custom Elements",
       "LRL Motors",
       "Moto Central",
-      "PowerSports"
+      "PowerSports",
+      "Slickshop"
     ],
     "categories": [
       "Bike Accessories",
+      "Electronics",
       "Helmet Accessories",
       "Helmets"
     ]
@@ -1561,13 +1596,26 @@
     ]
   },
   {
+    "name": "Klim",
+    "count": 10,
+    "stores": [
+      "Slickshop"
+    ],
+    "categories": [
+      "Bike Accessories",
+      "Gloves",
+      "Luggage",
+      "Pants",
+      "Riding Apparel"
+    ]
+  },
+  {
     "name": "Kolga Bros",
-    "count": 2,
+    "count": 1,
     "stores": [
       "Bikester Global"
     ],
     "categories": [
-      "Bike Accessories",
       "Luggage"
     ]
   },
@@ -1601,7 +1649,7 @@
   },
   {
     "name": "KYT",
-    "count": 308,
+    "count": 307,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
@@ -1639,20 +1687,26 @@
   },
   {
     "name": "Leatt",
-    "count": 4,
+    "count": 15,
     "stores": [
       "Bandidos Pitstop",
-      "Moto Central"
+      "Moto Central",
+      "Slickshop"
     ],
     "categories": [
       "Bike Accessories",
+      "Boots",
       "Gloves",
-      "Protection"
+      "Helmets",
+      "Jackets",
+      "Pants",
+      "Protection",
+      "Riding Apparel"
     ]
   },
   {
     "name": "Legundary Custom",
-    "count": 463,
+    "count": 464,
     "stores": [
       "Bandidos Pitstop"
     ],
@@ -1707,7 +1761,7 @@
   },
   {
     "name": "LS2",
-    "count": 172,
+    "count": 167,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
@@ -1888,7 +1942,7 @@
   },
   {
     "name": "Moto Arch",
-    "count": 11,
+    "count": 10,
     "stores": [
       "Bikester Global"
     ],
@@ -1969,7 +2023,7 @@
   },
   {
     "name": "Moto Torque",
-    "count": 173,
+    "count": 172,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
@@ -2230,6 +2284,16 @@
     ]
   },
   {
+    "name": "NEXX",
+    "count": 1,
+    "stores": [
+      "Slickshop"
+    ],
+    "categories": [
+      "Helmets"
+    ]
+  },
+  {
     "name": "NGAGE",
     "count": 16,
     "stores": [
@@ -2371,7 +2435,7 @@
   },
   {
     "name": "Peak Design",
-    "count": 131,
+    "count": 130,
     "stores": [
       "Custom Elements",
       "LRL Motors"
@@ -2776,12 +2840,19 @@
   },
   {
     "name": "Rev'it",
-    "count": 6,
+    "count": 27,
     "stores": [
-      "Moto Central"
+      "Moto Central",
+      "Slickshop"
     ],
     "categories": [
+      "Bike Accessories",
+      "Boots",
+      "Gloves",
       "Jackets",
+      "Luggage",
+      "Pants",
+      "Protection",
       "Riding Apparel"
     ]
   },
@@ -3025,13 +3096,25 @@
     ]
   },
   {
-    "name": "Scorpion Exo",
-    "count": 28,
+    "name": "Schuberth",
+    "count": 1,
     "stores": [
-      "Moto Central"
+      "Slickshop"
+    ],
+    "categories": [
+      "Helmets"
+    ]
+  },
+  {
+    "name": "Scorpion Exo",
+    "count": 30,
+    "stores": [
+      "Moto Central",
+      "Slickshop"
     ],
     "categories": [
       "Bike Accessories",
+      "Electronics",
       "Helmet Accessories",
       "Helmets"
     ]
@@ -3082,14 +3165,15 @@
   },
   {
     "name": "Sena",
-    "count": 106,
+    "count": 108,
     "stores": [
       "Bandidos Pitstop",
       "Bikester Global",
       "Custom Elements",
       "LRL Motors",
       "Moto Central",
-      "ReiseMoto"
+      "ReiseMoto",
+      "Slickshop"
     ],
     "categories": [
       "Bike Accessories",
@@ -3123,9 +3207,10 @@
   },
   {
     "name": "Shark",
-    "count": 14,
+    "count": 15,
     "stores": [
-      "Moto Central"
+      "Moto Central",
+      "Slickshop"
     ],
     "categories": [
       "Helmets"
@@ -3156,10 +3241,22 @@
     ]
   },
   {
-    "name": "SIDI",
-    "count": 7,
+    "name": "Shoei",
+    "count": 3,
     "stores": [
-      "Moto Central"
+      "Slickshop"
+    ],
+    "categories": [
+      "Electronics",
+      "Helmets"
+    ]
+  },
+  {
+    "name": "SIDI",
+    "count": 8,
+    "stores": [
+      "Moto Central",
+      "Slickshop"
     ],
     "categories": [
       "Boots"
@@ -3255,7 +3352,7 @@
   },
   {
     "name": "Solace",
-    "count": 267,
+    "count": 283,
     "stores": [
       "Bikester Global",
       "LRL Motors",
@@ -3271,6 +3368,16 @@
       "Pants",
       "Protection",
       "Riding Apparel"
+    ]
+  },
+  {
+    "name": "Spark",
+    "count": 1,
+    "stores": [
+      "Slickshop"
+    ],
+    "categories": [
+      "Maintenance & Parts"
     ]
   },
   {
@@ -3709,6 +3816,17 @@
     ]
   },
   {
+    "name": "Yoshimura",
+    "count": 2,
+    "stores": [
+      "Slickshop"
+    ],
+    "categories": [
+      "Bike Accessories",
+      "Maintenance & Parts"
+    ]
+  },
+  {
     "name": "Zana",
     "count": 572,
     "stores": [
@@ -3722,6 +3840,19 @@
       "Electronics",
       "Luggage",
       "Maintenance & Parts"
+    ]
+  },
+  {
+    "name": "Zard",
+    "count": 6,
+    "stores": [
+      "Custom Elements",
+      "Slickshop"
+    ],
+    "categories": [
+      "Bike Accessories",
+      "Maintenance & Parts",
+      "Riding Apparel"
     ]
   }
 ]
