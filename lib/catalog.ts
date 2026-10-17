@@ -1,5 +1,5 @@
 import snapshot from "./catalog-data.json";
-export type Offer={storeId:string;storeName:string;price:number;shipping:number|null;inStock:boolean|null;url:string;checkedAt:string;source:"retailer"|"import"|"crawl";fetchUrl?:string;variantId?:number};
+export type Offer={storeId:string;storeName:string;price:number;mrp?:number|null;shipping:number|null;inStock:boolean|null;url:string;checkedAt:string;source:"retailer"|"import"|"crawl";fetchUrl?:string;variantId?:number};
 export type Product={id:string;name:string;brand:string;category:string;variant:string;image:string;offers:Offer[];variantCount?:number|null;matchType?:string};
 export type Retailer={id:string;name:string;website:string;feedUrl?:string;lastSync?:string;builtin?:boolean};
 export const products=snapshot.products as Product[];

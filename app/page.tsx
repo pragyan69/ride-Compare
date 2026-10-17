@@ -1,12 +1,13 @@
 "use client";
 import { useEffect, useMemo, useState, useDeferredValue } from "react";
-import { Search, SlidersHorizontal, X, Package, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { products as starters, stores as starterStores, money, rankedOffers, checkedLabel, categories, type Product, type Retailer } from "@/lib/catalog";
+import { products as starters, stores as starterStores, rankedOffers, categories, type Product, type Retailer } from "@/lib/catalog";
+import { ProductCard } from "@/components/product-card";
 
 type Brand = { name: string; count: number };
 type CatalogData = { products: Product[]; stores: Retailer[]; summary?: { generatedAt: string } };
@@ -39,15 +40,6 @@ async function api<T = Record<string, unknown>>(path: string, body?: unknown): P
   return d;
 }
 
-function ProductImage({ p }: { p: Product }) {
-  const [broken, setBroken] = useState(false);
-  return p.image && !broken ? (
-    <img src={p.image} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setBroken(true)} />
-  ) : (
-    <Package className="image-missing" size={40} strokeWidth={1} aria-hidden />
-  );
-}
-
 function Dropdown({ label, value, onChange, items }: { label: string; value: string; onChange: (v: string) => void; items: { value: string; label: string }[] }) {
   return (
     <Select value={value} onValueChange={(v) => onChange(v as string)}>
@@ -65,26 +57,11 @@ function Dropdown({ label, value, onChange, items }: { label: string; value: str
   );
 }
 
-function Logo() {
-  return (
-    <span className="logo">
-      <svg viewBox="0 0 40 40" aria-hidden>
-        <rect width="40" height="40" rx="10" />
-        <path d="m9 15 11-6 11 6-11 6zm0 6 11 6 11-6M9 27l11 6 11-6" />
-      </svg>
-      <span>
-        ride<b>compare</b>
-      </span>
-    </span>
-  );
-}
-
 export default function Home() {
   const [data, setData] = useState<CatalogData>(initial),
     [loading, setLoading] = useState(true),
     [loadError, setLoadError] = useState("");
-  const [view, setView] = useState<"gear" | "brands">("gear"),
-    [query, setQuery] = useState(""),
+  const [query, setQuery] = useState(""),
     [category, setCategory] = useState("All gear"),
     [sort, setSort] = useState("featured"),
     [brands, setBrands] = useState<string[]>([]),
@@ -93,10 +70,8 @@ export default function Home() {
     [comparisonOnly, setComparisonOnly] = useState(false),
     [maxPrice, setMaxPrice] = useState(""),
     [brandSearch, setBrandSearch] = useState(""),
-    [directorySearch, setDirectorySearch] = useState(""),
     [page, setPage] = useState(1),
     [filterOpen, setFilterOpen] = useState(false),
-    [selectedId, setSelectedId] = useState<string | null>(null),
     [busy, setBusy] = useState(false),
     [manage, setManage] = useState(false);
   const [retailerName, setRetailerName] = useState(""),
@@ -144,6 +119,11 @@ export default function Home() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- loads the catalog once and follows the #admin hash
     void load();
+    const params = new URLSearchParams(location.search);
+    if (params.get("q")) setQuery(params.get("q")!);
+    if (params.get("brand")) setBrands([params.get("brand")!]);
+    if (params.get("store")) setStoreFilter(params.get("store")!);
+    if (categories.includes(params.get("category") || "")) setCategory(params.get("category")!);
     const openAdmin = () => setManage(location.hash === "#admin");
     openAdmin();
     window.addEventListener("hashchange", openAdmin);
@@ -187,8 +167,6 @@ export default function Home() {
   const totalPages = Math.max(1, Math.ceil(visible.length / pageSize)),
     currentPage = Math.min(page, totalPages),
     shown = visible.slice((currentPage - 1) * pageSize, currentPage * pageSize),
-    selected = data.products.find((p) => p.id === selectedId),
-    directory = allBrands.filter((b) => b.name.toLowerCase().includes(directorySearch.toLowerCase())),
     activeFilters = brands.length + (storeFilter !== "all" ? 1 : 0) + (stockOnly ? 1 : 0) + (comparisonOnly ? 1 : 0) + (maxPrice ? 1 : 0);
 
   function reset() {
@@ -199,12 +177,6 @@ export default function Home() {
     setStockOnly(false);
     setComparisonOnly(false);
     setMaxPrice("");
-  }
-  function selectBrand(b: string) {
-    reset();
-    setBrands([b]);
-    setView("gear");
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
   function movePage(p: number) {
     setPage(p);
@@ -320,32 +292,7 @@ export default function Home() {
   return (
     <>
       <Toaster position="bottom-right" />
-      <header className="site-header">
-        <div className="wrap header-inner">
-          <button
-            className="logo-button"
-            aria-label="RideCompare home"
-            onClick={() => {
-              reset();
-              setView("gear");
-            }}
-          >
-            <Logo />
-          </button>
-          <nav aria-label="Main">
-            <button aria-current={view === "gear" ? "page" : undefined} onClick={() => setView("gear")}>
-              Gear
-            </button>
-            <button aria-current={view === "brands" ? "page" : undefined} onClick={() => setView("brands")}>
-              Brands
-            </button>
-          </nav>
-        </div>
-      </header>
-
       <main className="wrap">
-        {view === "gear" ? (
-          <>
             <section className="hero">
               <h1>Find motorcycle gear for less.</h1>
               <p>
@@ -415,27 +362,9 @@ export default function Home() {
                 )}
 
                 <div className="grid">
-                  {shown.map((p) => {
-                    const offers = rankedOffers(p);
-                    const o = offers[0];
-                    return (
-                      <button className="card" key={p.id} onClick={() => setSelectedId(p.id)}>
-                        <span className="card-image">
-                          <ProductImage p={p} />
-                        </span>
-                        <span className="card-body">
-                          <span className="card-brand">{p.brand === "Unspecified" ? p.category : p.brand}</span>
-                          <span className="card-name">{p.name}</span>
-                          <span className="card-variant">{p.variant}</span>
-                          <span className="card-price">
-                            <strong>{money(o.price)}</strong>
-                            {o.inStock === false && <em>Out of stock</em>}
-                          </span>
-                          <span className="card-store">{offers.length > 1 ? `Lowest of ${offers.length} stores` : o.storeName}</span>
-                        </span>
-                      </button>
-                    );
-                  })}
+                  {shown.map((p) => (
+                    <ProductCard key={p.id} p={p} />
+                  ))}
                 </div>
 
                 {!loading && !visible.length && (
@@ -463,43 +392,6 @@ export default function Home() {
                 )}
               </section>
             </div>
-          </>
-        ) : (
-          <>
-            <section className="hero hero-small">
-              <h1>Brands</h1>
-              <p>{allBrands.length.toLocaleString("en-IN")} brands across every store we cover.</p>
-              <div className="search">
-                <Search size={20} aria-hidden />
-                <input aria-label="Search brands" value={directorySearch} onChange={(e) => setDirectorySearch(e.target.value)} placeholder="Search brands" />
-              </div>
-            </section>
-            <ul className="brand-index">
-              {directory.map((b) => (
-                <li key={b.name}>
-                  <button onClick={() => selectBrand(b.name)}>
-                    <span>{b.name}</span>
-                    <small>{b.count.toLocaleString("en-IN")}</small>
-                  </button>
-                </li>
-              ))}
-            </ul>
-            {directory.length === 0 && (
-              <div className="empty">
-                <h2>No brand by that name</h2>
-                <p>Check the spelling or try fewer letters.</p>
-              </div>
-            )}
-          </>
-        )}
-
-        <footer className="site-footer">
-          <Logo />
-          <p>
-            Prices are taken from each store&apos;s public listings{data.summary ? `, last updated ${checkedLabel(data.summary.generatedAt)}` : ""}. Shipping,
-            coupons and bank offers aren&apos;t included, so confirm the final price at the store.
-          </p>
-        </footer>
       </main>
 
       <Dialog open={filterOpen} onOpenChange={setFilterOpen}>
@@ -510,44 +402,6 @@ export default function Home() {
           <button className="primary-button" onClick={() => setFilterOpen(false)}>
             Show {visible.length.toLocaleString("en-IN")} products
           </button>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={!!selected} onOpenChange={(open) => !open && setSelectedId(null)}>
-        <DialogContent className="product-dialog">
-          {selected && (
-            <>
-              <div className="detail">
-                <div className="detail-image">
-                  <ProductImage p={selected} />
-                </div>
-                <div className="detail-text">
-                  <span className="card-brand">{selected.brand === "Unspecified" ? selected.category : selected.brand}</span>
-                  <DialogTitle className="detail-name">{selected.name}</DialogTitle>
-                  <DialogDescription className="detail-variant">{selected.variant}</DialogDescription>
-                </div>
-              </div>
-              <h3 className="offers-title">{selected.offers.length > 1 ? `${selected.offers.length} stores sell this` : "Where to buy"}</h3>
-              <ol className="offers">
-                {rankedOffers(selected).map((o, i) => (
-                  <li key={o.storeId} className={i === 0 && selected.offers.length > 1 ? "lowest" : undefined}>
-                    <div>
-                      <strong>{o.storeName}</strong>
-                      <span>
-                        {o.inStock === true ? "In stock" : o.inStock === false ? "Out of stock" : "Check stock at store"}
-                        {i === 0 && selected.offers.length > 1 && " · Lowest price"}
-                      </span>
-                    </div>
-                    <b>{money(o.price)}</b>
-                    <a className="primary-button" href={o.url} target="_blank" rel="noreferrer">
-                      Go to store <ArrowUpRight size={16} />
-                    </a>
-                  </li>
-                ))}
-              </ol>
-              <p className="fine-print">Price for the size and colour shown. Other sizes and colours can cost more or less.</p>
-            </>
-          )}
         </DialogContent>
       </Dialog>
 

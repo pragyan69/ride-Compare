@@ -11,6 +11,7 @@ function pool() {
 const schema = `
 CREATE TABLE IF NOT EXISTS retailers (id text PRIMARY KEY, data text NOT NULL);
 CREATE TABLE IF NOT EXISTS listings (id text PRIMARY KEY, store_id text NOT NULL, product_id text NOT NULL, data text NOT NULL);
+CREATE TABLE IF NOT EXISTS price_history (product_id text NOT NULL, store_id text NOT NULL, price numeric(12,2) NOT NULL, mrp numeric(12,2), in_stock boolean, checked_at timestamptz NOT NULL, PRIMARY KEY (product_id, store_id, checked_at));
 `;
 
 /** Runs a query after making sure the tables exist (once per server instance). */

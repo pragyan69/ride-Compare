@@ -1,0 +1,33 @@
+/* /bikes */
+.make{padding-top:32px}
+.make h2{font-size:20px;font-weight:600;letter-spacing:-.02em;padding-bottom:12px}
+.list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:32px;border-top:1px solid var(--line)}
+.list a{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);font-size:15px;font-weight:500}
+.list a span{min-width:0;overflow-wrap:anywhere}
+.list a small{flex:none;font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.list a:hover span{text-decoration:underline;text-underline-offset:3px}
+
+/* /bikes/[slug] */
+.back{display:inline-flex;align-items:center;gap:4px;margin-bottom:16px;font-size:14px;font-weight:500;color:var(--ink-2)}
+.back:hover{color:var(--ink)}
+.pills{display:flex;flex-wrap:wrap;gap:8px;padding:4px 0 20px;border-bottom:1px solid var(--line)}
+.pills a{flex:none;display:inline-flex;align-items:baseline;gap:6px;font-size:14px;font-weight:500;padding:8px 14px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2);transition:background .2s,border-color .2s,color .2s}
+.pills a small{font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.pills a:hover{border-color:var(--line-strong);color:var(--ink)}
+.pills a[aria-current=page]{background:var(--ink);border-color:var(--ink);color:#fff}
+.pills a[aria-current=page] small{color:rgba(255,255,255,.7)}
+.count{padding:20px 0 24px;font-size:15px;color:var(--ink-2)}
+.count strong{color:var(--ink);font-weight:600}
+.pager a,.off{display:grid;place-items:center;width:40px;height:40px;border-radius:10px;border:1px solid var(--line-strong)}
+.pager a:hover{background:var(--well)}
+.off{opacity:.45}
+
+@media (max-width:1024px){
+  .list{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:640px){
+  .make{padding-top:24px}
+  .list{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px}
+  .pills{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:4px 16px 16px}
+  .pills::-webkit-scrollbar{display:none}
+}
