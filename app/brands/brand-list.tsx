@@ -15,7 +15,7 @@ export function BrandList({ brands }: { brands: { name: string; count: number }[
       <ul className="brand-index">
         {shown.map((b) => (
           <li key={b.name}>
-            <Link href={`/?brand=${encodeURIComponent(b.name)}`}>
+            <Link href={`/gear?brand=${encodeURIComponent(b.name)}`}>
               <span>{b.name}</span>
               <small>{b.count.toLocaleString("en-IN")}</small>
             </Link>

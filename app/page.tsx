@@ -1,474 +1,313 @@
-"use client";
-import { useEffect, useMemo, useState, useDeferredValue } from "react";
-import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Toaster } from "@/components/ui/sonner";
-import { toast } from "sonner";
-import { products as starters, stores as starterStores, rankedOffers, categories, type Product, type Retailer } from "@/lib/catalog";
-import { ProductCard } from "@/components/product-card";
+import Link from "next/link";
+import { ArrowRight, ChevronRight, Scale, History, ShieldCheck, BadgeCheck } from "lucide-react";
+import { snapshot } from "@/lib/catalog-server";
+import { checkedLabel, money, rankedOffers, type Product } from "@/lib/catalog";
+import { buildKits, buildPools } from "@/lib/kit";
+import { bikeIndex, findBike } from "@/lib/bikes";
+import { ProductImage } from "@/components/product-card";
+import { TopTen, TabbedRow, type Pick } from "./home-client";
+import styles from "./home.module.css";
 
-type Brand = { name: string; count: number };
-type CatalogData = { products: Product[]; stores: Retailer[]; summary?: { generatedAt: string } };
+export const revalidate = 21600;
 
-const initial: CatalogData = { products: starters, stores: starterStores };
-const pageSize = 24;
+const knownBrands = ["Rynox", "ViaTerra", "Axor", "LS2", "SMK", "MT Helmets", "AGV", "Alpinestars", "Solace", "Raida", "Steelbird", "Studds", "KYT", "HJC", "Korda", "DSG", "Spidi", "Acerbis"];
+const notGear = /visor|pad|liner|lock|spoiler|cover|pinlock|peak|cheek|strap|cleaner|spray|sticker|mount|intercom|kids|balaclava/i;
+const categoryTiles = [
+  { name: "Helmets", match: /helmet/i },
+  { name: "Jackets", match: /jacket/i },
+  { name: "Gloves", match: /glove/i },
+  { name: "Boots", match: /boot|shoe/i },
+  { name: "Pants", match: /pant|jean|trouser/i },
+  { name: "Luggage", match: /bag|pannier|saddle/i },
+  { name: "Protection", match: /protector|armou?r|guard/i },
+  { name: "Bike Accessories", match: /guard|rack|light/i },
+];
 
-function adminToken() {
-  try {
-    return localStorage.getItem("rc-admin") || "";
-  } catch {
-    return "";
+const good = (p: Product) =>
+  knownBrands.includes(p.brand) && p.image.includes("cdn.shopify.com") && p.offers.some((o) => o.inStock === true) && !notGear.test(p.name);
+const model = (p: Product) => `${p.brand}|${p.name.toLowerCase().replace(/\s*[-(].*$/, "")}`;
+
+function toPick(p: Product): Pick {
+  const o = rankedOffers(p)[0];
+  return { id: p.id, name: p.name, brand: p.brand, image: p.image, price: o.price, mrp: o.mrp ?? null, storeName: o.storeName, stores: p.offers.length };
+}
+
+/** One listing per model, at most `perBrand` per brand, so rows don't fill up with one brand's sizes. */
+function pickVaried(list: Product[], take: number, perBrand = 2) {
+  const seen = new Set<string>();
+  const brands = new Map<string, number>();
+  const out: Product[] = [];
+  for (const p of list) {
+    if (out.length === take) break;
+    if (seen.has(model(p)) || (brands.get(p.brand) || 0) >= perBrand) continue;
+    seen.add(model(p));
+    brands.set(p.brand, (brands.get(p.brand) || 0) + 1);
+    out.push(p);
   }
-}
-function askAdminToken() {
-  const t = window.prompt("Admin token");
-  if (t === null) return;
-  try {
-    localStorage.setItem("rc-admin", t.trim());
-  } catch {}
-}
-async function api<T = Record<string, unknown>>(path: string, body?: unknown): Promise<T> {
-  const r = await fetch(path, {
-    method: body ? "POST" : "GET",
-    headers: body ? { "Content-Type": "application/json", Authorization: `Bearer ${adminToken()}` } : undefined,
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const d = (await r.json()) as T & { error?: string };
-  if (!r.ok) throw new Error(d.error || "Could not complete this request.");
-  return d;
+  return out;
 }
 
-function Dropdown({ label, value, onChange, items }: { label: string; value: string; onChange: (v: string) => void; items: { value: string; label: string }[] }) {
+export default async function Home() {
+  const { products, stores, summary } = await snapshot();
+  const price = (p: Product) => rankedOffers(p)[0].price;
+
+  const helmets = products
+    .filter((p) => p.category === "Helmets" && good(p) && /helmet/i.test(p.name) && price(p) >= 3000 && price(p) <= 25000)
+    .sort((a, b) => b.offers.length - a.offers.length || price(b) - price(a));
+  const topTen = pickVaried(helmets, 10, 2).map(toPick);
+
+  const tiles = categoryTiles.map((t) => ({
+    ...t,
+    count: products.filter((p) => p.category === t.name).length,
+    product: products.find((p) => p.category === t.name && good(p) && t.match.test(p.name)),
+  }));
+  const floaters = ["Helmets", "Jackets", "Gloves", "Boots", "Luggage"].map((c) => tiles.find((t) => t.name === c)?.product).filter(Boolean) as Product[];
+
+  const touring = /touring|adventure|waterproof|\bwp\b|all.?season|rally|tour/i;
+  const roadTabs = ["Jackets", "Gloves", "Boots", "Luggage", "Helmets"]
+    .map((c) => ({ name: c, items: pickVaried(products.filter((p) => p.category === c && good(p) && touring.test(`${p.name} ${p.variant}`)), 12, 3).map(toPick) }))
+    .filter((t) => t.items.length >= 4);
+
+  const brandCounts = new Map<string, number>();
+  for (const p of products) brandCounts.set(p.brand, (brandCounts.get(p.brand) || 0) + 1);
+  const brands = knownBrands.filter((b) => brandCounts.has(b));
+  const brandTotal = [...brandCounts.keys()].filter((b) => b !== "Unspecified").length;
+
+  const kit = buildKits(buildPools(products), 20000, "city", ["Helmet", "Jacket", "Gloves"]).kits[0];
+  const bikes = [...bikeIndex(products)]
+    .sort((a, b) => b[1].length - a[1].length)
+    .slice(0, 12)
+    .map(([slug, list]) => ({ bike: findBike(slug)!, count: list.length }));
+
+  const storeCounts = new Map<string, number>();
+  for (const p of products) for (const o of p.offers) storeCounts.set(o.storeId, (storeCounts.get(o.storeId) || 0) + 1);
+  const storeList = stores
+    .filter((s) => storeCounts.has(s.id))
+    .map((s) => ({ ...s, count: storeCounts.get(s.id)! }))
+    .sort((a, b) => b.count - a.count);
+
+  const ticker = [
+    `${products.length.toLocaleString("en-IN")} products`,
+    `${storeList.length} Indian stores`,
+    "Prices checked every night",
+    "No fake discounts",
+    `${brandTotal} brands`,
+    "Parts for 60+ bikes",
+  ];
+
   return (
-    <Select value={value} onValueChange={(v) => onChange(v as string)}>
-      <SelectTrigger aria-label={label} className="dropdown">
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        {items.map((i) => (
-          <SelectItem value={i.value} key={i.value}>
-            {i.label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  );
-}
-
-export default function Home() {
-  const [data, setData] = useState<CatalogData>(initial),
-    [loading, setLoading] = useState(true),
-    [loadError, setLoadError] = useState("");
-  const [query, setQuery] = useState(""),
-    [category, setCategory] = useState("All gear"),
-    [sort, setSort] = useState("featured"),
-    [brands, setBrands] = useState<string[]>([]),
-    [storeFilter, setStoreFilter] = useState("all"),
-    [stockOnly, setStockOnly] = useState(false),
-    [comparisonOnly, setComparisonOnly] = useState(false),
-    [maxPrice, setMaxPrice] = useState(""),
-    [brandSearch, setBrandSearch] = useState(""),
-    [page, setPage] = useState(1),
-    [filterOpen, setFilterOpen] = useState(false),
-    [busy, setBusy] = useState(false),
-    [manage, setManage] = useState(false);
-  const [retailerName, setRetailerName] = useState(""),
-    [website, setWebsite] = useState(""),
-    [feedUrl, setFeedUrl] = useState(""),
-    [importStore, setImportStore] = useState(""),
-    [feedText, setFeedText] = useState(""),
-    [formError, setFormError] = useState("");
-  const deferred = useDeferredValue(query);
-
-  async function load() {
-    setLoading(true);
-    setLoadError("");
-    try {
-      const r = await fetch("/data/catalog.json");
-      if (!r.ok) throw new Error("The catalog could not be loaded.");
-      const snapshot: CatalogData = await r.json();
-      try {
-        const saved = await api<{ products: Product[]; stores: Retailer[] }>("/api/catalog");
-        const map = new Map(snapshot.products.map((p) => [p.id, p]));
-        for (const p of saved.products) {
-          const current = map.get(p.id);
-          if (current) {
-            for (const o of p.offers) {
-              const old = current.offers.findIndex((x) => x.storeId === o.storeId);
-              if (old < 0) current.offers.push(o);
-              else if (Date.parse(o.checkedAt) > Date.parse(current.offers[old].checkedAt)) current.offers[old] = o;
-            }
-          } else map.set(p.id, p);
-        }
-        snapshot.products = [...map.values()];
-        const sm = new Map(snapshot.stores.map((s) => [s.id, s]));
-        for (const s of saved.stores) sm.set(s.id, { ...sm.get(s.id), ...s });
-        snapshot.stores = [...sm.values()];
-      } catch {
-        /* Imported offers are optional; the published catalog is enough to browse. */
-      }
-      setData(snapshot);
-    } catch (e) {
-      setLoadError(e instanceof Error ? e.message : "The catalog could not be loaded.");
-    } finally {
-      setLoading(false);
-    }
-  }
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- loads the catalog once and follows the #admin hash
-    void load();
-    const params = new URLSearchParams(location.search);
-    if (params.get("q")) setQuery(params.get("q")!);
-    if (params.get("brand")) setBrands([params.get("brand")!]);
-    if (params.get("store")) setStoreFilter(params.get("store")!);
-    if (categories.includes(params.get("category") || "")) setCategory(params.get("category")!);
-    const openAdmin = () => setManage(location.hash === "#admin");
-    openAdmin();
-    window.addEventListener("hashchange", openAdmin);
-    return () => window.removeEventListener("hashchange", openAdmin);
-  }, []);
-
-  const allBrands = useMemo(() => {
-    const map = new Map<string, Brand>();
-    for (const p of data.products) {
-      if (p.brand === "Unspecified") continue;
-      const b = map.get(p.brand) || { name: p.brand, count: 0 };
-      b.count++;
-      map.set(p.brand, b);
-    }
-    return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
-  }, [data]);
-  const storesWithProducts = useMemo(() => {
-    const ids = new Set(data.products.flatMap((p) => p.offers.map((o) => o.storeId)));
-    return data.stores.filter((s) => ids.has(s.id)).sort((a, b) => a.name.localeCompare(b.name));
-  }, [data]);
-  const visible = useMemo(() => {
-    const q = deferred.toLowerCase().trim();
-    const rows = data.products.filter(
-      (p) =>
-        (category === "All gear" || p.category === category) &&
-        (!brands.length || brands.includes(p.brand)) &&
-        (storeFilter === "all" || p.offers.some((o) => o.storeId === storeFilter)) &&
-        (!stockOnly || p.offers.some((o) => o.inStock === true)) &&
-        (!comparisonOnly || p.offers.length > 1) &&
-        (!maxPrice || p.offers.some((o) => o.price <= Number(maxPrice))) &&
-        (!q || `${p.name} ${p.brand} ${p.category} ${p.variant}`.toLowerCase().includes(q)),
-    );
-    if (sort === "low") rows.sort((a, b) => rankedOffers(a)[0].price - rankedOffers(b)[0].price);
-    if (sort === "high") rows.sort((a, b) => rankedOffers(b)[0].price - rankedOffers(a)[0].price);
-    if (sort === "stores") rows.sort((a, b) => b.offers.length - a.offers.length);
-    return rows;
-  }, [data, deferred, category, brands, storeFilter, stockOnly, comparisonOnly, maxPrice, sort]);
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- any filter change starts the results over
-  useEffect(() => setPage(1), [deferred, category, brands, storeFilter, stockOnly, comparisonOnly, maxPrice, sort]);
-
-  const totalPages = Math.max(1, Math.ceil(visible.length / pageSize)),
-    currentPage = Math.min(page, totalPages),
-    shown = visible.slice((currentPage - 1) * pageSize, currentPage * pageSize),
-    activeFilters = brands.length + (storeFilter !== "all" ? 1 : 0) + (stockOnly ? 1 : 0) + (comparisonOnly ? 1 : 0) + (maxPrice ? 1 : 0);
-
-  function reset() {
-    setQuery("");
-    setBrands([]);
-    setCategory("All gear");
-    setStoreFilter("all");
-    setStockOnly(false);
-    setComparisonOnly(false);
-    setMaxPrice("");
-  }
-  function movePage(p: number) {
-    setPage(p);
-    document.getElementById("results")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-  function closeManage(open: boolean) {
-    setManage(open);
-    if (!open && location.hash === "#admin") history.replaceState(null, "", location.pathname);
-  }
-  async function saveRetailer(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    setFormError("");
-    try {
-      const s = await api<Retailer>("/api/stores", { name: retailerName, website, feedUrl });
-      setImportStore(s.id);
-      setData((d) => ({ ...d, stores: [...d.stores, s] }));
-      setRetailerName("");
-      setWebsite("");
-      setFeedUrl("");
-      toast.success("Retailer saved. You can now import its product feed.");
-    } catch (e) {
-      setFormError(e instanceof Error ? e.message : "Could not save retailer.");
-    } finally {
-      setBusy(false);
-    }
-  }
-  async function importProducts() {
-    setBusy(true);
-    setFormError("");
-    try {
-      const d = await api<{ imported: number }>("/api/import", { storeId: importStore, feed: JSON.parse(feedText) });
-      toast.success(`${d.imported} offers imported.`);
-      await load();
-      setFeedText("");
-    } catch (e) {
-      setFormError(e instanceof Error ? e.message : "Could not import offers.");
-    } finally {
-      setBusy(false);
-    }
-  }
-  async function syncFeed() {
-    setBusy(true);
-    setFormError("");
-    try {
-      const d = await api<{ imported: number }>("/api/stores/sync", { storeId: importStore });
-      toast.success(`${d.imported} offers updated.`);
-      await load();
-    } catch (e) {
-      setFormError(e instanceof Error ? e.message : "Feed unavailable.");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  const filters = (
-    <div className="filters-body">
-      <div className="filter-group">
-        <h3>Store</h3>
-        <Dropdown
-          label="Filter by store"
-          value={storeFilter}
-          onChange={setStoreFilter}
-          items={[{ value: "all", label: "All stores" }, ...storesWithProducts.map((s) => ({ value: s.id, label: s.name }))]}
-        />
-      </div>
-      <div className="filter-group">
-        <h3>Budget</h3>
-        <label className="budget-input">
-          <span>₹</span>
-          <input
-            aria-label="Maximum price in rupees"
-            placeholder="Max price"
-            inputMode="numeric"
-            type="number"
-            min="0"
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value)}
-          />
-        </label>
-        <label className="check-row">
-          <Checkbox checked={stockOnly} onCheckedChange={(v) => setStockOnly(v === true)} />
-          In stock
-        </label>
-        <label className="check-row">
-          <Checkbox checked={comparisonOnly} onCheckedChange={(v) => setComparisonOnly(v === true)} />
-          Sold at 2+ stores
-        </label>
-      </div>
-      <div className="filter-group">
-        <h3>Brand</h3>
-        <input className="brand-search" aria-label="Find a brand" placeholder="Find a brand" value={brandSearch} onChange={(e) => setBrandSearch(e.target.value)} />
-        <div className="brand-list">
-          {allBrands
-            .filter((b) => b.name.toLowerCase().includes(brandSearch.toLowerCase()))
-            .map((b) => (
-              <label className="check-row" key={b.name}>
-                <Checkbox checked={brands.includes(b.name)} onCheckedChange={(v) => setBrands(v ? [...brands, b.name] : brands.filter((x) => x !== b.name))} />
-                <span className="check-label">{b.name}</span>
-                <span className="check-count">{b.count.toLocaleString("en-IN")}</span>
-              </label>
+    <main>
+      {/* Hero */}
+      <section className={styles.hero}>
+        <div className={styles.ticker} aria-hidden>
+          <div>
+            {[...ticker, ...ticker, ...ticker].map((t, i) => (
+              <span key={i}>{t}</span>
             ))}
+          </div>
         </div>
-      </div>
-      {activeFilters > 0 && (
-        <button className="link-button" onClick={reset}>
-          Clear all filters
-        </button>
+        <div className={`wrap ${styles.heroInner}`}>
+          <div className={styles.heroText}>
+            <p className={styles.heroBrand}>RideCompare</p>
+            <h1>Gear up for less.</h1>
+            <p className={styles.heroLead}>Same helmet, different price.</p>
+            <p className={styles.heroSub}>We check {storeList.length} Indian stores every night so you don&apos;t have to.</p>
+            <div className={styles.heroActions}>
+              <Link href="/build" className={styles.heroCta}>
+                Build your kit <ChevronRight size={20} aria-hidden />
+              </Link>
+              <Link href="/gear" className={styles.heroGhost}>
+                Browse all gear
+              </Link>
+            </div>
+          </div>
+          <div className={styles.heroArt} aria-hidden>
+            <span className={styles.glow}>₹</span>
+            {floaters.map((p, i) => (
+              <span key={p.id} className={styles.floater} data-i={i}>
+                <ProductImage p={p} />
+                <small>{money(price(p))}</small>
+              </span>
+            ))}
+          </div>
+        </div>
+        {summary && <p className={styles.heroStamp}>Checked {checkedLabel(summary.generatedAt)}</p>}
+      </section>
+
+      {/* Top 10 */}
+      {topTen.length >= 5 && (
+        <section className={styles.paper}>
+          <div className="wrap">
+            <h2 className={styles.topTitle}>
+              <span className={styles.outline}>TOP 10</span>
+              <span className={styles.script}>helmets</span>
+            </h2>
+            <p className={styles.topSub}>Full-face and modular helmets from brands riders trust, at tonight&apos;s lowest price.</p>
+            <TopTen items={topTen} />
+          </div>
+        </section>
       )}
-    </div>
-  );
 
-  return (
-    <>
-      <Toaster position="bottom-right" />
-      <main className="wrap">
-            <section className="hero">
-              <h1>Find motorcycle gear for less.</h1>
-              <p>
-                {data.products.length.toLocaleString("en-IN")} helmets, jackets, gloves and parts from {storesWithProducts.length} Indian stores, in one
-                search.
-              </p>
-              <div className="search">
-                <Search size={20} aria-hidden />
-                <input aria-label="Search motorcycle gear" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search a product, brand or category" />
-                {query && (
-                  <button aria-label="Clear search" onClick={() => setQuery("")}>
-                    <X size={18} />
-                  </button>
-                )}
+      {/* Built for the road */}
+      {roadTabs.length > 0 && (
+        <section className={styles.band}>
+          <div className="wrap">
+            <div className={styles.bandHead}>
+              <div>
+                <h2>
+                  Built for <em>the road.</em>
+                </h2>
+                <p>Touring and adventure gear: waterproof, all-season, made for long days.</p>
               </div>
-            </section>
-
-            <div className="categories" role="group" aria-label="Categories">
-              {categories.map((c) => (
-                <button key={c} aria-pressed={category === c} onClick={() => setCategory(c)}>
-                  {c}
-                </button>
+              <Link href="/gear?q=touring" className={styles.bandButton}>
+                View all <ChevronRight size={18} aria-hidden />
+              </Link>
+            </div>
+            <div className={styles.circles}>
+              {brands.map((b) => (
+                <Link key={b} href={`/gear?brand=${encodeURIComponent(b)}`} title={`${b} gear`} data-long={b.length > 7 || undefined}>
+                  {b}
+                </Link>
               ))}
             </div>
-
-            <div className="shop">
-              <aside className="filters" aria-label="Filters">
-                {filters}
-              </aside>
-              <section id="results" className="results" aria-busy={loading}>
-                <div className="results-bar">
-                  <p className="results-count">
-                    <strong>{visible.length.toLocaleString("en-IN")}</strong> {visible.length === 1 ? "product" : "products"}
-                    {category !== "All gear" && <> in {category}</>}
-                  </p>
-                  <button className="filters-toggle" onClick={() => setFilterOpen(true)}>
-                    <SlidersHorizontal size={16} /> Filters{activeFilters > 0 && <span className="pill">{activeFilters}</span>}
-                  </button>
-                  <Dropdown
-                    label="Sort products"
-                    value={sort}
-                    onChange={setSort}
-                    items={[
-                      { value: "featured", label: "Featured" },
-                      { value: "low", label: "Price: low to high" },
-                      { value: "high", label: "Price: high to low" },
-                      { value: "stores", label: "Most stores" },
-                    ]}
-                  />
-                </div>
-
-                {brands.length > 0 && (
-                  <div className="chips">
-                    {brands.map((b) => (
-                      <button key={b} onClick={() => setBrands(brands.filter((x) => x !== b))} aria-label={`Remove ${b}`}>
-                        {b}
-                        <X size={13} />
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {loadError && (
-                  <div role="alert" className="notice">
-                    {loadError} <button onClick={() => void load()}>Try again</button>
-                  </div>
-                )}
-
-                <div className="grid">
-                  {shown.map((p) => (
-                    <ProductCard key={p.id} p={p} />
-                  ))}
-                </div>
-
-                {!loading && !visible.length && (
-                  <div className="empty">
-                    <h2>Nothing matches that</h2>
-                    <p>Try a shorter search or remove a filter.</p>
-                    <button className="secondary-button" onClick={reset}>
-                      Clear search and filters
-                    </button>
-                  </div>
-                )}
-
-                {totalPages > 1 && (
-                  <nav className="pager" aria-label="Pages">
-                    <button aria-label="Previous page" disabled={currentPage === 1} onClick={() => movePage(currentPage - 1)}>
-                      <ChevronLeft size={18} />
-                    </button>
-                    <span aria-live="polite">
-                      Page {currentPage} of {totalPages.toLocaleString("en-IN")}
-                    </span>
-                    <button aria-label="Next page" disabled={currentPage === totalPages} onClick={() => movePage(currentPage + 1)}>
-                      <ChevronRight size={18} />
-                    </button>
-                  </nav>
-                )}
-              </section>
-            </div>
-      </main>
-
-      <Dialog open={filterOpen} onOpenChange={setFilterOpen}>
-        <DialogContent className="sheet">
-          <DialogTitle>Filters</DialogTitle>
-          <DialogDescription className="sr-only">Narrow products by store, budget and brand.</DialogDescription>
-          {filters}
-          <button className="primary-button" onClick={() => setFilterOpen(false)}>
-            Show {visible.length.toLocaleString("en-IN")} products
-          </button>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={manage} onOpenChange={closeManage}>
-        <DialogContent className="admin-dialog">
-          <DialogTitle>Connect a retailer</DialogTitle>
-          <DialogDescription>Add a website, then import its product feed. Existing stores can receive more offers too.</DialogDescription>
-          {formError && (
-            <div className="notice" role="alert">
-              {formError}
-            </div>
-          )}
-          <form className="admin-form" onSubmit={saveRetailer}>
-            <label>
-              Store name
-              <input required maxLength={60} value={retailerName} onChange={(e) => setRetailerName(e.target.value)} placeholder="Your retailer" />
-            </label>
-            <label>
-              Website
-              <input required type="url" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://retailer.in" />
-            </label>
-            <label className="full">
-              Public JSON feed URL (optional)
-              <input type="url" value={feedUrl} onChange={(e) => setFeedUrl(e.target.value)} placeholder="https://retailer.in/ridecompare-feed.json" />
-            </label>
-            <button className="primary-button full" disabled={busy}>
-              Save retailer
-            </button>
-          </form>
-          <h3>Import product offers</h3>
-          <Dropdown
-            label="Retailer to import"
-            value={importStore || "choose"}
-            onChange={setImportStore}
-            items={[{ value: "choose", label: "Choose a retailer" }, ...data.stores.map((s) => ({ value: s.id, label: s.name }))]}
-          />
-          <input
-            type="file"
-            aria-label="Upload a JSON feed"
-            accept=".json,application/json"
-            onChange={async (e) => {
-              const f = e.target.files?.[0];
-              if (!f) return;
-              if (f.size > 1024 * 1024) {
-                setFormError("Choose a file smaller than 1 MB.");
-                return;
-              }
-              setFeedText(await f.text());
-            }}
-          />
-          <textarea aria-label="Product feed JSON" value={feedText} onChange={(e) => setFeedText(e.target.value)} placeholder='{"currency":"INR","offers":[…]}' rows={6} />
-          <div className="admin-actions">
-            <button className="primary-button" disabled={busy || !importStore || importStore === "choose" || !feedText.trim()} onClick={() => void importProducts()}>
-              Import offers
-            </button>
-            <button className="secondary-button" disabled={busy || !data.stores.find((s) => s.id === importStore)?.feedUrl} onClick={() => void syncFeed()}>
-              Refresh connected feed
-            </button>
-            <a className="link-button" href="/feed-example.json" download>
-              Feed example
-            </a>
-            <button type="button" className="link-button" onClick={askAdminToken}>
-              Admin token
-            </button>
+            <TabbedRow tabs={roadTabs} />
           </div>
-        </DialogContent>
-      </Dialog>
-    </>
+        </section>
+      )}
+
+      {/* Categories */}
+      <section className={`wrap ${styles.section}`}>
+        <div className={styles.sectionHead}>
+          <h2>Shop by category</h2>
+          <Link href="/gear" className={styles.viewAll}>
+            View all <ChevronRight size={16} aria-hidden />
+          </Link>
+        </div>
+        <div className={styles.categories}>
+          {tiles.map((t) => (
+            <Link key={t.name} href={`/gear?category=${encodeURIComponent(t.name)}`} className={styles.category}>
+              <span className={styles.categoryImage}>{t.product && <ProductImage p={t.product} />}</span>
+              <span className={styles.categoryName}>{t.name}</span>
+              <small>{t.count.toLocaleString("en-IN")} products</small>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Bikes */}
+      <section className={`wrap ${styles.section} ${styles.split}`}>
+        <Link href="/bikes" className={styles.poster}>
+          <span>
+            Fits
+            <br />
+            your
+            <br />
+            bike
+          </span>
+          <small>
+            Shop by motorcycle <ArrowRight size={16} aria-hidden />
+          </small>
+        </Link>
+        <div className={styles.bikes}>
+          <h2>Parts and accessories for your motorcycle</h2>
+          <p>Crash guards, racks, exhausts and more, matched to the bike named in each listing.</p>
+          <ul>
+            {bikes.map(({ bike, count }) => (
+              <li key={bike.slug}>
+                <Link href={`/bikes/${bike.slug}`}>
+                  <span>
+                    {bike.make} <b>{bike.model}</b>
+                  </span>
+                  <small>{count}</small>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Kit */}
+      {kit && (
+        <section className={`wrap ${styles.section} ${styles.kitSection}`}>
+          <div className={styles.kitText}>
+            <h2>
+              Your whole kit, <em>on budget.</em>
+            </h2>
+            <p>
+              Tell us your budget and how you ride. We split it across helmet, jacket, gloves, pants and boots, and pick from what&apos;s in stock tonight.
+              Here&apos;s ₹20,000 for city riding:
+            </p>
+            <Link href="/build" className="primary-button">
+              Build yours <ArrowRight size={16} aria-hidden />
+            </Link>
+          </div>
+          <div className={styles.receipt}>
+            {kit.picks.map((pick) => (
+              <Link key={pick.piece} href={`/product/${encodeURIComponent(pick.item.id)}`} className={styles.receiptRow}>
+                <span className={styles.receiptImage}>
+                  <ProductImage p={pick.item} />
+                </span>
+                <span className={styles.receiptName}>
+                  <small>{pick.piece}</small>
+                  {pick.item.brand} {pick.item.name.replace(new RegExp(`^${pick.item.brand}\\s+`, "i"), "")}
+                </span>
+                <b>{money(pick.item.price)}</b>
+              </Link>
+            ))}
+            <div className={styles.receiptTotal}>
+              <span>Total</span>
+              <b>{money(kit.total)}</b>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Honest */}
+      <section id="honest" className={styles.honest}>
+        <div className="wrap">
+          <h2>How we keep it honest</h2>
+          <ul>
+            <li>
+              <Scale size={24} aria-hidden />
+              <strong>Ranked by price and stock</strong>
+              <p>The cheapest in-stock store comes first. If we ever show a paid spot, it will say Sponsored.</p>
+            </li>
+            <li>
+              <History size={24} aria-hidden />
+              <strong>Our own price history</strong>
+              <p>We record every price change, so a discount is measured against real past prices, not just the MRP a store prints.</p>
+            </li>
+            <li>
+              <ShieldCheck size={24} aria-hidden />
+              <strong>No invented safety claims</strong>
+              <p>We only mention CE, ISI, DOT or ECE when the store&apos;s own listing says it. Check the label before you buy.</p>
+            </li>
+            <li>
+              <BadgeCheck size={24} aria-hidden />
+              <strong>Like for like</strong>
+              <p>Prices are for the exact size and colour shown, and stores only sit side by side when it&apos;s the same product.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      {/* Stores */}
+      <section id="stores" className={`wrap ${styles.section}`}>
+        <div className={styles.sectionHead}>
+          <h2>Stores we check every night</h2>
+        </div>
+        <ul className={styles.stores}>
+          {storeList.map((s) => (
+            <li key={s.id}>
+              <Link href={`/gear?store=${encodeURIComponent(s.id)}`}>
+                <span>{s.name}</span>
+                <small>{s.count.toLocaleString("en-IN")} products</small>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <p className={styles.storeNote}>Amazon, Flipkart and a few brand stores block automated price checks, so they aren&apos;t here yet.</p>
+      </section>
+    </main>
   );
 }

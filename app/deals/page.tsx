@@ -169,7 +169,7 @@ export default async function DealsPage({ searchParams }: { searchParams: Promis
             We are collecting each store&apos;s MRP and recording price changes every night. Deals will show up here after the next
             update.
           </p>
-          <Link className="primary-button" href="/">
+          <Link className="primary-button" href="/gear">
             Browse all gear
           </Link>
         </div>

@@ -114,13 +114,13 @@ export default async function ProductPage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
 
       <nav aria-label="Breadcrumb" className={styles.crumbs}>
-        <Link href="/">Gear</Link>
+        <Link href="/gear">Gear</Link>
         <span aria-hidden>/</span>
-        <Link href={`/?category=${encodeURIComponent(p.category)}`}>{p.category}</Link>
+        <Link href={`/gear?category=${encodeURIComponent(p.category)}`}>{p.category}</Link>
         {p.brand !== "Unspecified" && (
           <>
             <span aria-hidden>/</span>
-            <Link href={`/?brand=${encodeURIComponent(p.brand)}`}>{p.brand}</Link>
+            <Link href={`/gear?brand=${encodeURIComponent(p.brand)}`}>{p.brand}</Link>
           </>
         )}
       </nav>

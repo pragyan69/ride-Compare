@@ -1,12 +1,10 @@
-export function Logo() {
+/** Stacked wordmark: RIDE over COMP + outlined ARE. */
+export function Logo({ small = false }: { small?: boolean }) {
   return (
-    <span className="logo">
-      <svg viewBox="0 0 40 40" aria-hidden>
-        <rect width="40" height="40" rx="10" />
-        <path d="m9 15 11-6 11 6-11 6zm0 6 11 6 11-6M9 27l11 6 11-6" />
-      </svg>
+    <span className={small ? "wordmark wordmark-small" : "wordmark"} aria-label="RideCompare">
+      <span>RIDE</span>
       <span>
-        ride<b>compare</b>
+        COMP<em>ARE</em>
       </span>
     </span>
   );
