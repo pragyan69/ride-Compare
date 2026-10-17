@@ -56,7 +56,7 @@ def main():
   category=categorize(r['name'])
   if category is None:continue
   b=r['brand'];variant=r['variant'];key,matched=product_key(s,r,bad,sourcekeys)
-  offer={'storeId':s['id'],'storeName':s['name'],'price':r['price'],'shipping':r.get('shipping'),'inStock':r['inStock'],'url':r['url'],'checkedAt':r['checkedAt'],'source':'crawl'}
+  offer={'storeId':s['id'],'storeName':s['name'],'price':r['price'],'mrp':r.get('mrp'),'shipping':r.get('shipping'),'inStock':r['inStock'],'url':r['url'],'checkedAt':r['checkedAt'],'source':'crawl'}
   # Retain source endpoint provenance without putting remote prices into code.
   if r.get('fetchUrl'):offer.update(fetchUrl=r['fetchUrl'],variantId=r.get('variantId'))
   if key not in products:products[key]={'id':key,'name':r['name'],'brand':b,'category':category,'variant':variant,'image':r['image'],'offers':[],'variantCount':r.get('variantCount'),'matchType':matched}
