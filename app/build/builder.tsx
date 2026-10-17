@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { ChevronDown, Share2 } from "lucide-react";
 import Link from "next/link";
 import { ProductImage } from "@/components/product-card";
 import { money } from "@/lib/catalog";
@@ -14,11 +15,14 @@ const listOf = (words: string[]) => (words.length < 2 ? words.join("") : `${word
 type Swaps = Partial<Record<KitVariant, Partial<Record<Piece, KitItem>>>>;
 type State = { status: "loading" } | { status: "error"; message: string } | { status: "done"; result: BuildResult };
 
-export function Builder() {
-  const [budget, setBudget] = useState(20000);
-  const [custom, setCustom] = useState("");
-  const [style, setStyle] = useState<RidingStyle>("city");
-  const [wanted, setWanted] = useState<Piece[]>(["Helmet", "Jacket", "Gloves"]);
+export type BuilderStart = { budget: number; style: RidingStyle; pieces: Piece[] };
+
+export function Builder({ start }: { start: BuilderStart }) {
+  const [budget, setBudget] = useState(start.budget);
+  const [custom, setCustom] = useState(presets.includes(start.budget) ? "" : String(start.budget));
+  const [style, setStyle] = useState<RidingStyle>(start.style);
+  const [wanted, setWanted] = useState<Piece[]>(start.pieces);
+  const [shared, setShared] = useState(false);
   const [state, setState] = useState<State>({ status: "loading" });
   const [variant, setVariant] = useState<KitVariant>("balance");
   const [swaps, setSwaps] = useState<Swaps>({});
@@ -47,12 +51,26 @@ export function Builder() {
         setState({ status: "error", message: e instanceof Error ? e.message : "We could not build a kit. Try again." });
       }
     }, 250);
+    history.replaceState(null, "", `/build?budget=${budget}&style=${style}&pieces=${wanted.join(",")}`);
     return () => {
       clearTimeout(timer);
       ctrl.abort();
     };
   }, [budget, style, wanted, attempt]);
 
+  async function share() {
+    const url = location.href;
+    try {
+      if (navigator.share) await navigator.share({ title: "My riding kit on RideCompare", url });
+      else {
+        await navigator.clipboard.writeText(url);
+        setShared(true);
+        setTimeout(() => setShared(false), 2000);
+      }
+    } catch {
+      /* the rider closed the share sheet */
+    }
+  }
   function pickPreset(v: number) {
     setCustom("");
     setBudget(v);
@@ -139,7 +157,7 @@ export function Builder() {
         )}
 
         {result && !result.tooLow && kit && (
-          <div className={state.status === "loading" ? styles.stale : undefined}>
+          <div className={`${styles.kit} ${state.status === "loading" ? styles.stale : ""}`}>
             <div className={styles.variants} role="tablist" aria-label="Kit options">
               {kitVariants.map((v) => (
                 <button key={v.id} role="tab" aria-selected={variant === v.id} onClick={() => setVariant(v.id)}>
@@ -157,6 +175,9 @@ export function Builder() {
               <div className={styles.meter} aria-hidden>
                 <i style={{ width: `${Math.min(100, (total / budget) * 100)}%` }} className={left < 0 ? styles.over : undefined} />
               </div>
+              <button type="button" className={styles.share} onClick={() => void share()}>
+                <Share2 size={16} aria-hidden /> {shared ? "Link copied" : "Share kit"}
+              </button>
             </div>
 
             {left < 0 && overPieces.length > 0 && (
@@ -173,7 +194,7 @@ export function Builder() {
                 />
               ))}
             </ol>
-            <p className="fine-print">Prices are the lowest in-stock listing for the size and colour shown. Safety notes repeat what the store listing says; check the label on the product before you buy.</p>
+            <p className="fine-print">Lowest in-stock price for the size shown. Safety notes repeat the store listing; check the label before you buy.</p>
           </div>
         )}
       </section>
@@ -182,6 +203,7 @@ export function Builder() {
 }
 
 function PickRow({ pick, item, onSwap }: { pick: KitPick; item: KitItem; onSwap: (item: KitItem) => void }) {
+  const [open, setOpen] = useState(false);
   const options = [pick.item, ...pick.alternatives].filter((o) => o.id !== item.id);
   return (
     <li className={styles.pick}>
@@ -205,6 +227,11 @@ function PickRow({ pick, item, onSwap }: { pick: KitPick; item: KitItem; onSwap:
         </span>
       </Link>
       {options.length > 0 && (
+        <button type="button" className={styles.altToggle} aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+          {open ? "Hide options" : `${options.length} other ${pick.piece.toLowerCase()} options`} <ChevronDown size={16} aria-hidden />
+        </button>
+      )}
+      {open && options.length > 0 && (
         <ul className={styles.alts} aria-label={`Other ${pick.piece.toLowerCase()} options`}>
           {options.map((o) => {
             const diff = o.price - item.price;
@@ -220,7 +247,12 @@ function PickRow({ pick, item, onSwap }: { pick: KitPick; item: KitItem; onSwap:
                   {money(o.price)}
                   <small>{diff === 0 ? "Same price" : diff < 0 ? `${money(-diff)} less` : `${money(diff)} more`}</small>
                 </span>
-                <button className={styles.swap} onClick={() => onSwap(o)} aria-label={`Swap in ${o.brand} ${o.name}`}>
+                <button
+                  className={styles.swap}
+                  onClick={() => {
+                    onSwap(o);
+                    setOpen(false);
+                  }} aria-label={`Swap in ${o.brand} ${o.name}`}>
                   Swap
                 </button>
               </li>

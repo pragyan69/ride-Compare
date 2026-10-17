@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { money } from "@/lib/catalog";
 import { ProductImage } from "@/components/product-card";
 import styles from "./home.module.css";
@@ -93,5 +93,41 @@ export function TabbedRow({ tabs }: { tabs: { name: string; items: Pick[] }[] })
         ))}
       </div>
     </>
+  );
+}
+
+const budgets = [10000, 20000, 40000, 75000];
+const rides = [
+  { id: "city", label: "City" },
+  { id: "touring", label: "Touring" },
+  { id: "track", label: "Track" },
+  { id: "offroad", label: "Off-road" },
+];
+
+/** Two taps to a kit: pick a budget and a riding style, then hand off to /build. */
+export function QuickBuild() {
+  const [budget, setBudget] = useState(20000);
+  const [ride, setRide] = useState("city");
+  return (
+    <div className={styles.quick}>
+      <p className={styles.quickTitle}>Build your kit in two taps</p>
+      <div className={styles.quickRow} role="group" aria-label="Budget">
+        {budgets.map((b) => (
+          <button key={b} aria-pressed={budget === b} onClick={() => setBudget(b)}>
+            ₹{b / 1000}k
+          </button>
+        ))}
+      </div>
+      <div className={styles.quickRow} role="group" aria-label="How you ride">
+        {rides.map((r) => (
+          <button key={r.id} aria-pressed={ride === r.id} onClick={() => setRide(r.id)}>
+            {r.label}
+          </button>
+        ))}
+      </div>
+      <Link href={`/build?budget=${budget}&style=${ride}`} className={styles.quickGo}>
+        Build my ₹{budget.toLocaleString("en-IN")} kit <ArrowRight size={18} aria-hidden />
+      </Link>
+    </div>
   );
 }

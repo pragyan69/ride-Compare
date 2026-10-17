@@ -3,7 +3,7 @@
 .layout{display:grid;grid-template-columns:300px minmax(0,1fr);gap:48px;align-items:start;padding-top:8px}
 
 /* Controls */
-.controls{position:sticky;top:88px;display:flex;flex-direction:column;gap:22px}
+.controls{min-width:0;position:sticky;top:120px;display:flex;flex-direction:column;gap:22px}
 .group{margin:0;padding:0 0 22px;border:0;border-bottom:1px solid var(--line);min-width:0}
 .group:last-child{border-bottom:0;padding-bottom:0}
 .group legend{padding:0;margin-bottom:12px;font-size:14px;font-weight:600}
@@ -18,6 +18,7 @@
 
 /* Results */
 .results{min-width:0}
+.kit{display:flex;flex-direction:column}
 .stale{opacity:.55;transition:opacity .2s}
 
 .variants{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;border-radius:12px;background:var(--well)}
@@ -65,22 +66,41 @@
 .swap{height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--line-strong);font-size:13px;font-weight:600;background:#fff;transition:background .2s,border-color .2s}
 .swap:hover{border-color:var(--green);color:var(--green)}
 
+.share{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line-strong);font-size:13px;font-weight:600;background:#fff;transition:border-color .2s}
+.share:hover{border-color:var(--ink)}
+.altToggle{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:14px;font-weight:600;color:var(--ink-2)}
+.altToggle:hover{color:var(--ink)}
+.altToggle[aria-expanded=true] svg{transform:rotate(180deg)}
 .skeleton{display:flex;flex-direction:column;gap:16px}
 .skeleton i{display:block;height:120px;border-radius:14px;background:linear-gradient(90deg,var(--well) 0%,#fbfbfa 50%,var(--well) 100%);background-size:200% 100%;animation:shimmer 1.4s linear infinite}
 .skeleton i:first-child{height:56px}
 @keyframes shimmer{to{background-position:-200% 0}}
 
 @media (max-width:1024px){
-  .layout{grid-template-columns:1fr;gap:28px}
+  .layout{grid-template-columns:minmax(0,1fr);gap:28px}
   .controls{position:static}
 }
 @media (max-width:640px){
-  .chips button{padding:7px 12px}
+  .hero p{display:none}
+  .layout{gap:20px}
+  .controls{gap:14px}
+  .group{padding-bottom:14px}
+  .group legend{margin-bottom:8px;font-size:13px;color:var(--ink-3)}
+  .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+  .chips::-webkit-scrollbar{display:none}
+  .chips button{flex:none;padding:8px 14px}
+  .custom{margin-top:10px}
   .variants button{font-size:13px;padding:8px 4px}
-  .totalBar p strong{font-size:24px}
-  .chosen{grid-template-columns:72px minmax(0,1fr);gap:12px}
+  /* total sticks above the tab bar while you scroll the picks */
+  .totalBar{position:sticky;bottom:calc(68px + env(safe-area-inset-bottom));z-index:5;margin:16px -16px 8px;padding:12px 16px;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);order:9}
+  .totalBar p strong{font-size:22px}
+  .meter{display:none}
+  .pieceName span{display:none}
+  .pick{padding:16px 0}
+  .chosen{grid-template-columns:80px minmax(0,1fr);gap:12px}
   .price{grid-column:2;flex-direction:row;align-items:baseline;gap:8px;text-align:left}
   .price strong{font-size:18px}
+  .mention{display:none}
   .alts li{grid-template-columns:40px minmax(0,1fr) auto;row-gap:4px}
   .altPrice{grid-column:2;flex-direction:row;align-items:baseline;gap:6px}
   .swap{grid-column:3;grid-row:1/span 2}

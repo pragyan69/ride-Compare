@@ -5,7 +5,7 @@ import { checkedLabel, money, rankedOffers, type Product } from "@/lib/catalog";
 import { buildKits, buildPools } from "@/lib/kit";
 import { bikeIndex, findBike } from "@/lib/bikes";
 import { ProductImage } from "@/components/product-card";
-import { TopTen, TabbedRow, type Pick } from "./home-client";
+import { TopTen, TabbedRow, QuickBuild, type Pick } from "./home-client";
 import styles from "./home.module.css";
 
 export const revalidate = 21600;
@@ -108,18 +108,12 @@ export default async function Home() {
         </div>
         <div className={`wrap ${styles.heroInner}`}>
           <div className={styles.heroText}>
-            <p className={styles.heroBrand}>RideCompare</p>
             <h1>Gear up for less.</h1>
-            <p className={styles.heroLead}>Same helmet, different price.</p>
-            <p className={styles.heroSub}>We check {storeList.length} Indian stores every night so you don&apos;t have to.</p>
-            <div className={styles.heroActions}>
-              <Link href="/build" className={styles.heroCta}>
-                Build your kit <ChevronRight size={20} aria-hidden />
-              </Link>
-              <Link href="/gear" className={styles.heroGhost}>
-                Browse all gear
-              </Link>
-            </div>
+            <p className={styles.heroLead}>Same helmet, different price. We check {storeList.length} stores every night.</p>
+            <QuickBuild />
+            <Link href="/gear" className={styles.heroGhost}>
+              Or browse all {products.length.toLocaleString("en-IN")} products
+            </Link>
           </div>
           <div className={styles.heroArt} aria-hidden>
             <span className={styles.glow}>₹</span>
@@ -297,8 +291,8 @@ export default async function Home() {
           <h2>Stores we check every night</h2>
         </div>
         <ul className={styles.stores}>
-          {storeList.map((s) => (
-            <li key={s.id}>
+          {storeList.map((s, i) => (
+            <li key={s.id} className={i >= 6 ? styles.more : undefined}>
               <Link href={`/gear?store=${encodeURIComponent(s.id)}`}>
                 <span>{s.name}</span>
                 <small>{s.count.toLocaleString("en-IN")} products</small>
