@@ -13,6 +13,15 @@ export function snapshot() {
   return cached;
 }
 
+let photos: Promise<Record<string, string[]>> | undefined;
+
+/** Every photo the store published for a product, falling back to the catalog's single image. */
+export async function productPhotos(p: Pick<Product, "id" | "image">) {
+  photos ??= readFile(path.join(process.cwd(), "public/data/images.json"), "utf8")
+    .then((t) => JSON.parse(t) as Record<string, string[]>);
+  return (await photos)[p.id] ?? (p.image ? [p.image] : []);
+}
+
 export async function findProduct(id: string) {
   return (await snapshot()).products.find((p) => p.id === id);
 }

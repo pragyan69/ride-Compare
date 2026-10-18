@@ -44,7 +44,7 @@ def main():
   g=gtin(r.get('barcode',''))
   if g:barcode_usage[(s['id'],g)].add(r['sourceId'])
  bad={g for (sid,g),ids in barcode_usage.items() if len(ids)>1}
- products={};sourcekeys={};stores={s['id']:{'id':s['id'],'name':s['name'],'website':s['url'],'builtin':True} for s in sites}
+ products={};gallery={};sourcekeys={};stores={s['id']:{'id':s['id'],'name':s['name'],'website':s['url'],'builtin':True} for s in sites}
  for p in seed['products']:
   products[p['id']]=p
   for o in p['offers']:sourcekeys[(o['storeId'],str(o.get('variantId')))]=p['id']
@@ -60,6 +60,8 @@ def main():
   # Retain source endpoint provenance without putting remote prices into code.
   if r.get('fetchUrl'):offer.update(fetchUrl=r['fetchUrl'],variantId=r.get('variantId'))
   if key not in products:products[key]={'id':key,'name':r['name'],'brand':b,'category':category,'variant':variant,'image':r['image'],'offers':[],'variantCount':r.get('variantCount'),'matchType':matched}
+  # Extra photos go to a separate file so the catalog the gear page downloads stays small.
+  if len(r.get('images') or [])>1:gallery.setdefault(key,r['images'])
   p=products[key];p['offers']=[o for o in p['offers'] if o['storeId']!=s['id']]+[offer]
   if r.get('variantId') is not None:sourcekeys[(s['id'],str(r['variantId']))]=key
  # Keep exactly matched variants in curated comparisons and list all other source products independently.
@@ -74,6 +76,7 @@ def main():
  payload={'products':result,'stores':list(stores.values()),'brands':brandlist,'reports':reports,'summary':summary}
  dest=ROOT/'public/data/catalog.json';tmp=dest.with_suffix('.tmp');tmp.write_text(json.dumps(payload,ensure_ascii=False,separators=(',',':')));tmp.replace(dest)
  (ROOT/'data/crawl/report.json').write_text(json.dumps({'summary':summary,'reports':reports},ensure_ascii=False,indent=2))
+ (ROOT/'public/data/images.json').write_text(json.dumps({k:gallery[k] for k in products if k in gallery},ensure_ascii=False,separators=(',',':')))
  (ROOT/'public/data/brands.json').write_text(json.dumps(brandlist,ensure_ascii=False,indent=2))
  # Compact server-side identities keep imported offers from merging unrelated variants.
  (ROOT/'lib/crawl-index.json').write_text(json.dumps({'stores':list(stores.values()),'products':[{'id':p['id'],'name':p['name'],'brand':p['brand'],'variant':p['variant']} for p in result]},ensure_ascii=False,separators=(',',':')))

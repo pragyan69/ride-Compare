@@ -21,7 +21,7 @@ fi
 # Price history lives in Postgres; the connection string is kept out of git in crawler/.env.
 docker run --rm --network host --env-file crawler/.env -v "$PWD":/repo -w /repo ridecompare-crawler python crawler/history.py
 
-git add public/data/catalog.json public/data/brands.json lib/crawl-index.json data/crawl/report.json
+git add public/data/catalog.json public/data/images.json public/data/brands.json lib/crawl-index.json data/crawl/report.json
 git diff --cached --quiet && exit 0
 git commit -q -m "Refresh catalog snapshot $(date -u +%F)"
 git pull --rebase -q

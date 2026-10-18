@@ -63,9 +63,9 @@ def shopify_products(items,site,checked):
   v=valid[0];price=money(v['price']);variant=clean(v.get('title'))
   mrp=money(v.get('compare_at_price'));mrp=mrp if mrp and mrp>price else None
   if variant.lower()=='default title':variant='Standard'
-  imgs=item.get('images',[]);img=(imgs[0].get('src','') if imgs else '')
+  imgs=[i['src'] for i in item.get('images',[])[:6] if i.get('src')];img=imgs[0] if imgs else ''
   base=site['url']+'/products/'+item['handle'];url=base+'?variant='+str(v['id']);b=brand(item.get('vendor'),title,site.get('brand',''))
-  rows.append({'sourceId':str(item['id']),'name':title,'brand':b,'category':cat,'variant':variant,'image':img,'price':price,'mrp':mrp,'shipping':None,'inStock':bool(v.get('available')),'url':url,'checkedAt':checked,'variantId':v['id'],'fetchUrl':base+'.js','variantCount':len(valid),'options':[{'id':x['id'],'title':clean(x.get('title')),'price':money(x['price']),'inStock':bool(x.get('available')),'barcode':clean(x.get('barcode'))} for x in valid], 'barcode':clean(v.get('barcode'))})
+  rows.append({'sourceId':str(item['id']),'name':title,'brand':b,'category':cat,'variant':variant,'image':img,'images':imgs,'price':price,'mrp':mrp,'shipping':None,'inStock':bool(v.get('available')),'url':url,'checkedAt':checked,'variantId':v['id'],'fetchUrl':base+'.js','variantCount':len(valid),'options':[{'id':x['id'],'title':clean(x.get('title')),'price':money(x['price']),'inStock':bool(x.get('available')),'barcode':clean(x.get('barcode'))} for x in valid], 'barcode':clean(v.get('barcode'))})
  return rows
 
 def json_products(html,page_url,site,checked):
@@ -282,8 +282,8 @@ class Crawler:
     title=BeautifulSoup(item.get('name',''),'html.parser').get_text();cat=categorize(title)
     if not cat:continue
     brands=item.get('brands',[]);b=brands[0].get('name','') if brands else ''
-    img=(item.get('images') or [{}])[0].get('src','')
-    self.rows.append({'sourceId':str(item['id']),'name':title,'brand':brand(b,title,self.site.get('brand','')),'category':cat,'variant':item.get('variation') or 'Check size / colour at store','image':img,'price':price,'mrp':mrp,'shipping':None,'inStock':item.get('is_in_stock'),'url':item['permalink'],'checkedAt':now(),'variantCount':None,'options':[],'barcode':''})
+    imgs=[i['src'] for i in (item.get('images') or [])[:6] if i.get('src')];img=imgs[0] if imgs else ''
+    self.rows.append({'sourceId':str(item['id']),'name':title,'brand':brand(b,title,self.site.get('brand','')),'category':cat,'variant':item.get('variation') or 'Check size / colour at store','image':img,'images':imgs,'price':price,'mrp':mrp,'shipping':None,'inStock':item.get('is_in_stock'),'url':item['permalink'],'checkedAt':now(),'variantCount':None,'options':[],'barcode':''})
    if len(items)<100:self.report['complete']=True;return
    if page%10==0:print(f"{self.site['id']}: {len(self.rows)} catalog listings",flush=True)
   self.report['notes'].append(f'Reached {self.args.max_feed_pages} public feed pages; more may remain.')

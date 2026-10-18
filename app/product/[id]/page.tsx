@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
-import { ProductCard, ProductImage } from "@/components/product-card";
+import { ProductCard } from "@/components/product-card";
 import { checkedLabel, money, rankedOffers, type Offer, type Product } from "@/lib/catalog";
-import { findProduct, snapshot } from "@/lib/catalog-server";
+import { findProduct, productPhotos, snapshot } from "@/lib/catalog-server";
 import { query } from "@/lib/db";
+import { Gallery } from "./gallery";
 import { PriceChart, dateLabel, type HistoryPoint } from "./price-chart";
 import styles from "./page.module.css";
 
@@ -84,7 +85,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProductPage({ params }: Props) {
   const p = await load(params);
   if (!p) notFound();
-  const [data, hist] = await Promise.all([snapshot(), history(p.id)]);
+  const [data, hist, photos] = await Promise.all([snapshot(), history(p.id), productPhotos(p)]);
   const offers = rankedOffers(p);
   const lowest = offers.length > 1 && offers[0].inStock !== false ? offers[0] : undefined;
   const prices = p.offers.map((o) => o.price);
@@ -98,7 +99,7 @@ export default async function ProductPage({ params }: Props) {
     name,
     ...(p.brand !== "Unspecified" && { brand: { "@type": "Brand", name: p.brand } }),
     category: p.category,
-    ...(p.image && { image: p.image }),
+    ...(photos.length > 0 && { image: photos }),
     description: `${name}, ${p.variant}`,
     offers: {
       "@type": "AggregateOffer",
@@ -126,9 +127,7 @@ export default async function ProductPage({ params }: Props) {
       </nav>
 
       <section className={styles.top}>
-        <div className={styles.image}>
-          <ProductImage p={{ image: p.image }} />
-        </div>
+        <Gallery photos={photos} name={name} />
 
         <div className={styles.info}>
           {p.brand !== "Unspecified" && <p className={styles.brand}>{p.brand}</p>}
