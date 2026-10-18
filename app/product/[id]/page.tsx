@@ -87,7 +87,7 @@ export default async function ProductPage({ params }: Props) {
   if (!p) notFound();
   const [data, hist, photos] = await Promise.all([snapshot(), history(p.id), productPhotos(p)]);
   const offers = rankedOffers(p);
-  const lowest = offers.length > 1 && offers[0].inStock !== false ? offers[0] : undefined;
+  const lowest = offers.length > 1 && offers[0].inStock !== false && offers[0].price < offers[1].price ? offers[0] : undefined;
   const prices = p.offers.map((o) => o.price);
   const storeName = (id: string) => p.offers.find((o) => o.storeId === id)?.storeName ?? data.stores.find((s) => s.id === id)?.name ?? id;
   const more = related(p, data.products);
@@ -133,7 +133,7 @@ export default async function ProductPage({ params }: Props) {
           {p.brand !== "Unspecified" && <p className={styles.brand}>{p.brand}</p>}
           <h1 className={styles.name}>{p.name}</h1>
           <p className={styles.variant}>
-            {p.variant} <span aria-hidden>·</span> {p.category}
+            {offers.length > 1 ? p.category : `${p.variant} · ${p.category}`}
           </p>
 
           <h2 className={styles.sectionTitle}>
@@ -150,6 +150,7 @@ export default async function ProductPage({ params }: Props) {
                       {o.storeName}
                       {isLowest && <span className={styles.badge}>Lowest price</span>}
                     </strong>
+                    {offers.length > 1 && o.variant && !["Standard", "Check size / colour at store"].includes(o.variant) && <span>{o.variant}</span>}
                     <span className={o.inStock === false ? styles.out : o.inStock ? styles.in : undefined}>{stockLabel(o)}</span>
                     <span className={styles.checked}>Price checked {checkedLabel(o.checkedAt)}</span>
                   </div>
@@ -174,7 +175,7 @@ export default async function ProductPage({ params }: Props) {
             })}
           </ul>
           <p className={styles.honesty}>
-            Price for the size and colour shown. Other sizes and colours can cost more or less. Shipping and coupons aren&apos;t included.
+            Price for the size and colour listed. Other sizes and colours can cost more or less. Shipping and coupons aren&apos;t included.
           </p>
         </div>
       </section>

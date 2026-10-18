@@ -9,12 +9,19 @@ def gtin(s):
  if not s.isdigit() or len(s) not in [8,12,13,14] or len(set(s))<3:return ''
  total=sum(int(n)*(3 if i%2==0 else 1) for i,n in enumerate(reversed(s[:-1])))
  return s.zfill(14) if (10-total%10)%10==int(s[-1]) else ''
+# Words that stores add or drop around the same model name; sizes are left out because the
+# variant each store shows first is arbitrary, and colour stays in so colourways stay apart.
+FILLER={'helmet','helmets','motorcycle','motorbike','bike','riding','for','with','and','the','of','new','men','mens','unisex','a','in','size','full','face','edition','version','v','by'}
+SIZES={'xxs','xs','s','m','l','xl','xxl','xxxl','2xl','3xl','4xl','small','medium','large'}
+SYNONYMS={'ii':'2','iii':'3','iv':'4','matte':'matt','gloss':'glossy','grey':'gray'}
+def model_words(brand,name):
+ words={SYNONYMS.get(w,w) for w in (' '+norm(name)+' ').replace(' '+norm(brand)+' ',' ').split()}
+ return ' '.join(sorted(words-FILLER-SIZES))
 def product_key(site,row,bad,sourcekeys):
- b=row['brand'];variant=row['variant'];g=gtin(row.get('barcode',''));matched='retailer'
+ b=row['brand'];g=gtin(row.get('barcode',''));matched='retailer'
+ words=model_words(b,row['name']) if b!='Unspecified' else ''
  if g and g not in bad and b!='Unspecified':key='gtin-'+slug(b)+'-'+g;matched='barcode'
- elif b!='Unspecified' and variant not in ['Standard','Check size / colour at store']:
-  identity=norm(b)+'|'+norm(row['name'])+'|'+norm(variant)
-  key='exact-'+hashlib.sha1(identity.encode()).hexdigest()[:20];matched='exact'
+ elif words:key='model-'+slug(b)+'-'+hashlib.sha1(words.encode()).hexdigest()[:16];matched='model'
  else:key=site['id']+'-'+row['sourceId']
  if row.get('variantId') is not None:key=sourcekeys.get((site['id'],str(row['variantId'])),key)
  return key,matched
@@ -56,13 +63,19 @@ def main():
   category=categorize(r['name'])
   if category is None:continue
   b=r['brand'];variant=r['variant'];key,matched=product_key(s,r,bad,sourcekeys)
-  offer={'storeId':s['id'],'storeName':s['name'],'price':r['price'],'mrp':r.get('mrp'),'shipping':r.get('shipping'),'inStock':r['inStock'],'url':r['url'],'checkedAt':r['checkedAt'],'source':'crawl'}
+  offer={'storeId':s['id'],'storeName':s['name'],'variant':variant,'price':r['price'],'mrp':r.get('mrp'),'shipping':r.get('shipping'),'inStock':r['inStock'],'url':r['url'],'checkedAt':r['checkedAt'],'source':'crawl'}
   # Retain source endpoint provenance without putting remote prices into code.
   if r.get('fetchUrl'):offer.update(fetchUrl=r['fetchUrl'],variantId=r.get('variantId'))
+  # A price far from the other stores' means a different item that shares the name, like a spare part.
+  others=[o['price'] for o in products[key]['offers'] if o['storeId']!=s['id']] if key in products else []
+  if others and not min(others)/2.5<=r['price']<=max(others)*2.5:key,matched=s['id']+'-'+r['sourceId'],'retailer'
   if key not in products:products[key]={'id':key,'name':r['name'],'brand':b,'category':category,'variant':variant,'image':r['image'],'offers':[],'variantCount':r.get('variantCount'),'matchType':matched}
   # Extra photos go to a separate file so the catalog the gear page downloads stays small.
   if len(r.get('images') or [])>1:gallery.setdefault(key,r['images'])
-  p=products[key];p['offers']=[o for o in p['offers'] if o['storeId']!=s['id']]+[offer]
+  p=products[key];same=[o for o in p['offers'] if o['storeId']==s['id']]
+  # A store listing one model twice (per size or colour) keeps its cheaper listing.
+  if same and same[0]['price']<=offer['price']:continue
+  p['offers']=[o for o in p['offers'] if o['storeId']!=s['id']]+[offer]
   if r.get('variantId') is not None:sourcekeys[(s['id'],str(r['variantId']))]=key
  # Keep exactly matched variants in curated comparisons and list all other source products independently.
  result=list(products.values());brands=collections.defaultdict(lambda:{'count':0,'stores':set(),'categories':set()});cats=collections.Counter()
