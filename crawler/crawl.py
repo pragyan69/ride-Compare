@@ -160,9 +160,14 @@ class Crawler:
  async def request(self,url,robots=False):
   if time.monotonic()-self.started>self.args.max_seconds:raise CrawlBlocked('Collection time limit reached; an additional crawl may find more listings.')
   if not robots and self.robots and not self.robots.can_fetch(BOT,url):raise CrawlBlocked('robots.txt disallows this URL')
-  await asyncio.sleep(max(0,self.delay-(time.monotonic()-self.last)));self.last=time.monotonic()
-  response=await self.ctx.request.get(url,timeout=25000,max_redirects=4)
-  status=response.status
+  # Shopify answers 429 to the whole server IP for a while after heavy use; wait it out and slow down.
+  for wait in [30,90,240,0]:
+   await asyncio.sleep(max(0,self.delay-(time.monotonic()-self.last)));self.last=time.monotonic()
+   response=await self.ctx.request.get(url,timeout=25000,max_redirects=4)
+   status=response.status
+   if status!=429 or not wait:break
+   await response.dispose();retry=response.headers.get('retry-after','')
+   self.delay=max(self.delay,3.0);await asyncio.sleep(int(retry) if retry.isdigit() and int(retry)<600 else wait)
   content_type=response.headers.get('content-type','')
   if any(content_type.startswith(t) for t in ['image/','video/','audio/','application/pdf']):
    await response.dispose();return 415,''
