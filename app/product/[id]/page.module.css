@@ -7,6 +7,11 @@
 .top{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:56px;align-items:start;margin-top:24px}
 .image{position:sticky;top:88px;display:grid;place-items:center;aspect-ratio:1;border-radius:18px;background:var(--well);overflow:hidden}
 .image img{width:100%;height:100%;object-fit:contain;padding:10%;mix-blend-mode:multiply}
+.image{cursor:zoom-in}
+.image img{transition:transform .2s ease;transform-origin:var(--origin,50% 50%)}
+.image[data-zoomed="true"]{cursor:zoom-out;touch-action:none}
+.image[data-zoomed="true"] img{transform:scale(2.5)}
+.track[data-zoomed="true"]{overflow-x:hidden}
 
 .gallery{position:sticky;top:88px;min-width:0}
 .track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;border-radius:18px;scrollbar-width:none}

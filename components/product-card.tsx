@@ -4,11 +4,19 @@ import Link from "next/link";
 import { Package } from "lucide-react";
 import { money, rankedOffers, type Product } from "@/lib/catalog";
 
-export function ProductImage({ p }: { p: Pick<Product, "image"> }) {
+/** Shopify's CDN resizes on request; store photos are often 1500-3000px wide. */
+function sized(src: string, width: number) {
+  if (!/cdn\.shopify\.com|\/cdn\/shop\//.test(src)) return src;
+  const url = new URL(src);
+  url.searchParams.set("width", String(width));
+  return url.toString();
+}
+
+export function ProductImage({ p, width = 600 }: { p: Pick<Product, "image">; width?: number }) {
   const [broken, setBroken] = useState(false);
   return p.image && !broken ? (
     // eslint-disable-next-line @next/next/no-img-element -- product photos come from many store CDNs
-    <img src={p.image} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setBroken(true)} />
+    <img src={sized(p.image, width)} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setBroken(true)} />
   ) : (
     <Package className="image-missing" size={40} strokeWidth={1} aria-hidden />
   );

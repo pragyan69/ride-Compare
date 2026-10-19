@@ -61,7 +61,19 @@ export default async function Home() {
     count: products.filter((p) => p.category === t.name).length,
     product: products.find((p) => p.category === t.name && good(p) && t.match.test(p.name)),
   }));
-  const floaters = ["Helmets", "Jackets", "Gloves", "Boots", "Luggage"].map((c) => tiles.find((t) => t.name === c)?.product).filter(Boolean) as Product[];
+  // The pitch in one picture: real products sold at several stores, with what you save by picking the cheapest.
+  const candidates = new Map(
+    products
+      .filter((p) => ["Helmets", "Jackets", "Gloves", "Boots"].includes(p.category) && good(p))
+      .map((p) => {
+        const offers = rankedOffers(p).filter((o) => o.inStock !== false).slice(0, 3);
+        return { p, offers, save: offers.length > 1 ? offers[offers.length - 1].price - offers[0].price : 0 };
+      })
+      .filter((c) => c.save >= 200 && c.save < c.offers[0].price)
+      .sort((a, b) => b.save - a.save)
+      .map((c) => [c.p, c] as const),
+  );
+  const compares = pickVaried([...candidates.keys()], 3, 1).map((p) => candidates.get(p)!);
 
   const touring = /touring|adventure|waterproof|\bwp\b|all.?season|rally|tour/i;
   const roadTabs = ["Jackets", "Gloves", "Boots", "Luggage", "Helmets"]
@@ -115,15 +127,31 @@ export default async function Home() {
               Or browse all {products.length.toLocaleString("en-IN")} products
             </Link>
           </div>
-          <div className={styles.heroArt} aria-hidden>
-            <span className={styles.glow}>₹</span>
-            {floaters.map((p, i) => (
-              <span key={p.id} className={styles.floater} data-i={i}>
-                <ProductImage p={p} />
-                <small>{money(price(p))}</small>
-              </span>
-            ))}
-          </div>
+          {compares.length > 0 && (
+            <div className={styles.deck}>
+              {compares.map(({ p, offers, save }, i) => (
+                <Link key={p.id} href={`/product/${encodeURIComponent(p.id)}`} className={styles.compare} data-i={i} tabIndex={i === 0 ? 0 : -1} aria-hidden={i !== 0}>
+                  <span className={styles.compareImage}>
+                    <span className={styles.compareTag}>Same item · {offers.length} stores</span>
+                    <ProductImage p={p} />
+                  </span>
+                  <span className={styles.compareBody}>
+                    <small>{p.brand}</small>
+                    <strong>{p.name}</strong>
+                    <span className={styles.compareRows}>
+                      {offers.map((o, j) => (
+                        <span key={o.storeId} data-low={j === 0}>
+                          {o.storeName}
+                          <b>{money(o.price)}</b>
+                        </span>
+                      ))}
+                    </span>
+                    <span className={styles.compareSave}>Save {money(save)} at {offers[0].storeName}</span>
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
         {summary && <p className={styles.heroStamp}>Checked {checkedLabel(summary.generatedAt)}</p>}
       </section>
