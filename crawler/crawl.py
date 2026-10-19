@@ -10,12 +10,20 @@ from pathlib import Path
 from urllib.parse import urljoin, urlparse, unquote
 from urllib.robotparser import RobotFileParser
 import xml.etree.ElementTree as ET
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError
 from bs4 import BeautifulSoup
 from playwright.async_api import async_playwright
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'data/crawl/raw'
 BOT='RideCompareBot'
+UA='Mozilla/5.0 (compatible; RideCompareBot/1.0; public product comparison)'
+# Shopify answers 429 to Playwright's request client but not to a plain HTTP client with the same agent.
+def fetch(url):
+ try:r=urlopen(Request(url,headers={'User-Agent':UA,'Accept-Language':'en-IN'}),timeout=25)
+ except HTTPError as e:r=e
+ with r:return r.status,r.headers,r.read(12*1024*1024+1)
 CATEGORIES=['Helmets','Helmet Accessories','Jackets','Gloves','Pants','Boots','Luggage','Riding Apparel','Protection','Electronics','Bike Accessories','Maintenance & Parts']
 BRAND_ALIASES={'rynox gears':'Rynox','rynox gear':'Rynox','rynox':'Rynox','axor helmets':'Axor','axor':'Axor','viaterra gear':'ViaTerra','viaterra':'ViaTerra','via terra':'ViaTerra','mt helmets':'MT Helmets','mt':'MT Helmets','smk helmets':'SMK','smk':'SMK','ls2 helmets':'LS2','ls2':'LS2','dsg':'DSG','dream sporting gear':'DSG','motul':'Motul','vega':'Vega','raida':'Raida','solace':'Solace','solace riding gear':'Solace','clan':'Clan','agv helmets':'AGV','agv':'AGV','steelbird':'Steelbird','royal enfield':'Royal Enfield','royalenfield':'Royal Enfield','jb racing':'JB Racing','legundary custom':'Legundary Custom','reisemoto':'Reise','reise':'Reise'}
 KNOWN=['Alpinestars','Dainese','Rynox','ViaTerra','Axor','Vega','Steelbird','SMK','LS2','MT Helmets','KYT','AGV','Bell','Shoei','Arai','Shark','HJC','Richa','Rev\'it','Revit','Racer','Spidi','Solace','Raida','DSG','Cramster','Clan','Reise','Motul','Muc-Off','Liqui Moly','Putoline','Motorex','BBG','BBGears','Korda','Klim','Rukka','Ixon','Furygan','Barkbusters','SW-Motech','Givi','Shad','BMC','K&N','NGK','Bobo','Maddog','HJG','Zana','Legundary','JB Racing','Sena','Cardo','Bluarmor','Carbonado','DirtSack','Dirtsack','Rage','Rynox','Bikeratti','Ridetek','Scoyco','Tarmac','Mototech','Royal Enfield','Fego','Grand Pitstop','Grandpitstop','Acerbis','Leatt','Forma','TCX','R&G','Evotech','RAM Mounts','Quad Lock','Kriega','Lone Ranger','Tiivra','Scala','Bolt','Enduristan','Wurth','Stalwart','Studds','Ignyte','Royal Enfield X Alpinestars']
@@ -163,20 +171,18 @@ class Crawler:
   # Shopify answers 429 to the whole server IP for a while after heavy use; wait it out and slow down.
   for wait in [30,90,240,0]:
    await asyncio.sleep(max(0,self.delay-(time.monotonic()-self.last)));self.last=time.monotonic()
-   response=await self.ctx.request.get(url,timeout=25000,max_redirects=4)
-   status=response.status
+   status,headers,raw=await asyncio.to_thread(fetch,url)
    if status!=429 or not wait:break
-   await response.dispose();retry=response.headers.get('retry-after','')
+   retry=headers.get('retry-after','')
    self.delay=max(self.delay,3.0);await asyncio.sleep(int(retry) if retry.isdigit() and int(retry)<600 else wait)
-  content_type=response.headers.get('content-type','')
-  if any(content_type.startswith(t) for t in ['image/','video/','audio/','application/pdf']):
-   await response.dispose();return 415,''
-  body=await response.text();await response.dispose()
+  content_type=headers.get('content-type','')
+  if any(content_type.startswith(t) for t in ['image/','video/','audio/','application/pdf']):return 415,''
+  body=raw.decode(headers.get_content_charset() or 'utf-8','replace')
   if not robots:self.report['pages']+=1
   if status in [401,403,429]:raise CrawlBlocked(f'HTTP {status}: retailer access restriction')
   if status==202:raise CrawlBlocked('HTTP 202: retailer did not return a readable catalog page')
   if status>=500:raise CrawlBlocked(f'HTTP {status}: retailer temporarily unavailable')
-  if len(body)>12*1024*1024:raise CrawlBlocked('Page exceeds the 12 MB response limit')
+  if len(raw)>12*1024*1024:raise CrawlBlocked('Page exceeds the 12 MB response limit')
   return status,body
  async def run(self):
   path=OUT/(self.site['id']+'.json')
@@ -353,7 +359,7 @@ async def main(args):
    path=OUT/(site['id']+'.json')
    if args.resume and path.exists():return json.loads(path.read_text())
    async with semaphore:
-    ctx=await browser.new_context(user_agent='Mozilla/5.0 (compatible; RideCompareBot/1.0; public product comparison)',locale='en-IN')
+    ctx=await browser.new_context(user_agent=UA,locale='en-IN')
     try:return await Crawler(ctx,site,args).run()
     finally:await ctx.close()
   await asyncio.gather(*(one(s) for s in sites));await browser.close()
