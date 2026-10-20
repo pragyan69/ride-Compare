@@ -1,0 +1,22 @@
+# Fallback scheduler. The Worker already refreshes itself through its cron
+# trigger (vite.config.ts → triggers.crons). If the hosting platform does not
+# run cron triggers, set two repository secrets and enable this workflow:
+#   SITE_URL       e.g. https://your-site.example
+#   REFRESH_TOKEN  the same value configured as the Worker's REFRESH_TOKEN variable
+name: Refresh catalog
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+jobs:
+  refresh:
+    if: ${{ vars.ENABLE_REFRESH_WORKFLOW == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call /api/refresh
+        run: |
+          curl --fail --silent --show-error --max-time 600 \
+            -H "Authorization: Bearer ${{ secrets.REFRESH_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -X POST "${{ secrets.SITE_URL }}/api/refresh" \
+            -d '{"pages":80}'
