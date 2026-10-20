@@ -4,118 +4,247 @@
     "name": "Amazon India",
     "url": "https://www.amazon.in",
     "start": "https://www.amazon.in/s?k=motorcycle+riding+gear",
-    "kind": "marketplace"
+    "kind": "marketplace",
+    "platform": "blocked",
+    "enabled": false,
+    "note": "Amazon returns HTTP 403 to automated catalog requests. Needs the official Product Advertising API."
   },
   {
     "id": "flipkart",
     "name": "Flipkart",
     "url": "https://www.flipkart.com",
     "start": "https://www.flipkart.com/search?q=motorcycle%20riding%20gear",
-    "kind": "marketplace"
+    "kind": "marketplace",
+    "platform": "blocked",
+    "enabled": false,
+    "note": "Flipkart exposes no public catalog feed; search pages are script-rendered and rate limited. Needs the affiliate API."
   },
   {
     "id": "royal-enfield",
     "name": "Royal Enfield",
     "url": "https://royalenfield.store",
     "start": "https://royalenfield.store/in/en/riding",
-    "brand": "Royal Enfield"
+    "brand": "Royal Enfield",
+    "platform": "blocked",
+    "enabled": false,
+    "note": "royalenfield.store returns HTTP 403 (Access Denied) to automated requests."
   },
   {
     "id": "rynox",
     "name": "Rynox Gear",
     "url": "https://rynoxgear.com",
-    "brand": "Rynox"
+    "brand": "Rynox",
+    "platform": "shopify"
   },
   {
     "id": "bandidos",
     "name": "Bandidos Pitstop",
-    "url": "https://bandidospitstop.com"
+    "url": "https://bandidospitstop.com",
+    "platform": "shopify"
   },
   {
     "id": "lrl",
     "name": "LRL Motors",
-    "url": "https://lrlmotors.com"
+    "url": "https://lrlmotors.com",
+    "platform": "shopify"
   },
   {
     "id": "motocentral",
     "name": "Moto Central",
-    "url": "https://motocentral.in"
+    "url": "https://motocentral.in",
+    "platform": "shopify"
   },
   {
     "id": "powersports",
     "name": "PowerSports",
-    "url": "https://powersports.in"
+    "url": "https://powersports.in",
+    "platform": "shopify"
   },
   {
     "id": "bikester",
     "name": "Bikester Global",
-    "url": "https://bikesterglobal.com"
+    "url": "https://bikesterglobal.com",
+    "platform": "shopify"
   },
   {
     "id": "custom-elements",
     "name": "Custom Elements",
-    "url": "https://www.customelements.in"
+    "url": "https://www.customelements.in",
+    "platform": "woocommerce",
+    "note": "Moved from Shopify to WooCommerce in 2026; read through the public Store API."
   },
   {
     "id": "store4riders",
     "name": "Store4Riders",
-    "url": "https://www.store4riders.com"
+    "url": "https://www.store4riders.com",
+    "platform": "magento-graphql"
   },
   {
     "id": "viaterra",
     "name": "ViaTerra",
     "url": "https://viaterragear.com",
-    "brand": "ViaTerra"
+    "brand": "ViaTerra",
+    "platform": "shopify"
   },
   {
     "id": "axor",
     "name": "Axor Helmets",
     "url": "https://axorhelmets.com",
-    "brand": "Axor"
+    "brand": "Axor",
+    "platform": "shopify"
   },
   {
     "id": "vega",
     "name": "Vega Helmets",
     "url": "https://vegaauto.com",
-    "brand": "Vega"
+    "brand": "Vega",
+    "platform": "shopify"
   },
   {
     "id": "steelbird",
     "name": "Steelbird Helmets",
     "url": "https://www.steelbirdhelmet.com",
-    "brand": "Steelbird"
+    "brand": "Steelbird",
+    "platform": "blocked",
+    "enabled": false,
+    "note": "Custom storefront with no public feed; only a handful of listings are readable."
   },
   {
     "id": "smk",
     "name": "SMK Helmets",
     "url": "https://smkhelmets.com",
-    "brand": "SMK"
+    "brand": "SMK",
+    "platform": "blocked",
+    "enabled": false,
+    "note": "No extractable INR offers on smkhelmets.com; SMK products are covered through retailers."
   },
   {
     "id": "solace",
     "name": "Solace Riding Gear",
     "url": "https://solacegears.com",
-    "brand": "Solace"
+    "brand": "Solace",
+    "platform": "shopify"
   },
   {
     "id": "planet-dsg",
     "name": "Planet DSG",
-    "url": "https://planetdsg.com"
+    "url": "https://planetdsg.com",
+    "platform": "shopify"
   },
   {
     "id": "reisemoto",
     "name": "ReiseMoto",
-    "url": "https://www.reisemoto.com"
+    "url": "https://www.reisemoto.com",
+    "platform": "shopify"
   },
   {
     "id": "raida",
     "name": "Raida Gears",
     "url": "https://raidagears.com",
-    "brand": "Raida"
+    "brand": "Raida",
+    "platform": "woocommerce",
+    "note": "Moved from Shopify to WooCommerce in 2026; read through the public Store API."
   },
   {
     "id": "slickshop",
     "name": "Slickshop",
-    "url": "https://slickshop.in"
+    "url": "https://slickshop.in",
+    "platform": "woocommerce"
+  },
+  {
+    "id": "riders-india",
+    "name": "Riders India",
+    "url": "https://www.ridersindia.com",
+    "platform": "shopify"
+  },
+  {
+    "id": "riderz-planet",
+    "name": "Riderz Planet",
+    "url": "https://www.riderzplanet.com",
+    "platform": "shopify"
+  },
+  {
+    "id": "high-note",
+    "name": "High Note Performance",
+    "url": "https://highnoteperformance.com",
+    "platform": "shopify"
+  },
+  {
+    "id": "motomodz",
+    "name": "MotoModz",
+    "url": "https://www.motomodz.com",
+    "platform": "shopify"
+  },
+  {
+    "id": "moto-usher",
+    "name": "Moto Usher",
+    "url": "https://motousher.com",
+    "platform": "shopify"
+  },
+  {
+    "id": "bachoo",
+    "name": "Bachoo Motors",
+    "url": "https://www.bachoomotors.com",
+    "platform": "shopify"
+  },
+  {
+    "id": "big-bad-bikes",
+    "name": "Big Bad Bikes",
+    "url": "https://bigbadbikes.com",
+    "platform": "woocommerce"
+  },
+  {
+    "id": "bbg",
+    "name": "Biking Brotherhood Gears",
+    "url": "https://bikingbrotherhood.com",
+    "brand": "BBG",
+    "platform": "woocommerce"
+  },
+  {
+    "id": "tiivra",
+    "name": "Tiivra",
+    "url": "https://tiivra.com",
+    "brand": "Tiivra",
+    "platform": "shopify"
+  },
+  {
+    "id": "grand-pitstop",
+    "name": "Grand Pitstop",
+    "url": "https://grandpitstop.com",
+    "brand": "Grand Pitstop",
+    "platform": "shopify"
+  },
+  {
+    "id": "superbike-store",
+    "name": "Superbike Store",
+    "url": "https://superbikestore.in",
+    "platform": "shopify"
+  },
+  {
+    "id": "helmet-racing",
+    "name": "Helmet Racing",
+    "url": "https://helmetracing.in",
+    "platform": "woocommerce"
+  },
+  {
+    "id": "gear-n-ride",
+    "name": "Gear n Ride",
+    "url": "https://gearnride.in",
+    "platform": "woocommerce",
+    "pageSize": 10,
+    "note": "robots.txt disallows per_page parameters, so the public Store API is read ten products per page."
+  },
+  {
+    "id": "bikegear",
+    "name": "BikeGear",
+    "url": "https://bikegear.in",
+    "platform": "opencart"
+  },
+  {
+    "id": "kyt-india",
+    "name": "KYT India",
+    "url": "https://www.kytindia.com",
+    "platform": "kyt",
+    "brand": "KYT"
   }
 ]

@@ -52,3 +52,5 @@ next-env.d.ts
 **/__pycache__/
 *.pyc
 .gstack/
+/data/crawl/catalog.json
+/data/crawl/brands.json
