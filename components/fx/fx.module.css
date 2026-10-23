@@ -1,0 +1,251 @@
+/* Race line (tracing beam) */
+.raceLine {
+  position: fixed;
+  left: 18px;
+  top: 14vh;
+  height: 72vh;
+  width: 40px;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.raceLine[data-shown] {
+  opacity: 1;
+}
+.raceTrack {
+  position: relative;
+  height: 100%;
+}
+.raceLine svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.trackBed,
+.trackKerb,
+.trackLit {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+.trackBed {
+  stroke: #000;
+  stroke-width: 10px;
+  stroke-linecap: round;
+}
+.trackKerb {
+  stroke: rgba(255, 255, 255, 0.55);
+  stroke-width: 1.2px;
+  stroke-dasharray: 4 6;
+}
+.trackLit {
+  stroke: var(--brand);
+  stroke-width: 3.5px;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 3px rgba(23, 138, 3, 0.55));
+  transition: stroke 0.3s;
+}
+.raceLine[data-on-dark] .trackLit {
+  stroke: var(--signal);
+  filter: drop-shadow(0 0 4px rgba(44, 240, 5, 0.9));
+}
+.raceLine[data-on-dark] .trackBed {
+  stroke: rgba(255, 255, 255, 0.1);
+}
+.rider {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: var(--brand);
+  box-shadow: 0 0 0 3px #fff, 0 0 0 4px var(--ink), 0 0 10px 2px rgba(23, 138, 3, 0.5);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.raceLine[data-on-dark] .rider {
+  background: var(--ink);
+  box-shadow: 0 0 0 3px var(--signal), 0 0 14px 4px rgba(44, 240, 5, 0.7);
+}
+.flag {
+  position: absolute;
+  left: 50%;
+  bottom: -18px;
+  width: 22px;
+  height: 14px;
+  translate: -50% 0;
+  background: conic-gradient(#000 25%, #fff 0 50%, #000 0 75%, #fff 0) 0 0 / 7px 7px;
+}
+@media (max-width: 1439px) {
+  .raceLine {
+    display: none;
+  }
+}
+
+/* Flip words */
+.flip {
+  position: relative;
+  display: inline-block;
+}
+.flip > span {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* Movie looks carousel */
+.movies {
+  position: relative;
+}
+.movieRail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 240px;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  --edge: max(32px, calc((100vw - 1320px) / 2 + 32px));
+  padding: 4px var(--edge) 8px;
+  scroll-padding-inline: var(--edge);
+}
+.movieRail::-webkit-scrollbar {
+  display: none;
+}
+.movieCard {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  border-radius: 20px;
+  overflow: hidden;
+  scroll-snap-align: start;
+  background: var(--well);
+  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
+}
+.movieCard img {
+  object-fit: cover;
+  transition: transform 0.6s var(--ease);
+}
+.movieCard:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 40px -18px rgba(13, 15, 14, 0.5), 0 0 0 2px var(--signal);
+}
+.movieCard:hover img {
+  transform: scale(1.05);
+}
+.movieShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.85));
+}
+.movieText {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #fff;
+}
+.movieText small {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+.movieText strong {
+  font-size: 18px;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.movieText span {
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.movieText s {
+  margin-left: 8px;
+  font-weight: 400;
+  opacity: 0.6;
+}
+.movieNav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px max(32px, calc((100vw - 1320px) / 2 + 32px)) 0;
+}
+.movieNav button {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  transition: background 0.2s, border-color 0.2s;
+}
+.movieNav button:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+@media (max-width: 760px) {
+  .movieRail {
+    grid-auto-columns: 62vw;
+    padding-inline: 16px;
+    scroll-padding-inline: 16px;
+  }
+  .movieNav {
+    display: none;
+  }
+}
+
+/* Tyre tread divider */
+.tread {
+  height: 22px;
+  margin: 8px 0;
+}
+.tread {
+  background:
+    repeating-linear-gradient(115deg, transparent 0 8px, rgba(13, 15, 14, 0.14) 8px 16px, transparent 16px 24px) top / 100% 50% no-repeat,
+    repeating-linear-gradient(65deg, transparent 0 8px, rgba(13, 15, 14, 0.14) 8px 16px, transparent 16px 24px) bottom / 100% 50% no-repeat;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);
+}
+.tread[data-tone="dark"] {
+  background:
+    repeating-linear-gradient(115deg, transparent 0 8px, rgba(44, 240, 5, 0.35) 8px 16px, transparent 16px 24px) top / 100% 50% no-repeat,
+    repeating-linear-gradient(65deg, transparent 0 8px, rgba(44, 240, 5, 0.35) 8px 16px, transparent 16px 24px) bottom / 100% 50% no-repeat;
+}
+
+/* Infinite brand marquee */
+.marquee {
+  --gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.marqueeRow {
+  display: flex;
+  gap: var(--gap);
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+.marqueeRow[data-reverse="true"] {
+  animation-direction: reverse;
+}
+.marquee:hover .marqueeRow {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(calc(-50% - var(--gap) / 2));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marqueeRow {
+    animation: none;
+  }
+}

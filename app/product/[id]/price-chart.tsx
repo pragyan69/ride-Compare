@@ -3,7 +3,7 @@ import styles from "./page.module.css";
 
 export type HistoryPoint = { storeId: string; price: number; mrp: number | null; inStock: boolean | null; at: number };
 
-const colors = ["#1d4a39", "#c0562b", "#2f5fb3", "#8a5a00", "#7b3fa0", "#2b7f86"];
+const colors = ["#178a03", "#c0562b", "#2f5fb3", "#8a5a00", "#7b3fa0", "#2b7f86"];
 const W = 1000;
 const H = 280;
 const day = 24 * 60 * 60 * 1000;

@@ -36,22 +36,25 @@ const columns = [
       ["All gear", "/gear"],
     ],
   },
-  {
-    title: "About",
-    links: [
-      ["How we keep it honest", "/#honest"],
-      ["Stores we check", "/#stores"],
-    ],
-  },
 ];
 
 export function SiteFooter() {
   return (
-    <footer className="site-footer">
-      <div className="wrap">
-        <Link href="/" className="footer-logo" aria-label="RideCompare home">
-          <Logo small />
-        </Link>
+    <footer className="site-footer" data-dark>
+      <div className="wrap footer-top">
+        <div className="footer-brand">
+          <Link href="/" className="footer-logo" aria-label="RideCompare home">
+            <Logo dark />
+          </Link>
+          <p>Same gear. Lowest price. Checked every night across Indian stores.</p>
+          <a href="https://www.instagram.com/ridecompare26/" target="_blank" rel="noopener noreferrer" className="footer-social" aria-label="RideCompare on Instagram">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" />
+              <circle cx="12" cy="12" r="4.2" />
+              <circle cx="17.4" cy="6.6" r="0.6" fill="currentColor" />
+            </svg>
+          </a>
+        </div>
         <div className="footer-cols">
           {columns.map((c) => (
             <nav key={c.title} aria-label={c.title}>
@@ -69,9 +72,17 @@ export function SiteFooter() {
       </div>
       <div className="footer-base">
         <div className="wrap">
-          <p>Prices come from each store&apos;s public listings and are checked every night. Shipping, coupons and bank offers aren&apos;t included, so confirm the final price at the store.</p>
-          <p>© {new Date().getFullYear()} RideCompare. Made for riders in India.</p>
+          <div className="footer-base-inner">
+            <p>
+              Prices come from each store&apos;s public listings and are checked every night. Shipping, coupons and bank offers aren&apos;t included, so confirm
+              the final price at the store.
+            </p>
+            <p>© {new Date().getFullYear()} RideCompare. Made for riders in India.</p>
+          </div>
         </div>
+      </div>
+      <div className="footer-giant" aria-hidden>
+        RideCompare
       </div>
     </footer>
   );

@@ -1,11 +1,15 @@
-/** Stacked wordmark: RIDE over COMP + outlined ARE. */
-export function Logo({ small = false }: { small?: boolean }) {
+import Image from "next/image";
+
+/** RideCompare logo: rider and wordmark. `dark` is the white version for black backgrounds (footer). */
+export function Logo({ dark = false }: { dark?: boolean }) {
   return (
-    <span className={small ? "wordmark wordmark-small" : "wordmark"} aria-label="RideCompare">
-      <span>RIDE</span>
-      <span>
-        COMP<em>ARE</em>
-      </span>
-    </span>
+    <Image
+      src={dark ? "/brand/rc-logo-dark.png" : "/brand/rc-logo.png"}
+      alt="RideCompare"
+      width={480}
+      height={243}
+      priority={!dark}
+      className={dark ? "logo-full" : "wordmark"}
+    />
   );
 }

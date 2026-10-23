@@ -1,7 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { money } from "@/lib/catalog";
 import { ProductImage } from "@/components/product-card";
 import styles from "./home.module.css";
@@ -9,6 +9,42 @@ import styles from "./home.module.css";
 export type Pick = { id: string; name: string; brand: string; image: string; price: number; mrp: number | null; storeName: string; stores: number };
 
 const href = (p: Pick) => `/product/${encodeURIComponent(p.id)}`;
+
+/** Full-width promo banner: slides change every 7s, pause on hover, arrows and dots to jump. */
+export function HeroBanner({ slides }: { slides: ReactNode[] }) {
+  const [i, setI] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const n = slides.length;
+  useEffect(() => {
+    if (paused || n < 2) return;
+    const t = setTimeout(() => setI((x) => (x + 1) % n), 7000);
+    return () => clearTimeout(t);
+  }, [i, paused, n]);
+  return (
+    <div className={styles.banner} data-dark onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)}>
+      {slides.map((s, k) => (
+        <div key={k} className={styles.slide} data-active={k === i} aria-hidden={k !== i} inert={k !== i}>
+          {s}
+        </div>
+      ))}
+      {n > 1 && (
+        <>
+          <button className={styles.bannerArrow} data-side="prev" aria-label="Previous banner" onClick={() => setI((i - 1 + n) % n)}>
+            <ChevronLeft size={20} />
+          </button>
+          <button className={styles.bannerArrow} data-side="next" aria-label="Next banner" onClick={() => setI((i + 1) % n)}>
+            <ChevronRight size={20} />
+          </button>
+          <div className={styles.dots}>
+            {slides.map((_, k) => (
+              <button key={k} aria-label={`Banner ${k + 1}`} aria-current={k === i} onClick={() => setI(k)} />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
 
 /** Centre product large, neighbours shrinking out to the sides. */
 export function TopTen({ items }: { items: Pick[] }) {
@@ -69,18 +105,18 @@ export function TopTen({ items }: { items: Pick[] }) {
 }
 
 /** Category tabs over a horizontally scrolling row of white product cards. */
-export function TabbedRow({ tabs }: { tabs: { name: string; items: Pick[] }[] }) {
+export function TabbedRow({ tabs, light = false }: { tabs: { name: string; items: Pick[] }[]; light?: boolean }) {
   const [active, setActive] = useState(0);
   return (
     <>
-      <div className={styles.tabs} role="tablist">
+      <div className={`${styles.tabs} ${light ? styles.tabsLight : ""}`} role="tablist">
         {tabs.map((t, i) => (
           <button key={t.name} role="tab" aria-selected={i === active} onClick={() => setActive(i)}>
             {t.name}
           </button>
         ))}
       </div>
-      <div className={styles.row} role="tabpanel">
+      <div className={`${styles.row} ${light ? styles.rowLight : ""}`} role="tabpanel">
         {tabs[active].items.map((p) => (
           <Link key={p.id} href={href(p)} className={styles.rowCard}>
             <span className={styles.rowImage}>
@@ -88,46 +124,13 @@ export function TabbedRow({ tabs }: { tabs: { name: string; items: Pick[] }[] })
             </span>
             <strong>{p.brand}</strong>
             <span className={styles.rowName}>{p.name}</span>
-            <b>{money(p.price)}</b>
+            <span className={styles.rowPrice}>
+              <b>{money(p.price)}</b>
+              {p.mrp && p.mrp > p.price * 1.05 && <s>{money(p.mrp)}</s>}
+            </span>
           </Link>
         ))}
       </div>
     </>
-  );
-}
-
-const budgets = [10000, 20000, 40000, 75000];
-const rides = [
-  { id: "city", label: "City" },
-  { id: "touring", label: "Touring" },
-  { id: "track", label: "Track" },
-  { id: "offroad", label: "Off-road" },
-];
-
-/** Two taps to a kit: pick a budget and a riding style, then hand off to /build. */
-export function QuickBuild() {
-  const [budget, setBudget] = useState(20000);
-  const [ride, setRide] = useState("city");
-  return (
-    <div className={styles.quick}>
-      <p className={styles.quickTitle}>Build your kit in two taps</p>
-      <div className={styles.quickRow} role="group" aria-label="Budget">
-        {budgets.map((b) => (
-          <button key={b} aria-pressed={budget === b} onClick={() => setBudget(b)}>
-            ₹{b / 1000}k
-          </button>
-        ))}
-      </div>
-      <div className={styles.quickRow} role="group" aria-label="How you ride">
-        {rides.map((r) => (
-          <button key={r.id} aria-pressed={ride === r.id} onClick={() => setRide(r.id)}>
-            {r.label}
-          </button>
-        ))}
-      </div>
-      <Link href={`/build?budget=${budget}&style=${ride}`} className={styles.quickGo}>
-        Build my ₹{budget.toLocaleString("en-IN")} kit <ArrowRight size={18} aria-hidden />
-      </Link>
-    </div>
   );
 }

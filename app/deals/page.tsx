@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ProductCard } from "@/components/product-card";
 import { checkedLabel, money, type Offer, type Product } from "@/lib/catalog";
@@ -169,17 +170,17 @@ export default async function DealsPage({ searchParams }: { searchParams: Promis
             We are collecting each store&apos;s MRP and recording price changes every night. Deals will show up here after the next
             update.
           </p>
-          <Link className="primary-button" href="/gear">
+          <Button asChild size="lg"><Link href="/gear">
             Browse all gear
-          </Link>
+          </Link></Button>
         </div>
       ) : !drops.length && !mrp.length ? (
         <div className={`empty ${styles.empty}`}>
           <h2>No {tab.label.toLowerCase()} deals right now</h2>
           <p>Nothing in this category is below its usual price or the store&apos;s MRP today.</p>
-          <Link className="primary-button" href="/deals">
+          <Button asChild size="lg"><Link href="/deals">
             See all deals
-          </Link>
+          </Link></Button>
         </div>
       ) : (
         <>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowUpRight } from "lucide-react";
 import { ProductCard } from "@/components/product-card";
 import { checkedLabel, money, rankedOffers, type Offer, type Product } from "@/lib/catalog";
 import { findProduct, productPhotos, snapshot } from "@/lib/catalog-server";
@@ -32,6 +32,12 @@ async function load(params: Props["params"]) {
   }
   return findProduct(decoded);
 }
+
+const hasMoved = (points: HistoryPoint[]) => {
+  const byStore = new Map<string, Set<number>>();
+  for (const pt of points) byStore.set(pt.storeId, (byStore.get(pt.storeId) ?? new Set()).add(pt.price));
+  return [...byStore.values()].some((prices) => prices.size > 1);
+};
 
 type HistoryRow = { store_id: string; price: string; mrp: string | null; in_stock: boolean | null; checked_at: Date };
 
@@ -91,6 +97,13 @@ export default async function ProductPage({ params }: Props) {
   const prices = p.offers.map((o) => o.price);
   const storeName = (id: string) => p.offers.find((o) => o.storeId === id)?.storeName ?? data.stores.find((s) => s.id === id)?.name ?? id;
   const more = related(p, data.products);
+  // No recorded history yet: start the chart from tonight's checked prices instead of leaving it empty.
+  const chartPoints: HistoryPoint[] = hist?.points.length
+    ? hist.points
+    : p.offers
+        .map((o) => ({ storeId: o.storeId, price: o.price, mrp: o.mrp ?? null, inStock: o.inStock, at: Date.parse(o.checkedAt) }))
+        .filter((pt) => Number.isFinite(pt.at));
+  const chartNow = hist?.now ?? Math.max(...chartPoints.map((pt) => pt.at));
   const name = displayName(p);
 
   const jsonLd = {
@@ -162,14 +175,11 @@ export default async function ProductPage({ params }: Props) {
                       </span>
                     )}
                   </div>
-                  <a
-                    className={isLowest || offers.length === 1 ? "primary-button" : "secondary-button"}
-                    href={o.url}
-                    target="_blank"
-                    rel="noopener noreferrer nofollow"
-                  >
-                    Go to store <ArrowUpRight size={16} aria-hidden />
-                  </a>
+                  <Button asChild size="lg" variant={isLowest || offers.length === 1 ? "default" : "outline"} className="store-cta">
+                    <a href={o.url} target="_blank" rel="noopener noreferrer nofollow">
+                      Go to store
+                    </a>
+                  </Button>
                 </li>
               );
             })}
@@ -180,18 +190,11 @@ export default async function ProductPage({ params }: Props) {
         </div>
       </section>
 
-      {hist && (
+      {chartPoints.length > 0 && (
         <section className={styles.section}>
           <h2 className={styles.heading}>Price history</h2>
-          {hist.points.length >= 2 ? (
-            <PriceChart points={hist.points} storeName={storeName} now={hist.now} />
-          ) : hist.points.length === 1 ? (
-            <p className={styles.muted}>
-              We started tracking this price on {dateLabel(hist.points[0].at)}. The chart fills in as prices change.
-            </p>
-          ) : (
-            <p className={styles.muted}>We haven&apos;t recorded a price for this yet. The chart fills in as prices change.</p>
-          )}
+          <PriceChart points={chartPoints} storeName={storeName} now={chartNow} />
+          {!hasMoved(chartPoints) && <p className={styles.muted}>No price change since {dateLabel(Math.min(...chartPoints.map((pt) => pt.at)))}.</p>}
         </section>
       )}
 

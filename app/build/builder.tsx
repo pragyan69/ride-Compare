@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { ChevronDown, Share2 } from "lucide-react";
 import Link from "next/link";
 import { ProductImage } from "@/components/product-card";
@@ -150,9 +151,9 @@ export function Builder({ start }: { start: BuilderStart }) {
               {result.cheapest.map((c) => `The cheapest ${pieceNoun[c.piece]} we have is ${money(c.price)}.`).join(" ")}{" "}
               {result.cheapest.length > 1 && `Together that is ${money(result.minimum)}.`}
             </p>
-            <button className="secondary-button" onClick={() => pickPreset(Math.ceil(result.minimum / 500) * 500)}>
+            <Button variant="outline" size="lg" onClick={() => pickPreset(Math.ceil(result.minimum / 500) * 500)}>
               Use {money(Math.ceil(result.minimum / 500) * 500)}
-            </button>
+            </Button>
           </div>
         )}
 

@@ -1,26 +1,54 @@
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowRight, ChevronRight, Scale, History, ShieldCheck, BadgeCheck } from "lucide-react";
+import { existsSync } from "node:fs";
+import path from "node:path";
+import { BadgeCheck, History, Scale, ShieldCheck } from "lucide-react";
 import { snapshot } from "@/lib/catalog-server";
-import { checkedLabel, money, rankedOffers, type Product } from "@/lib/catalog";
+import { money, rankedOffers, type Product } from "@/lib/catalog";
+import { ProductImage } from "@/components/product-card";
 import { buildKits, buildPools } from "@/lib/kit";
 import { bikeIndex, findBike } from "@/lib/bikes";
-import { ProductImage } from "@/components/product-card";
-import { TopTen, TabbedRow, QuickBuild, type Pick } from "./home-client";
+import { TopTen, TabbedRow, HeroBanner, type Pick } from "./home-client";
+import { RaceLine } from "@/components/fx/race-line";
+import { FlipWords } from "@/components/fx/flip-words";
+import { MovieCards, type MovieKit } from "@/components/fx/movie-cards";
+import { Tread } from "@/components/fx/tread";
+import fx from "@/components/fx/fx.module.css";
+import reelKits from "@/lib/reel-kits.json";
 import styles from "./home.module.css";
 
 export const revalidate = 21600;
 
-const knownBrands = ["Rynox", "ViaTerra", "Axor", "LS2", "SMK", "MT Helmets", "AGV", "Alpinestars", "Solace", "Raida", "Steelbird", "Studds", "KYT", "HJC", "Korda", "DSG", "Spidi", "Acerbis"];
-const notGear = /visor|pad|liner|lock|spoiler|cover|pinlock|peak|cheek|strap|cleaner|spray|sticker|mount|intercom|kids|balaclava/i;
+const knownBrands = [
+  "Rynox",
+  "ViaTerra",
+  "Axor",
+  "LS2",
+  "SMK",
+  "MT Helmets",
+  "AGV",
+  "Alpinestars",
+  "Solace",
+  "Raida",
+  "Steelbird",
+  "Studds",
+  "KYT",
+  "HJC",
+  "Korda",
+  "DSG",
+  "Spidi",
+  "Acerbis",
+];
+const notGear = /visor|pad|liner|lock|spoiler|cover|pinlock|peak|cheek|strap|cleaner|spray|sticker|mount|intercom|kids|balaclava|slider|plate|spare|mechanism|screw|bolt|replacement|accessor/i;
 const categoryTiles = [
-  { name: "Helmets", match: /helmet/i },
+  { name: "Helmets", match: /^(?!.*\b(back ?pack|bag)\b).*helmet/i },
   { name: "Jackets", match: /jacket/i },
   { name: "Gloves", match: /glove/i },
   { name: "Boots", match: /boot|shoe/i },
-  { name: "Pants", match: /pant|jean|trouser/i },
+  { name: "Pants", match: /^(?!.*\brain\b).*(riding|touring|kevlar|armou?r|mesh).*(pant|jean|trouser)/i },
   { name: "Luggage", match: /bag|pannier|saddle/i },
   { name: "Protection", match: /protector|armou?r|guard/i },
-  { name: "Bike Accessories", match: /guard|rack|light/i },
 ];
 
 const good = (p: Product) =>
@@ -29,7 +57,16 @@ const model = (p: Product) => `${p.brand}|${p.name.toLowerCase().replace(/\s*[-(
 
 function toPick(p: Product): Pick {
   const o = rankedOffers(p)[0];
-  return { id: p.id, name: p.name, brand: p.brand, image: p.image, price: o.price, mrp: o.mrp ?? null, storeName: o.storeName, stores: p.offers.length };
+  return {
+    id: p.id,
+    name: p.name,
+    brand: p.brand,
+    image: p.image,
+    price: o.price,
+    mrp: o.mrp ?? null,
+    storeName: o.storeName,
+    stores: p.offers.length,
+  };
 }
 
 /** One listing per model, at most `perBrand` per brand, so rows don't fill up with one brand's sizes. */
@@ -48,7 +85,7 @@ function pickVaried(list: Product[], take: number, perBrand = 2) {
 }
 
 export default async function Home() {
-  const { products, stores, summary } = await snapshot();
+  const { products, stores } = await snapshot();
   const price = (p: Product) => rankedOffers(p)[0].price;
 
   const helmets = products
@@ -59,15 +96,23 @@ export default async function Home() {
   const tiles = categoryTiles.map((t) => ({
     ...t,
     count: products.filter((p) => p.category === t.name).length,
-    product: products.find((p) => p.category === t.name && good(p) && t.match.test(p.name)),
+    product:
+      products.find((p) => p.category === t.name && good(p) && t.match.test(p.name)) ??
+      products.find((p) => p.category === t.name && p.image.includes("cdn.shopify.com") && t.match.test(p.name)),
   }));
   // The pitch in one picture: real products sold at several stores, with what you save by picking the cheapest.
   const candidates = new Map(
     products
       .filter((p) => ["Helmets", "Jackets", "Gloves", "Boots"].includes(p.category) && good(p))
       .map((p) => {
-        const offers = rankedOffers(p).filter((o) => o.inStock !== false).slice(0, 3);
-        return { p, offers, save: offers.length > 1 ? offers[offers.length - 1].price - offers[0].price : 0 };
+        const offers = rankedOffers(p)
+          .filter((o) => o.inStock !== false)
+          .slice(0, 3);
+        return {
+          p,
+          offers,
+          save: offers.length > 1 ? offers[offers.length - 1].price - offers[0].price : 0,
+        };
       })
       .filter((c) => c.save >= 200 && c.save < c.offers[0].price)
       .sort((a, b) => b.save - a.save)
@@ -75,21 +120,9 @@ export default async function Home() {
   );
   const compares = pickVaried([...candidates.keys()], 3, 1).map((p) => candidates.get(p)!);
 
-  const touring = /touring|adventure|waterproof|\bwp\b|all.?season|rally|tour/i;
-  const roadTabs = ["Jackets", "Gloves", "Boots", "Luggage", "Helmets"]
-    .map((c) => ({ name: c, items: pickVaried(products.filter((p) => p.category === c && good(p) && touring.test(`${p.name} ${p.variant}`)), 12, 3).map(toPick) }))
-    .filter((t) => t.items.length >= 4);
-
   const brandCounts = new Map<string, number>();
   for (const p of products) brandCounts.set(p.brand, (brandCounts.get(p.brand) || 0) + 1);
-  const brands = knownBrands.filter((b) => brandCounts.has(b));
   const brandTotal = [...brandCounts.keys()].filter((b) => b !== "Unspecified").length;
-
-  const kit = buildKits(buildPools(products), 20000, "city", ["Helmet", "Jacket", "Gloves"]).kits[0];
-  const bikes = [...bikeIndex(products)]
-    .sort((a, b) => b[1].length - a[1].length)
-    .slice(0, 12)
-    .map(([slug, list]) => ({ bike: findBike(slug)!, count: list.length }));
 
   const storeCounts = new Map<string, number>();
   for (const p of products) for (const o of p.offers) storeCounts.set(o.storeId, (storeCounts.get(o.storeId) || 0) + 1);
@@ -107,54 +140,184 @@ export default async function Home() {
     "Parts for 60+ bikes",
   ];
 
-  return (
-    <main>
-      {/* Hero */}
-      <section className={styles.hero}>
-        <div className={styles.ticker} aria-hidden>
-          <div>
-            {[...ticker, ...ticker, ...ticker].map((t, i) => (
-              <span key={i}>{t}</span>
+  // In-stock offers at least 10% under the store's own MRP (capped at 80%, beyond that the MRP is usually made up).
+  const dealOf = (p: Product) => {
+    const o = rankedOffers(p).find((x) => x.inStock === true && x.mrp && x.mrp > x.price);
+    if (!o || !o.mrp) return null;
+    const pct = Math.round(((o.mrp - o.price) / o.mrp) * 100);
+    return pct >= 10 && pct <= 80 ? pct : null;
+  };
+  const dealCats = ["Helmets", "Jackets", "Gloves", "Boots", "Luggage"];
+  const dealTabs = dealCats
+    .map((c) => ({
+      name: c,
+      items: pickVaried(
+        products
+          .filter((p) => p.category === c && good(p) && (categoryTiles.find((t) => t.name === c)?.match.test(p.name) ?? true) && dealOf(p) !== null)
+          .sort((a, b) => dealOf(b)! - dealOf(a)!),
+        12,
+        2,
+      ).map(toPick),
+    }))
+    .filter((t) => t.items.length >= 4);
+  const topDeal = Math.max(0, ...products.filter(good).map((p) => dealOf(p) ?? 0));
+
+  const logoFor = (b: string) => {
+    const slug = b.toLowerCase().replace(/\s+/g, "-");
+    return existsSync(path.join(process.cwd(), "public/brand-logos", `${slug}.png`)) ? `/brand-logos/${slug}.png` : null;
+  };
+  const brandGrid = [...brandCounts]
+    .filter(([b]) => b !== "Unspecified")
+    .map(([b, n]) => ({ name: b, n, logo: logoFor(b) }))
+    .sort((a, b) => Number(!!b.logo) - Number(!!a.logo) || b.n - a.n)
+    .slice(0, 20);
+
+  const touring = /touring|adventure|waterproof|\bwp\b|all.?season|rally|tour/i;
+  const roadTabs = ["Jackets", "Gloves", "Boots", "Luggage", "Helmets"]
+    .map((c) => ({ name: c, items: pickVaried(products.filter((p) => p.category === c && good(p) && touring.test(`${p.name} ${p.variant}`)), 12, 3).map(toPick) }))
+    .filter((t) => t.items.length >= 4);
+  const kit = buildKits(buildPools(products), 20000, "city", ["Helmet", "Jacket", "Gloves"]).kits[0];
+  const bikes = [...bikeIndex(products)]
+    .sort((a, b) => b[1].length - a[1].length)
+    .slice(0, 12)
+    .map(([slug, list]) => ({ bike: findBike(slug)!, count: list.length }));
+  const byId = new Map(products.map((p) => [p.id, p]));
+  const movieKits: MovieKit[] = Object.values(reelKits)
+    .filter((k) => k.cover && k.items.length > 1)
+    .map((k) => ({
+      code: k.code,
+      title: k.title,
+      cover: k.cover!,
+      premium: k.premium,
+      total: k.items.reduce((sum, i) => sum + (byId.has(i.id) ? price(byId.get(i.id)!) : 0), 0),
+    }));
+  const bannerPicks = compares.map((c) => c.p);
+  const nowPicks = tiles.map((t) => t.product).filter((p): p is Product => !!p && p.image.includes("cdn.shopify.com")).slice(0, 5);
+  const festPicks = [...new Map([...bannerPicks, ...nowPicks].map((p) => [p.category, p])).values()].slice(0, 5);
+  const slides = [
+    <div key="now" className={`${styles.slideBody} ${styles.slideNow}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element -- pre-sized WebP banners, faster than on-the-fly optimisation */}
+      <img src="/banners/now-1920.webp" srcSet="/banners/now-960.webp 960w, /banners/now-1920.webp 1920w" sizes="100vw" alt="" fetchPriority="high" className={styles.nowBg} />
+      <div className={`wrap ${styles.slideInner}`}>
+        <div className={styles.nowText}>
+          <p className={styles.nowBrand}>RideCompare</p>
+          <h1 className={styles.nowTitle}>Now</h1>
+          <p className={styles.nowSub}>Lowest price, checked tonight</p>
+          <p className={styles.nowLead}>{storeList.length} Indian stores, {products.length.toLocaleString("en-IN")} products</p>
+          <Button asChild variant="glass" size="xl" className="mt-8"><Link href="/gear">
+            Get your kit tonight
+          </Link></Button>
+        </div>
+      </div>
+    </div>,
+    <div key="track" className={`${styles.slideBody} ${styles.slideTrack}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element -- pre-sized WebP banners */}
+      <img src="/banners/track-1920.webp" srcSet="/banners/track-960.webp 960w, /banners/track-1920.webp 1920w" sizes="100vw" alt="" className={styles.trackBg} />
+      <div className={`wrap ${styles.slideInner}`}>
+        <div className={styles.trackText}>
+          <p className={styles.trackKicker}>Track day ready</p>
+          <h2 className={styles.trackTitle}>
+            Built for <em>the track.</em>
+          </h2>
+          <p className={styles.slideLead}>Race helmets, leathers, sliders and back protectors, at tonight&apos;s lowest price.</p>
+          <Button asChild variant="neon" size="xl" className="mt-7">
+            <Link href="/gear?q=race">
+              Shop track gear
+            </Link>
+          </Button>
+        </div>
+      </div>
+    </div>,
+    <div key="sale" className={`${styles.slideBody} ${styles.slideFest}`}>
+      <div className={`wrap ${styles.slideInner}`}>
+        <Link href="/deals" className={styles.festBadge}>
+          <span className={styles.festRays} aria-hidden />
+          <span className={styles.festDisc}>
+            <span>The great</span>
+            <span>Indian</span>
+            <span>ride</span>
+            <span>sale</span>
+          </span>
+          {topDeal > 0 && (
+            <span className={styles.festRibbon}>
+              Up to <b>{topDeal}%</b> off
+            </span>
+          )}
+        </Link>
+        <div className={styles.festRow} aria-hidden>
+          {festPicks.map((p, i) => (
+            <span key={p.id} className={styles.festItem} data-i={i}>
+              <ProductImage p={p} width={300} />
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>,
+    compares.length > 0 && (
+      <div key="compare" className={`${styles.slideBody} ${styles.slideDark}`}>
+        <div className={`wrap ${styles.slideInner}`}>
+          <div className={styles.slideText}>
+            <h2 className={styles.slideTitle}>
+              Same helmet.
+              <br />
+              Different <em><FlipWords words={["price.", "store.", "discount."]} /></em>
+            </h2>
+            <p className={styles.slideLead}>We check {storeList.length} Indian stores every night and put the cheapest first.</p>
+            <Button asChild variant="light" size="lg" className="mt-6"><Link href="/gear">
+              Browse {products.length.toLocaleString("en-IN")} products
+            </Link></Button>
+          </div>
+          <div className={styles.deck}>
+            {compares.map(({ p, offers, save }, i) => (
+              <Link
+                key={p.id}
+                href={`/product/${encodeURIComponent(p.id)}`}
+                className={styles.compare}
+                data-i={i}
+                tabIndex={i === 0 ? 0 : -1}
+                aria-hidden={i !== 0}
+              >
+                <span className={styles.compareImage}>
+                  <span className={styles.compareTag}>Same item · {offers.length} stores</span>
+                  <ProductImage p={p} />
+                </span>
+                <span className={styles.compareBody}>
+                  <small>{p.brand}</small>
+                  <strong>{p.name}</strong>
+                  <span className={styles.compareRows}>
+                    {offers.map((o, j) => (
+                      <span key={o.storeId} data-low={j === 0}>
+                        {o.storeName}
+                        <b>{money(o.price)}</b>
+                      </span>
+                    ))}
+                  </span>
+                  <span className={styles.compareSave}>
+                    Save {money(save)} at {offers[0].storeName}
+                  </span>
+                </span>
+              </Link>
             ))}
           </div>
         </div>
-        <div className={`wrap ${styles.heroInner}`}>
-          <div className={styles.heroText}>
-            <h1>Gear up for less.</h1>
-            <p className={styles.heroLead}>Same helmet, different price. We check {storeList.length} stores every night.</p>
-            <QuickBuild />
-            <Link href="/gear" className={styles.heroGhost}>
-              Or browse all {products.length.toLocaleString("en-IN")} products
-            </Link>
-          </div>
-          {compares.length > 0 && (
-            <div className={styles.deck}>
-              {compares.map(({ p, offers, save }, i) => (
-                <Link key={p.id} href={`/product/${encodeURIComponent(p.id)}`} className={styles.compare} data-i={i} tabIndex={i === 0 ? 0 : -1} aria-hidden={i !== 0}>
-                  <span className={styles.compareImage}>
-                    <span className={styles.compareTag}>Same item · {offers.length} stores</span>
-                    <ProductImage p={p} />
-                  </span>
-                  <span className={styles.compareBody}>
-                    <small>{p.brand}</small>
-                    <strong>{p.name}</strong>
-                    <span className={styles.compareRows}>
-                      {offers.map((o, j) => (
-                        <span key={o.storeId} data-low={j === 0}>
-                          {o.storeName}
-                          <b>{money(o.price)}</b>
-                        </span>
-                      ))}
-                    </span>
-                    <span className={styles.compareSave}>Save {money(save)} at {offers[0].storeName}</span>
-                  </span>
-                </Link>
-              ))}
-            </div>
-          )}
+      </div>
+    ),
+  ].filter(Boolean);
+
+  const tileTone = ["#f3f3f2", "#ecfde6", "#f3f3f2", "#f3f3f2", "#ecfde6", "#f3f3f2", "#ecfde6", "#f3f3f2"];
+
+  return (
+    <main>
+      <RaceLine />
+      <div className={styles.ticker} aria-hidden>
+        <div>
+          {[...ticker, ...ticker, ...ticker].map((t, i) => (
+            <span key={i}>{t}</span>
+          ))}
         </div>
-        {summary && <p className={styles.heroStamp}>Checked {checkedLabel(summary.generatedAt)}</p>}
-      </section>
+      </div>
+
+      <HeroBanner slides={slides} />
 
       {/* Top 10 */}
       {topTen.length >= 5 && (
@@ -170,9 +333,46 @@ export default async function Home() {
         </section>
       )}
 
+      <Tread />
+
+      {/* Movie looks */}
+      {movieKits.length > 0 && (
+        <section className={`${styles.section} ${styles.moviesBlock}`}>
+          <div className={`wrap ${styles.sectionHead}`}>
+            <div>
+              <h2>
+                Ride like <em>the movies.</em>
+              </h2>
+              <p className={styles.sectionSub}>Iconic biker looks from our reels, rebuilt with real gear for a fraction of the price.</p>
+            </div>
+          </div>
+          <MovieCards kits={movieKits} />
+        </section>
+      )}
+
+      {/* Deals tile + tabs */}
+      {dealTabs.length > 0 && (
+        <section className={`wrap ${styles.section} ${styles.dealSplit}`}>
+          <Link href="/deals" className={styles.dealTile}>
+            <span className={styles.dealTileKicker}>Tonight&apos;s</span>
+            <span className={styles.dealTileTitle}>Deals</span>
+            <span className={styles.dealTileSub}>Up to {topDeal}% below MRP</span>
+          </Link>
+          <div className={styles.dealRight}>
+            <div className={styles.sectionHead}>
+              <h2 className={styles.plainH}>Below the store&apos;s MRP</h2>
+              <Button asChild variant="outline" size="sm"><Link href="/deals">
+                View all
+              </Link></Button>
+            </div>
+            <TabbedRow tabs={dealTabs} light />
+          </div>
+        </section>
+      )}
+
       {/* Built for the road */}
       {roadTabs.length > 0 && (
-        <section className={styles.band}>
+        <section className={styles.band} data-dark>
           <div className="wrap">
             <div className={styles.bandHead}>
               <div>
@@ -181,40 +381,35 @@ export default async function Home() {
                 </h2>
                 <p>Touring and adventure gear: waterproof, all-season, made for long days.</p>
               </div>
-              <Link href="/gear?q=touring" className={styles.bandButton}>
-                View all <ChevronRight size={18} aria-hidden />
-              </Link>
-            </div>
-            <div className={styles.circles}>
-              {brands.map((b) => (
-                <Link key={b} href={`/gear?brand=${encodeURIComponent(b)}`} title={`${b} gear`} data-long={b.length > 7 || undefined}>
-                  {b}
-                </Link>
-              ))}
+              <Button asChild variant="light" size="lg"><Link href="/gear?q=touring">
+                View all
+              </Link></Button>
             </div>
             <TabbedRow tabs={roadTabs} />
           </div>
         </section>
       )}
 
-      {/* Categories */}
-      <section className={`wrap ${styles.section}`}>
-        <div className={styles.sectionHead}>
-          <h2>Shop by category</h2>
-          <Link href="/gear" className={styles.viewAll}>
-            View all <ChevronRight size={16} aria-hidden />
-          </Link>
-        </div>
-        <div className={styles.categories}>
-          {tiles.map((t) => (
-            <Link key={t.name} href={`/gear?category=${encodeURIComponent(t.name)}`} className={styles.category}>
-              <span className={styles.categoryImage}>{t.product && <ProductImage p={t.product} />}</span>
-              <span className={styles.categoryName}>{t.name}</span>
+      {/* Category mosaic */}
+      <section className={`${styles.section} ${styles.mosaicWrap}`}>
+        <div className={styles.mosaic}>
+          {tiles.map((t, i) => (
+            <Link
+              key={t.name}
+              href={`/gear?category=${encodeURIComponent(t.name)}`}
+              className={styles.tile}
+              data-i={i}
+              style={{ background: tileTone[i % tileTone.length] }}
+            >
+              <span className={styles.tileName}>{t.name}</span>
+              <span className={styles.tileImage}>{t.product && <ProductImage p={t.product} />}</span>
               <small>{t.count.toLocaleString("en-IN")} products</small>
             </Link>
           ))}
         </div>
       </section>
+
+      <Tread />
 
       {/* Bikes */}
       <section className={`wrap ${styles.section} ${styles.split}`}>
@@ -227,7 +422,7 @@ export default async function Home() {
             bike
           </span>
           <small>
-            Shop by motorcycle <ArrowRight size={16} aria-hidden />
+            Shop by motorcycle
           </small>
         </Link>
         <div className={styles.bikes}>
@@ -259,9 +454,9 @@ export default async function Home() {
               Tell us your budget and how you ride. We split it across helmet, jacket, gloves, pants and boots, and pick from what&apos;s in stock tonight.
               Here&apos;s ₹20,000 for city riding:
             </p>
-            <Link href="/build" className="primary-button">
-              Build yours <ArrowRight size={16} aria-hidden />
-            </Link>
+            <Button asChild size="lg"><Link href="/build">
+              Build yours
+            </Link></Button>
           </div>
           <div className={styles.receipt}>
             {kit.picks.map((pick) => (
@@ -283,6 +478,30 @@ export default async function Home() {
           </div>
         </section>
       )}
+
+      {/* Brands */}
+      <section className={`wrap ${styles.section} ${styles.brandsBlock}`}>
+        <small className={styles.centerKicker}>Shop from the</small>
+        <h2 className={styles.centerH}>Top brands at the lowest prices</h2>
+        <div className={`${fx.marquee} ${styles.brandMarquee}`}>
+          {[brandGrid.slice(0, 10), brandGrid.slice(10)].map((row, r) => (
+            <ul key={r} className={`${fx.marqueeRow} ${styles.brandRow}`} data-reverse={r === 1}>
+              {[...row, ...row].map((b, i) => (
+                <li key={`${b.name}-${i}`} aria-hidden={i >= row.length || undefined}>
+                  <Link href={`/gear?brand=${encodeURIComponent(b.name)}`} title={`${b.name}: ${b.n.toLocaleString("en-IN")} products`} tabIndex={i >= row.length ? -1 : undefined}>
+                    {b.logo ? <Image src={b.logo} alt={b.name} width={120} height={60} /> : <span>{b.name}</span>}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ))}
+        </div>
+        <Button asChild variant="outline" size="lg" className="mt-8"><Link href="/brands">
+          View all brands
+        </Link></Button>
+      </section>
+
+      <Tread />
 
       {/* Honest */}
       <section id="honest" className={styles.honest}>

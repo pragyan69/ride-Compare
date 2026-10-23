@@ -1,5 +1,7 @@
 "use client";
-import { useEffect, useMemo, useState, useDeferredValue } from "react";
+import { Suspense, useEffect, useMemo, useState, useDeferredValue } from "react";
+import { Button } from "@/components/ui/button";
+import { useSearchParams } from "next/navigation";
 import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -58,6 +60,15 @@ function Dropdown({ label, value, onChange, items }: { label: string; value: str
 }
 
 export default function GearPage() {
+  return (
+    <Suspense>
+      <Gear />
+    </Suspense>
+  );
+}
+
+function Gear() {
+  const search = useSearchParams();
   const [data, setData] = useState<CatalogData>(initial),
     [loading, setLoading] = useState(true),
     [loadError, setLoadError] = useState("");
@@ -119,16 +130,21 @@ export default function GearPage() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- loads the catalog once and follows the #admin hash
     void load();
-    const params = new URLSearchParams(location.search);
-    if (params.get("q")) setQuery(params.get("q")!);
-    if (params.get("brand")) setBrands([params.get("brand")!]);
-    if (params.get("store")) setStoreFilter(params.get("store")!);
-    if (categories.includes(params.get("category") || "")) setCategory(params.get("category")!);
     const openAdmin = () => setManage(location.hash === "#admin");
     openAdmin();
     window.addEventListener("hashchange", openAdmin);
     return () => window.removeEventListener("hashchange", openAdmin);
   }, []);
+
+  // Follow the URL every time it changes, so the top menu (Helmets -> Jackets) switches category without a reload.
+  useEffect(() => {
+    const cat = search.get("category") ?? "";
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- the URL is the source of truth for these filters
+    setCategory(categories.includes(cat) ? cat : "All gear");
+    setQuery(search.get("q") ?? "");
+    setBrands(search.get("brand") ? [search.get("brand")!] : []);
+    setStoreFilter(search.get("store") ?? "all");
+  }, [search]);
 
   const allBrands = useMemo(() => {
     const map = new Map<string, Brand>();
@@ -282,9 +298,9 @@ export default function GearPage() {
         </div>
       </div>
       {activeFilters > 0 && (
-        <button className="link-button" onClick={reset}>
+        <Button variant="link" size="sm" onClick={reset}>
           Clear all filters
-        </button>
+        </Button>
       )}
     </div>
   );
@@ -370,9 +386,9 @@ export default function GearPage() {
                   <div className="empty">
                     <h2>Nothing matches that</h2>
                     <p>Try a shorter search or remove a filter.</p>
-                    <button className="secondary-button" onClick={reset}>
+                    <Button variant="outline" size="lg" onClick={reset}>
                       Clear search and filters
-                    </button>
+                    </Button>
                   </div>
                 )}
 
@@ -398,9 +414,9 @@ export default function GearPage() {
           <DialogTitle>Filters</DialogTitle>
           <DialogDescription className="sr-only">Narrow products by store, budget and brand.</DialogDescription>
           {filters}
-          <button className="primary-button" onClick={() => setFilterOpen(false)}>
+          <Button size="lg" onClick={() => setFilterOpen(false)}>
             Show {visible.length.toLocaleString("en-IN")} products
-          </button>
+          </Button>
         </DialogContent>
       </Dialog>
 
@@ -426,9 +442,9 @@ export default function GearPage() {
               Public JSON feed URL (optional)
               <input type="url" value={feedUrl} onChange={(e) => setFeedUrl(e.target.value)} placeholder="https://retailer.in/ridecompare-feed.json" />
             </label>
-            <button className="primary-button full" disabled={busy}>
+            <Button size="lg" className="w-full" disabled={busy}>
               Save retailer
-            </button>
+            </Button>
           </form>
           <h3>Import product offers</h3>
           <Dropdown
@@ -453,18 +469,18 @@ export default function GearPage() {
           />
           <textarea aria-label="Product feed JSON" value={feedText} onChange={(e) => setFeedText(e.target.value)} placeholder='{"currency":"INR","offers":[…]}' rows={6} />
           <div className="admin-actions">
-            <button className="primary-button" disabled={busy || !importStore || importStore === "choose" || !feedText.trim()} onClick={() => void importProducts()}>
+            <Button size="lg" disabled={busy || !importStore || importStore === "choose" || !feedText.trim()} onClick={() => void importProducts()}>
               Import offers
-            </button>
-            <button className="secondary-button" disabled={busy || !data.stores.find((s) => s.id === importStore)?.feedUrl} onClick={() => void syncFeed()}>
+            </Button>
+            <Button variant="outline" size="lg" disabled={busy || !data.stores.find((s) => s.id === importStore)?.feedUrl} onClick={() => void syncFeed()}>
               Refresh connected feed
-            </button>
-            <a className="link-button" href="/feed-example.json" download>
+            </Button>
+            <Button asChild variant="link" size="sm"><a href="/feed-example.json" download>
               Feed example
-            </a>
-            <button type="button" className="link-button" onClick={askAdminToken}>
+            </a></Button>
+            <Button variant="link" size="sm" type="button" onClick={askAdminToken}>
               Admin token
-            </button>
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

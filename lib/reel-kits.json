@@ -1,0 +1,360 @@
+{
+ "valimai": {
+  "code": "VALIMAI",
+  "title": "Arjun's Valimai look",
+  "premium": 178296,
+  "cover": "/kits/valimai.jpg",
+  "items": [
+   {
+    "slot": "jacket",
+    "label": "Jacket",
+    "id": "model-viaterra-37205426244f07dd"
+   },
+   {
+    "slot": "pants",
+    "label": "Pants",
+    "id": "model-viaterra-fadb6df26355a67c"
+   },
+   {
+    "slot": "boots",
+    "label": "Boots",
+    "id": "model-cramster-24631076eb07464a"
+   },
+   {
+    "slot": "gloves",
+    "label": "Gloves",
+    "id": "model-viaterra-07a3cf2bd5f7230d"
+   },
+   {
+    "slot": "helmet",
+    "label": "Helmet",
+    "id": "model-studds-febfec20018a321c",
+    "alt": "model-kyt-0b0e731f8006802c"
+   }
+  ]
+ },
+ "aryan": {
+  "code": "ARYAN",
+  "title": "Aryan's Dhoom 2 look",
+  "premium": 128597,
+  "cover": "/kits/aryan.jpg",
+  "items": [
+   {
+    "slot": "helmet",
+    "label": "Helmet",
+    "id": "model-axor-14eab3c02fde4f0a"
+   },
+   {
+    "slot": "jacket",
+    "label": "Jacket",
+    "id": "model-rynox-219244f74770fdec",
+    "alt": "model-axor-f7b7884d8a1ea98d"
+   },
+   {
+    "slot": "gloves",
+    "label": "Gloves",
+    "id": "model-rynox-7a66836ff2b5bd4e"
+   },
+   {
+    "slot": "pants",
+    "label": "Pants",
+    "id": "model-rynox-d0ad55f5682f1120"
+   },
+   {
+    "slot": "boots",
+    "label": "Boots",
+    "id": "model-korda-d49c4e574d6066f5"
+   }
+  ]
+ },
+ "blaze": {
+  "code": "BLAZE",
+  "title": "Johnny Blaze's Ghost Rider look",
+  "premium": 136097,
+  "cover": "/kits/blaze.jpg",
+  "items": [
+   {
+    "slot": "helmet",
+    "label": "Helmet",
+    "id": "model-nhk-74991b5d82fd6987",
+    "alt": "model-korda-7785bced21193258"
+   },
+   {
+    "slot": "jacket",
+    "label": "Jacket",
+    "id": "model-korda-84e9a065d3ec79fa"
+   },
+   {
+    "slot": "gloves",
+    "label": "Gloves",
+    "id": "model-bikeratti-dee42084df57d18e"
+   },
+   {
+    "slot": "pants",
+    "label": "Riding jeans",
+    "id": "model-bikeratti-316f5931b04e8fb3"
+   },
+   {
+    "slot": "boots",
+    "label": "Boots",
+    "id": "model-korda-20a84605673696b6"
+   }
+  ]
+ },
+ "kabir": {
+  "code": "KABIR",
+  "title": "Kabir's Dhoom look",
+  "premium": 141497,
+  "cover": "/kits/kabir.jpg",
+  "items": [
+   {
+    "slot": "helmet",
+    "label": "Helmet",
+    "id": "model-vega-32e4b68638733a4d",
+    "alt": "model-axor-2c0dee67adc9923f"
+   },
+   {
+    "slot": "jacket",
+    "label": "Jacket",
+    "id": "model-raida-9dfc48c22e131560"
+   },
+   {
+    "slot": "gloves",
+    "label": "Gloves",
+    "id": "model-tarmac-535667470adb225e"
+   },
+   {
+    "slot": "pants",
+    "label": "Pants",
+    "id": "model-tarmac-bdc7192018364ba9"
+   },
+   {
+    "slot": "boots",
+    "label": "Boots",
+    "id": "model-raida-a44408cfa84f305b",
+    "alt": "model-tarmac-a81c8d821330456e"
+   }
+  ]
+ },
+ "preeti": {
+  "code": "PREETI",
+  "title": "Kabir Singh's look",
+  "premium": 108996,
+  "cover": "/kits/preeti.jpg",
+  "items": [
+   {
+    "slot": "jacket",
+    "label": "Jacket",
+    "id": "model-cramster-6c6622ab94854509"
+   },
+   {
+    "slot": "pants",
+    "label": "Riding jeans",
+    "id": "model-cramster-4b3724be75a2ea7e"
+   },
+   {
+    "slot": "boots",
+    "label": "Boots",
+    "id": "model-cramster-1a64573fb91b3d13"
+   },
+   {
+    "slot": "gloves",
+    "label": "Gloves",
+    "id": "model-reise-cd6c81dff4067e99"
+   },
+   {
+    "slot": "helmet",
+    "label": "Helmet",
+    "id": "model-studds-41aff671145ce7af",
+    "alt": "model-axor-9f5c7973e168f1c8"
+   }
+  ]
+ },
+ "kaneda": {
+  "code": "KANEDA",
+  "title": "Kaneda's Akira look",
+  "premium": 163996,
+  "cover": "/kits/kaneda.jpg",
+  "items": [
+   {
+    "slot": "jacket",
+    "label": "Jacket",
+    "id": "model-spidi-83f2d6f999135d20"
+   },
+   {
+    "slot": "pants",
+    "label": "Pants",
+    "id": "model-raida-55d67c439481b186"
+   },
+   {
+    "slot": "boots",
+    "label": "Boots",
+    "id": "model-raida-5ca6bc76a366f5aa"
+   },
+   {
+    "slot": "gloves",
+    "label": "Gloves",
+    "id": "model-dsg-aa363f25a8dc3351"
+   },
+   {
+    "slot": "helmet",
+    "label": "Helmet",
+    "id": "model-axor-d19c46ad641ffdd9",
+    "alt": "model-korda-67bd2531c5b4d4ac"
+   }
+  ]
+ },
+ "maverick": {
+  "code": "MAVERICK",
+  "title": "Maverick's Top Gun look",
+  "premium": 139796,
+  "cover": "/kits/maverick.jpg",
+  "items": [
+   {
+    "slot": "jacket",
+    "label": "Jacket",
+    "id": "model-ixon-e456998f245fceec"
+   },
+   {
+    "slot": "pants",
+    "label": "Pants",
+    "id": "model-acerbis-79788653ff30e068"
+   },
+   {
+    "slot": "boots",
+    "label": "Boots",
+    "id": "model-cramster-1a64573fb91b3d13",
+    "alt": "model-bbg-e9a0f3d94a9976f5"
+   },
+   {
+    "slot": "gloves",
+    "label": "Gloves",
+    "id": "model-ls2-d2c2d23296ffffa5"
+   },
+   {
+    "slot": "helmet",
+    "label": "Helmet",
+    "id": "model-mt-helmets-60f7980d662bfdd8",
+    "alt": "model-ls2-f7594b725fcab3b0"
+   }
+  ]
+ },
+ "pathaan": {
+  "code": "PATHAAN",
+  "title": "Pathaan's look",
+  "premium": 145996,
+  "cover": "/kits/pathaan.jpg",
+  "items": [
+   {
+    "slot": "helmet",
+    "label": "Helmet",
+    "id": "model-axor-b6e5391b1e3dce0c",
+    "alt": "model-ls2-f7594b725fcab3b0"
+   },
+   {
+    "slot": "jacket",
+    "label": "Jacket",
+    "id": "model-axor-f7b7884d8a1ea98d"
+   },
+   {
+    "slot": "gloves",
+    "label": "Gloves",
+    "id": "model-ls2-d2c2d23296ffffa5",
+    "alt": "model-tarmac-3d4ccd9e6aebdbd1"
+   },
+   {
+    "slot": "pants",
+    "label": "Pants",
+    "id": "model-cramster-4b3724be75a2ea7e"
+   },
+   {
+    "slot": "boots",
+    "label": "Boots",
+    "id": "model-amaroq-145644897af83297"
+   }
+  ]
+ },
+ "hs1": {
+  "code": "HS1",
+  "title": "Bluarmor HS1 lowest price",
+  "premium": null,
+  "cover": "/kits/hs1.jpg",
+  "items": [
+   {
+    "slot": "device",
+    "label": "Bluetooth device",
+    "id": "model-bluarmor-e4b9d54c050a6ba8"
+   }
+  ]
+ },
+ "sahir": {
+  "code": "SAHIR",
+  "title": "Sahir's Dhoom 3 look",
+  "premium": 128097,
+  "cover": "/kits/sahir.jpg",
+  "items": [
+   {
+    "slot": "helmet",
+    "label": "Helmet",
+    "id": "model-smk-c1f2e71e8d9a169b",
+    "alt": "model-smk-88cd22b44ec9a442"
+   },
+   {
+    "slot": "jacket",
+    "label": "Jacket",
+    "id": "model-solace-527f7c5eb063d93a"
+   },
+   {
+    "slot": "gloves",
+    "label": "Gloves",
+    "id": "model-solace-8502caaf6692a2d6",
+    "alt": "model-solace-48e5350f0ecfd6b9"
+   },
+   {
+    "slot": "pants",
+    "label": "Pants",
+    "id": "model-solace-55463a33922987d0"
+   },
+   {
+    "slot": "boots",
+    "label": "Boots",
+    "id": "model-solace-c0b68fb220134ce0"
+   }
+  ]
+ },
+ "classic": {
+  "code": "CLASSIC",
+  "title": "Classic 350 rider kit",
+  "premium": 139996,
+  "cover": "/kits/classic.jpg",
+  "items": [
+   {
+    "slot": "helmet",
+    "label": "Helmet",
+    "id": "model-axor-fce1f7c9d03e71a3",
+    "alt": "model-smk-1a10ee3e136b562a"
+   },
+   {
+    "slot": "jacket",
+    "label": "Jacket",
+    "id": "model-ixon-2e6984a135766b5b"
+   },
+   {
+    "slot": "gloves",
+    "label": "Gloves",
+    "id": "model-viaterra-b9edba76352afb0a"
+   },
+   {
+    "slot": "pants",
+    "label": "Pants",
+    "id": "model-acerbis-79788653ff30e068",
+    "alt": "model-rynox-12507157a63c546d"
+   },
+   {
+    "slot": "boots",
+    "label": "Boots",
+    "id": "model-tarmac-3e548aaba6a87f92"
+   }
+  ]
+ }
+}
