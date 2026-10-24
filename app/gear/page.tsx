@@ -8,14 +8,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { products as starters, stores as starterStores, rankedOffers, categories, type Product, type Retailer } from "@/lib/catalog";
+import { categories, type Product, type Retailer } from "@/lib/catalog";
 import { ProductCard } from "@/components/product-card";
 
 type Brand = { name: string; count: number };
-type CatalogData = { products: Product[]; stores: Retailer[]; summary?: { generatedAt: string } };
+type GearResult = { total: number; totalProducts: number; pageSize: number; products: Product[]; brands: Brand[]; stores: Retailer[] };
 
-const initial: CatalogData = { products: starters, stores: starterStores };
-const pageSize = 24;
+const empty: GearResult = { total: 0, totalProducts: 0, pageSize: 24, products: [], brands: [], stores: [] };
 
 function adminToken() {
   try {
@@ -69,7 +68,7 @@ export default function GearPage() {
 
 function Gear() {
   const search = useSearchParams();
-  const [data, setData] = useState<CatalogData>(initial),
+  const [data, setData] = useState<GearResult>(empty),
     [loading, setLoading] = useState(true),
     [loadError, setLoadError] = useState("");
   const [query, setQuery] = useState(""),
@@ -93,43 +92,43 @@ function Gear() {
     [formError, setFormError] = useState("");
   const deferred = useDeferredValue(query);
 
-  async function load() {
+  const params = useMemo(() => {
+    const p = new URLSearchParams({ category, sort, page: String(page) });
+    if (deferred.trim()) p.set("q", deferred.trim());
+    for (const b of brands) p.append("brand", b);
+    if (storeFilter !== "all") p.set("store", storeFilter);
+    if (stockOnly) p.set("stock", "1");
+    if (comparisonOnly) p.set("multi", "1");
+    if (maxPrice) p.set("max", maxPrice);
+    return p.toString();
+  }, [category, sort, page, deferred, brands, storeFilter, stockOnly, comparisonOnly, maxPrice]);
+  const [reloads, setReloads] = useState(0);
+  const load = () => setReloads((n) => n + 1);
+
+  // The server filters the catalog; the browser only fetches the page it shows.
+  useEffect(() => {
+    const ctrl = new AbortController();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- shows the spinner while the next page loads
     setLoading(true);
     setLoadError("");
-    try {
-      const r = await fetch("/data/catalog.json");
-      if (!r.ok) throw new Error("The catalog could not be loaded.");
-      const snapshot: CatalogData = await r.json();
-      try {
-        const saved = await api<{ products: Product[]; stores: Retailer[] }>("/api/catalog");
-        const map = new Map(snapshot.products.map((p) => [p.id, p]));
-        for (const p of saved.products) {
-          const current = map.get(p.id);
-          if (current) {
-            for (const o of p.offers) {
-              const old = current.offers.findIndex((x) => x.storeId === o.storeId);
-              if (old < 0) current.offers.push(o);
-              else if (Date.parse(o.checkedAt) > Date.parse(current.offers[old].checkedAt)) current.offers[old] = o;
-            }
-          } else map.set(p.id, p);
-        }
-        snapshot.products = [...map.values()];
-        const sm = new Map(snapshot.stores.map((s) => [s.id, s]));
-        for (const s of saved.stores) sm.set(s.id, { ...sm.get(s.id), ...s });
-        snapshot.stores = [...sm.values()];
-      } catch {
-        /* Imported offers are optional; the published catalog is enough to browse. */
-      }
-      setData(snapshot);
-    } catch (e) {
-      setLoadError(e instanceof Error ? e.message : "The catalog could not be loaded.");
-    } finally {
-      setLoading(false);
-    }
-  }
+    fetch(`/api/gear?${params}`, { signal: ctrl.signal })
+      .then((r) => {
+        if (!r.ok) throw new Error("The catalog could not be loaded.");
+        return r.json() as Promise<GearResult>;
+      })
+      .then((d) => {
+        setData(d);
+        setLoading(false);
+      })
+      .catch((e: unknown) => {
+        if (ctrl.signal.aborted) return;
+        setLoadError(e instanceof Error ? e.message : "The catalog could not be loaded.");
+        setLoading(false);
+      });
+    return () => ctrl.abort();
+  }, [params, reloads]);
+
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- loads the catalog once and follows the #admin hash
-    void load();
     const openAdmin = () => setManage(location.hash === "#admin");
     openAdmin();
     window.addEventListener("hashchange", openAdmin);
@@ -146,43 +145,14 @@ function Gear() {
     setStoreFilter(search.get("store") ?? "all");
   }, [search]);
 
-  const allBrands = useMemo(() => {
-    const map = new Map<string, Brand>();
-    for (const p of data.products) {
-      if (p.brand === "Unspecified") continue;
-      const b = map.get(p.brand) || { name: p.brand, count: 0 };
-      b.count++;
-      map.set(p.brand, b);
-    }
-    return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
-  }, [data]);
-  const storesWithProducts = useMemo(() => {
-    const ids = new Set(data.products.flatMap((p) => p.offers.map((o) => o.storeId)));
-    return data.stores.filter((s) => ids.has(s.id)).sort((a, b) => a.name.localeCompare(b.name));
-  }, [data]);
-  const visible = useMemo(() => {
-    const q = deferred.toLowerCase().trim();
-    const rows = data.products.filter(
-      (p) =>
-        (category === "All gear" || p.category === category) &&
-        (!brands.length || brands.includes(p.brand)) &&
-        (storeFilter === "all" || p.offers.some((o) => o.storeId === storeFilter)) &&
-        (!stockOnly || p.offers.some((o) => o.inStock === true)) &&
-        (!comparisonOnly || p.offers.length > 1) &&
-        (!maxPrice || p.offers.some((o) => o.price <= Number(maxPrice))) &&
-        (!q || `${p.name} ${p.brand} ${p.category} ${p.variant}`.toLowerCase().includes(q)),
-    );
-    if (sort === "low") rows.sort((a, b) => rankedOffers(a)[0].price - rankedOffers(b)[0].price);
-    if (sort === "high") rows.sort((a, b) => rankedOffers(b)[0].price - rankedOffers(a)[0].price);
-    if (sort === "stores") rows.sort((a, b) => b.offers.length - a.offers.length);
-    return rows;
-  }, [data, deferred, category, brands, storeFilter, stockOnly, comparisonOnly, maxPrice, sort]);
+  const allBrands = data.brands;
+  const storesWithProducts = data.stores;
   // eslint-disable-next-line react-hooks/set-state-in-effect -- any filter change starts the results over
   useEffect(() => setPage(1), [deferred, category, brands, storeFilter, stockOnly, comparisonOnly, maxPrice, sort]);
 
-  const totalPages = Math.max(1, Math.ceil(visible.length / pageSize)),
+  const totalPages = Math.max(1, Math.ceil(data.total / data.pageSize)),
     currentPage = Math.min(page, totalPages),
-    shown = visible.slice((currentPage - 1) * pageSize, currentPage * pageSize),
+    shown = data.products,
     activeFilters = brands.length + (storeFilter !== "all" ? 1 : 0) + (stockOnly ? 1 : 0) + (comparisonOnly ? 1 : 0) + (maxPrice ? 1 : 0);
 
   function reset() {
@@ -209,7 +179,7 @@ function Gear() {
     try {
       const s = await api<Retailer>("/api/stores", { name: retailerName, website, feedUrl });
       setImportStore(s.id);
-      setData((d) => ({ ...d, stores: [...d.stores, s] }));
+      load();
       setRetailerName("");
       setWebsite("");
       setFeedUrl("");
@@ -226,7 +196,7 @@ function Gear() {
     try {
       const d = await api<{ imported: number }>("/api/import", { storeId: importStore, feed: JSON.parse(feedText) });
       toast.success(`${d.imported} offers imported.`);
-      await load();
+      load();
       setFeedText("");
     } catch (e) {
       setFormError(e instanceof Error ? e.message : "Could not import offers.");
@@ -240,7 +210,7 @@ function Gear() {
     try {
       const d = await api<{ imported: number }>("/api/stores/sync", { storeId: importStore });
       toast.success(`${d.imported} offers updated.`);
-      await load();
+      load();
     } catch (e) {
       setFormError(e instanceof Error ? e.message : "Feed unavailable.");
     } finally {
@@ -312,7 +282,9 @@ function Gear() {
             <section className="hero hero-small">
               <h1>All gear</h1>
               <p>
-                {data.products.length.toLocaleString("en-IN")} products from {storesWithProducts.length} Indian stores, checked every night.
+                {data.totalProducts
+                  ? `${data.totalProducts.toLocaleString("en-IN")} products from ${storesWithProducts.length} Indian stores, checked every night.`
+                  : "Prices from Indian riding gear stores, checked every night."}
               </p>
               <div className="search">
                 <Search size={20} aria-hidden />
@@ -340,7 +312,7 @@ function Gear() {
               <section id="results" className="results" aria-busy={loading}>
                 <div className="results-bar">
                   <p className="results-count">
-                    <strong>{visible.length.toLocaleString("en-IN")}</strong> {visible.length === 1 ? "product" : "products"}
+                    <strong>{loading && !data.totalProducts ? "…" : data.total.toLocaleString("en-IN")}</strong> {data.total === 1 ? "product" : "products"}
                     {category !== "All gear" && <> in {category}</>}
                   </p>
                   <button className="filters-toggle" onClick={() => setFilterOpen(true)}>
@@ -380,9 +352,10 @@ function Gear() {
                   {shown.map((p) => (
                     <ProductCard key={p.id} p={p} />
                   ))}
+                  {loading && !shown.length && Array.from({ length: 8 }, (_, i) => <div key={i} className="card-skeleton" aria-hidden />)}
                 </div>
 
-                {!loading && !visible.length && (
+                {!loading && !data.total && (
                   <div className="empty">
                     <h2>Nothing matches that</h2>
                     <p>Try a shorter search or remove a filter.</p>
@@ -415,7 +388,7 @@ function Gear() {
           <DialogDescription className="sr-only">Narrow products by store, budget and brand.</DialogDescription>
           {filters}
           <Button size="lg" onClick={() => setFilterOpen(false)}>
-            Show {visible.length.toLocaleString("en-IN")} products
+            Show {data.total.toLocaleString("en-IN")} products
           </Button>
         </DialogContent>
       </Dialog>
