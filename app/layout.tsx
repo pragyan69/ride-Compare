@@ -12,7 +12,7 @@ const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: "ital
 const round = Nunito({ subsets: ["latin"], weight: "900", variable: "--font-round", display: "swap" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.SITE_URL || "https://ride-compare-kqfw.vercel.app"),
+  metadataBase: new URL(process.env.SITE_URL || "https://ridecompare.store"),
   title: "RideCompare | Motorcycle gear prices across Indian stores",
   description: "Search helmets, riding jackets, gloves, boots and accessories from Indian motorcycle gear stores and see who sells it for less.",
 };
