@@ -1,54 +1,54 @@
 {
   "summary": {
-    "generatedAt": "2026-10-23T20:40:48.295969Z",
+    "generatedAt": "2026-10-24T20:43:00.770687Z",
     "requestedStores": 36,
     "attemptedStores": 36,
-    "collectedStores": 26,
-    "productCount": 49028,
-    "offerCount": 50978,
-    "brandCount": 591,
+    "collectedStores": 25,
+    "productCount": 48421,
+    "offerCount": 50229,
+    "brandCount": 584,
     "categories": {
-      "Helmets": 4115,
-      "Jackets": 1345,
-      "Boots": 824,
-      "Gloves": 1067,
-      "Luggage": 1788,
-      "Pants": 522,
-      "Bike Accessories": 23166,
-      "Protection": 329,
-      "Riding Apparel": 836,
-      "Electronics": 1303,
-      "Maintenance & Parts": 12716,
-      "Helmet Accessories": 1017
+      "Helmets": 4112,
+      "Jackets": 1332,
+      "Boots": 822,
+      "Gloves": 1053,
+      "Luggage": 1765,
+      "Pants": 501,
+      "Bike Accessories": 22772,
+      "Protection": 319,
+      "Riding Apparel": 820,
+      "Electronics": 1247,
+      "Maintenance & Parts": 12666,
+      "Helmet Accessories": 1012
     },
     "method": "Python Playwright",
     "scope": "Public catalog listings; each card shows one observed variant. Other sizes and colours remain on the retailer website.",
-    "matchedProducts": 1788
+    "matchedProducts": 1650
   },
   "reports": [
     {
       "id": "amazon",
       "name": "Amazon India",
       "website": "https://www.amazon.in/s?k=motorcycle+riding+gear",
-      "startedAt": "2026-10-23T20:30:47.788008Z",
+      "startedAt": "2026-10-24T20:30:48.031387Z",
       "status": "restricted",
-      "method": "Playwright rendered pages / JSON-LD",
-      "pages": 3,
+      "method": "",
+      "pages": 1,
       "productCount": 0,
       "brands": [],
       "notes": [
-        "HTTP 403: retailer access restriction"
+        "HTTP 503: retailer temporarily unavailable"
       ],
       "complete": false,
       "robots": "checked",
       "sitemaps": [],
-      "finishedAt": "2026-10-23T20:30:53.346436Z"
+      "finishedAt": "2026-10-24T20:30:49.161769Z"
     },
     {
       "id": "flipkart",
       "name": "Flipkart",
       "website": "https://www.flipkart.com/search?q=motorcycle%20riding%20gear",
-      "startedAt": "2026-10-23T20:30:47.791438Z",
+      "startedAt": "2026-10-24T20:30:48.033525Z",
       "status": "restricted",
       "method": "Playwright rendered pages / JSON-LD",
       "pages": 55,
@@ -72,13 +72,13 @@
         "https://www.flipkart.com/sitemap_pi_product_index_v2_5.xml",
         "https://www.flipkart.com/sitemap_pi_product_index_v2_6.xml"
       ],
-      "finishedAt": "2026-10-23T20:37:48.746118Z"
+      "finishedAt": "2026-10-24T20:37:54.187210Z"
     },
     {
       "id": "royal-enfield",
       "name": "Royal Enfield",
       "website": "https://royalenfield.store/in/en/riding",
-      "startedAt": "2026-10-23T20:30:47.792307Z",
+      "startedAt": "2026-10-24T20:30:48.034410Z",
       "status": "restricted",
       "method": "",
       "pages": 0,
@@ -88,13 +88,13 @@
         "HTTP 403: retailer access restriction"
       ],
       "complete": false,
-      "finishedAt": "2026-10-23T20:30:48.021153Z"
+      "finishedAt": "2026-10-24T20:30:48.260291Z"
     },
     {
       "id": "rynox",
       "name": "Rynox Gear",
       "website": "https://rynoxgear.com",
-      "startedAt": "2026-10-23T20:30:48.031024Z",
+      "startedAt": "2026-10-24T20:30:48.269720Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 2,
@@ -108,17 +108,17 @@
       "sitemaps": [
         "https://rynoxgear.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:30:51.011716Z"
+      "finishedAt": "2026-10-24T20:30:51.329759Z"
     },
     {
       "id": "bandidos",
       "name": "Bandidos Pitstop",
       "website": "https://bandidospitstop.com",
-      "startedAt": "2026-10-23T20:30:51.055974Z",
+      "startedAt": "2026-10-24T20:30:49.168515Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 10,
-      "productCount": 2163,
+      "productCount": 2170,
       "brands": [
         "100%",
         "5M",
@@ -254,13 +254,13 @@
       "sitemaps": [
         "https://bandidospitstop.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:31:05.838170Z"
+      "finishedAt": "2026-10-24T20:31:03.972052Z"
     },
     {
       "id": "lrl",
       "name": "LRL Motors",
       "website": "https://lrlmotors.com",
-      "startedAt": "2026-10-23T20:30:53.353393Z",
+      "startedAt": "2026-10-24T20:30:51.338662Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 22,
@@ -407,13 +407,13 @@
         "https://lrlmotors.com/sitemap.xml",
         "https://lrlmotors.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:31:22.148453Z"
+      "finishedAt": "2026-10-24T20:31:19.798733Z"
     },
     {
       "id": "motocentral",
       "name": "Moto Central",
       "website": "https://motocentral.in",
-      "startedAt": "2026-10-23T20:31:05.881633Z",
+      "startedAt": "2026-10-24T20:31:04.023144Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 33,
@@ -562,13 +562,13 @@
       "sitemaps": [
         "https://motocentral.in/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:31:48.982247Z"
+      "finishedAt": "2026-10-24T20:31:48.503113Z"
     },
     {
       "id": "powersports",
       "name": "PowerSports",
       "website": "https://powersports.in",
-      "startedAt": "2026-10-23T20:31:22.250399Z",
+      "startedAt": "2026-10-24T20:31:19.887641Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 2,
@@ -591,13 +591,13 @@
       "sitemaps": [
         "https://powersports.in/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:31:24.919102Z"
+      "finishedAt": "2026-10-24T20:31:22.662183Z"
     },
     {
       "id": "bikester",
       "name": "Bikester Global",
       "website": "https://bikesterglobal.com",
-      "startedAt": "2026-10-23T20:31:24.929605Z",
+      "startedAt": "2026-10-24T20:31:22.674519Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 2,
@@ -624,7 +624,6 @@
         "Raida",
         "Red Rooster Performance",
         "Rhinowalk",
-        "Rolon",
         "Solace",
         "Vesrah",
         "ViaTerra",
@@ -637,13 +636,13 @@
       "sitemaps": [
         "https://bikesterglobal.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:31:28.544839Z"
+      "finishedAt": "2026-10-24T20:31:26.426780Z"
     },
     {
       "id": "custom-elements",
       "name": "Custom Elements",
       "website": "https://www.customelements.in",
-      "startedAt": "2026-10-23T20:31:28.555269Z",
+      "startedAt": "2026-10-24T20:31:26.434840Z",
       "status": "partial",
       "method": "WooCommerce public catalog via Playwright",
       "pages": 41,
@@ -688,13 +687,13 @@
       "sitemaps": [
         "https://www.customelements.in/sitemap_index.xml"
       ],
-      "finishedAt": "2026-10-23T20:32:32.192721Z"
+      "finishedAt": "2026-10-24T20:32:30.836181Z"
     },
     {
       "id": "store4riders",
       "name": "Store4Riders",
       "website": "https://www.store4riders.com",
-      "startedAt": "2026-10-23T20:31:49.114862Z",
+      "startedAt": "2026-10-24T20:31:48.636391Z",
       "status": "restricted",
       "method": "",
       "pages": 0,
@@ -710,13 +709,13 @@
         "https://www.store4riders.com/pub/brand-page-sitemap.txt",
         "https://www.store4riders.com/blog_sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:31:50.062476Z"
+      "finishedAt": "2026-10-24T20:31:49.445131Z"
     },
     {
       "id": "viaterra",
       "name": "ViaTerra",
       "website": "https://viaterragear.com",
-      "startedAt": "2026-10-23T20:31:50.068668Z",
+      "startedAt": "2026-10-24T20:31:49.450991Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 3,
@@ -731,13 +730,13 @@
       "sitemaps": [
         "https://viaterragear.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:31:53.582205Z"
+      "finishedAt": "2026-10-24T20:31:52.885405Z"
     },
     {
       "id": "axor",
       "name": "Axor Helmets",
       "website": "https://axorhelmets.com",
-      "startedAt": "2026-10-23T20:31:53.593756Z",
+      "startedAt": "2026-10-24T20:31:52.898031Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 2,
@@ -751,13 +750,13 @@
       "sitemaps": [
         "https://axorhelmets.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:31:56.517097Z"
+      "finishedAt": "2026-10-24T20:31:55.519755Z"
     },
     {
       "id": "vega",
       "name": "Vega Helmets",
       "website": "https://vegaauto.com",
-      "startedAt": "2026-10-23T20:31:56.528407Z",
+      "startedAt": "2026-10-24T20:31:55.528333Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 3,
@@ -772,13 +771,13 @@
       "sitemaps": [
         "https://vegaauto.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:31:59.794436Z"
+      "finishedAt": "2026-10-24T20:31:59.037434Z"
     },
     {
       "id": "steelbird",
       "name": "Steelbird Helmets",
       "website": "https://www.steelbirdhelmet.com",
-      "startedAt": "2026-10-23T20:31:59.806021Z",
+      "startedAt": "2026-10-24T20:31:59.049646Z",
       "status": "collected",
       "method": "Playwright rendered pages / JSON-LD",
       "pages": 32,
@@ -789,13 +788,13 @@
       "notes": [],
       "complete": true,
       "robots": "not-published",
-      "finishedAt": "2026-10-23T20:32:37.073736Z"
+      "finishedAt": "2026-10-24T20:32:36.300408Z"
     },
     {
       "id": "smk",
       "name": "SMK Helmets",
       "website": "https://smkhelmets.com",
-      "startedAt": "2026-10-23T20:32:32.241694Z",
+      "startedAt": "2026-10-24T20:32:30.873983Z",
       "status": "no-readable-products",
       "method": "Playwright rendered pages / JSON-LD",
       "pages": 117,
@@ -809,17 +808,17 @@
       "sitemaps": [
         "https://smkhelmets.com/sitemap_index.xml"
       ],
-      "finishedAt": "2026-10-23T20:34:34.479162Z"
+      "finishedAt": "2026-10-24T20:34:32.864553Z"
     },
     {
       "id": "solace",
       "name": "Solace Riding Gear",
       "website": "https://solacegears.com",
-      "startedAt": "2026-10-23T20:32:37.083370Z",
+      "startedAt": "2026-10-24T20:32:36.312379Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 2,
-      "productCount": 226,
+      "productCount": 232,
       "brands": [
         "Solace"
       ],
@@ -829,13 +828,13 @@
       "sitemaps": [
         "https://solacegears.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:32:40.037775Z"
+      "finishedAt": "2026-10-24T20:32:39.807541Z"
     },
     {
       "id": "planet-dsg",
       "name": "Planet DSG",
       "website": "https://planetdsg.com",
-      "startedAt": "2026-10-23T20:32:40.048357Z",
+      "startedAt": "2026-10-24T20:32:39.816712Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 2,
@@ -850,13 +849,13 @@
       "sitemaps": [
         "https://planetdsg.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:32:42.709917Z"
+      "finishedAt": "2026-10-24T20:32:42.421411Z"
     },
     {
       "id": "reisemoto",
       "name": "ReiseMoto",
       "website": "https://www.reisemoto.com",
-      "startedAt": "2026-10-23T20:32:42.716322Z",
+      "startedAt": "2026-10-24T20:32:42.428721Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 6,
@@ -907,13 +906,13 @@
       "sitemaps": [
         "https://www.reisemoto.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:32:49.641781Z"
+      "finishedAt": "2026-10-24T20:32:49.634077Z"
     },
     {
       "id": "raida",
       "name": "Raida Gears",
       "website": "https://raidagears.com",
-      "startedAt": "2026-10-23T20:32:49.667539Z",
+      "startedAt": "2026-10-24T20:32:49.657065Z",
       "status": "restricted",
       "method": "",
       "pages": 0,
@@ -923,13 +922,13 @@
         "HTTP 403: retailer access restriction"
       ],
       "complete": false,
-      "finishedAt": "2026-10-23T20:32:49.789991Z"
+      "finishedAt": "2026-10-24T20:32:49.804324Z"
     },
     {
       "id": "slickshop",
       "name": "Slickshop",
       "website": "https://slickshop.in",
-      "startedAt": "2026-10-23T20:32:49.798261Z",
+      "startedAt": "2026-10-24T20:32:49.810355Z",
       "status": "restricted",
       "method": "",
       "pages": 0,
@@ -939,13 +938,13 @@
         "HTTP 403: retailer access restriction"
       ],
       "complete": false,
-      "finishedAt": "2026-10-23T20:32:50.928559Z"
+      "finishedAt": "2026-10-24T20:32:50.865125Z"
     },
     {
       "id": "riders-india",
       "name": "Riders India",
       "website": "https://www.ridersindia.com",
-      "startedAt": "2026-10-23T20:32:50.936833Z",
+      "startedAt": "2026-10-24T20:32:50.870929Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 3,
@@ -973,17 +972,17 @@
         "https://www.ridersindia.com/sitemap.xml",
         "https://www.ridersindia.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:32:55.821302Z"
+      "finishedAt": "2026-10-24T20:32:55.883487Z"
     },
     {
       "id": "riderz-planet",
       "name": "Riderz Planet",
       "website": "https://www.riderzplanet.com",
-      "startedAt": "2026-10-23T20:32:55.836714Z",
+      "startedAt": "2026-10-24T20:32:55.898569Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 12,
-      "productCount": 2656,
+      "productCount": 2662,
       "brands": [
         "ADV Sports",
         "Acerbis",
@@ -1036,13 +1035,13 @@
       "sitemaps": [
         "https://www.riderzplanet.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:33:14.226544Z"
+      "finishedAt": "2026-10-24T20:33:13.812400Z"
     },
     {
       "id": "high-note",
       "name": "High Note Performance",
       "website": "https://highnoteperformance.com",
-      "startedAt": "2026-10-23T20:33:14.265977Z",
+      "startedAt": "2026-10-24T20:33:13.850214Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 5,
@@ -1064,13 +1063,13 @@
       "sitemaps": [
         "https://www.highnoteperformance.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:33:21.037221Z"
+      "finishedAt": "2026-10-24T20:33:20.427441Z"
     },
     {
       "id": "motomodz",
       "name": "MotoModz",
       "website": "https://www.motomodz.com",
-      "startedAt": "2026-10-23T20:33:21.054268Z",
+      "startedAt": "2026-10-24T20:33:20.442502Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 19,
@@ -1192,17 +1191,17 @@
       "sitemaps": [
         "https://www.motomodz.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:33:40.612165Z"
+      "finishedAt": "2026-10-24T20:33:39.974932Z"
     },
     {
       "id": "moto-usher",
       "name": "Moto Usher",
       "website": "https://motousher.com",
-      "startedAt": "2026-10-23T20:33:40.665921Z",
+      "startedAt": "2026-10-24T20:33:40.035045Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 20,
-      "productCount": 4692,
+      "productCount": 4689,
       "brands": [
         "Ace Bikes",
         "All Balls Racing",
@@ -1270,17 +1269,17 @@
       "sitemaps": [
         "https://www.motousher.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:34:10.672193Z"
+      "finishedAt": "2026-10-24T20:34:08.099482Z"
     },
     {
       "id": "bachoo",
       "name": "Bachoo Motors",
       "website": "https://www.bachoomotors.com",
-      "startedAt": "2026-10-23T20:34:10.741785Z",
+      "startedAt": "2026-10-24T20:34:08.160317Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 14,
-      "productCount": 3137,
+      "productCount": 3139,
       "brands": [
         "AGV",
         "Aprilia",
@@ -1331,61 +1330,29 @@
       "sitemaps": [
         "https://www.bachoomotors.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:34:26.842935Z"
+      "finishedAt": "2026-10-24T20:34:23.527269Z"
     },
     {
       "id": "big-bad-bikes",
       "name": "Big Bad Bikes",
       "website": "https://bigbadbikes.com",
-      "startedAt": "2026-10-23T20:34:26.906209Z",
-      "status": "partial",
-      "method": "WooCommerce public catalog via Playwright",
-      "pages": 9,
-      "productCount": 796,
-      "brands": [
-        "Alpinestars",
-        "Barkbusters",
-        "Big Bad Bikes",
-        "Camel ADV",
-        "Cardo",
-        "Cliff Top",
-        "D3O Armour",
-        "Denali",
-        "DesertFox",
-        "Enduristan",
-        "Evotech",
-        "Gear Aid",
-        "HJC",
-        "Innovv",
-        "Klim",
-        "Lust Racing",
-        "Motorex",
-        "Muc-Off",
-        "Peak Design",
-        "Polisport",
-        "PyramidPlastics",
-        "Quad Lock",
-        "RAM Mounts",
-        "RoxSpeedFX",
-        "SW-Motech",
-        "Scottoiler",
-        "Speedo Angels"
-      ],
+      "startedAt": "2026-10-24T20:34:23.599280Z",
+      "status": "restricted",
+      "method": "",
+      "pages": 0,
+      "productCount": 0,
+      "brands": [],
       "notes": [
-        "The read operation timed out"
+        "HTTP 403: retailer access restriction"
       ],
       "complete": false,
-      "robots": "checked",
-      "sitemaps": [
-        "https://bigbadbikes.com/sitemap_index.xml"
-      ],
-      "finishedAt": "2026-10-23T20:35:47.546554Z"
+      "finishedAt": "2026-10-24T20:34:23.664945Z"
     },
     {
       "id": "bbg",
       "name": "Biking Brotherhood Gears",
       "website": "https://bikingbrotherhood.com",
-      "startedAt": "2026-10-23T20:34:34.487829Z",
+      "startedAt": "2026-10-24T20:34:23.676162Z",
       "status": "collected",
       "method": "WooCommerce public catalog via Playwright",
       "pages": 2,
@@ -1399,13 +1366,13 @@
       "sitemaps": [
         "https://bikingbrotherhood.com/wp-sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:34:38.750560Z"
+      "finishedAt": "2026-10-24T20:34:28.443346Z"
     },
     {
       "id": "tiivra",
       "name": "Tiivra",
       "website": "https://tiivra.com",
-      "startedAt": "2026-10-23T20:34:38.757002Z",
+      "startedAt": "2026-10-24T20:34:28.451175Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 2,
@@ -1419,13 +1386,13 @@
       "sitemaps": [
         "https://tiivra.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:34:41.158205Z"
+      "finishedAt": "2026-10-24T20:34:30.743165Z"
     },
     {
       "id": "grand-pitstop",
       "name": "Grand Pitstop",
       "website": "https://grandpitstop.com",
-      "startedAt": "2026-10-23T20:34:41.165036Z",
+      "startedAt": "2026-10-24T20:34:30.751661Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 4,
@@ -1439,13 +1406,13 @@
       "sitemaps": [
         "https://grandpitstop.com/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:34:45.668261Z"
+      "finishedAt": "2026-10-24T20:34:35.331996Z"
     },
     {
       "id": "superbike-store",
       "name": "Superbike Store",
       "website": "https://superbikestore.in",
-      "startedAt": "2026-10-23T20:34:45.685475Z",
+      "startedAt": "2026-10-24T20:34:32.871007Z",
       "status": "collected",
       "method": "Shopify public catalog via Playwright",
       "pages": 35,
@@ -1677,13 +1644,13 @@
         "https://superbikestore.in/sitemap.xml",
         "https://superbikestore.in/sitemap.xml"
       ],
-      "finishedAt": "2026-10-23T20:35:31.816434Z"
+      "finishedAt": "2026-10-24T20:35:18.947612Z"
     },
     {
       "id": "helmet-racing",
       "name": "Helmet Racing",
       "website": "https://helmetracing.in",
-      "startedAt": "2026-10-23T20:35:32.034131Z",
+      "startedAt": "2026-10-24T20:34:35.346138Z",
       "status": "partial",
       "method": "WooCommerce public catalog via Playwright",
       "pages": 41,
@@ -1782,13 +1749,13 @@
       "sitemaps": [
         "https://helmetracing.in/sitemap_index.xml"
       ],
-      "finishedAt": "2026-10-23T20:37:00.757414Z"
+      "finishedAt": "2026-10-24T20:36:06.945247Z"
     },
     {
       "id": "gear-n-ride",
       "name": "Gear n Ride",
       "website": "https://gearnride.in",
-      "startedAt": "2026-10-23T20:35:47.588861Z",
+      "startedAt": "2026-10-24T20:35:19.188041Z",
       "status": "restricted",
       "method": "",
       "pages": 0,
@@ -1798,13 +1765,13 @@
         "HTTP 403: retailer access restriction"
       ],
       "complete": false,
-      "finishedAt": "2026-10-23T20:35:47.709631Z"
+      "finishedAt": "2026-10-24T20:35:19.308606Z"
     },
     {
       "id": "bikegear",
       "name": "BikeGear",
       "website": "https://bikegear.in",
-      "startedAt": "2026-10-23T20:35:47.716795Z",
+      "startedAt": "2026-10-24T20:35:19.314153Z",
       "status": "no-readable-products",
       "method": "Playwright rendered pages / JSON-LD",
       "pages": 182,
@@ -1819,13 +1786,13 @@
       "sitemaps": [
         "https://bikegear.in/index.php?route=extension/feed/google_sitemap"
       ],
-      "finishedAt": "2026-10-23T20:40:48.295969Z"
+      "finishedAt": "2026-10-24T20:43:00.770687Z"
     },
     {
       "id": "kyt-india",
       "name": "KYT India",
       "website": "https://www.kytindia.com",
-      "startedAt": "2026-10-23T20:37:00.794856Z",
+      "startedAt": "2026-10-24T20:36:07.009190Z",
       "status": "no-readable-products",
       "method": "Playwright rendered pages / JSON-LD",
       "pages": 6,
@@ -1836,7 +1803,7 @@
       ],
       "complete": true,
       "robots": "not-published",
-      "finishedAt": "2026-10-23T20:37:09.096399Z"
+      "finishedAt": "2026-10-24T20:36:14.607916Z"
     }
   ]
 }
