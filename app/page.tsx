@@ -164,7 +164,7 @@ export default async function Home() {
     .map(([slug, list]) => ({ bike: findBike(slug)!, count: list.length }));
   const byId = new Map(products.map((p) => [p.id, p]));
   const movieKits: MovieKit[] = Object.values(reelKits)
-    .filter((k) => k.cover && k.items.length > 1)
+    .filter((k) => k.cover && k.items.length > 1 && !("movie" in k && k.movie === false))
     .map((k) => ({
       code: k.code,
       title: k.title,

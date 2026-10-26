@@ -356,5 +356,42 @@
     "id": "model-tarmac-3e548aaba6a87f92"
    }
   ]
+ },
+ "firstkit": {
+  "code": "FIRSTKIT",
+  "title": "Your first riding kit",
+  "premium": null,
+  "cover": "/kits/firstkit.jpg",
+  "movie": false,
+  "items": [
+   {
+    "slot": "helmet",
+    "label": "Helmet",
+    "id": "model-smk-02a6258de413e793"
+   },
+   {
+    "slot": "gloves",
+    "label": "Gloves",
+    "id": "model-viaterra-a52f2bc1b3bca056"
+   },
+   {
+    "slot": "jacket",
+    "label": "Jacket",
+    "id": "model-cramster-e392d459c77896a4"
+   }
+  ]
+ },
+ "k1s": {
+  "code": "K1S",
+  "title": "AGV K1 S lowest price",
+  "premium": null,
+  "cover": "/kits/k1s.jpg",
+  "items": [
+   {
+    "slot": "helmet",
+    "label": "Helmet",
+    "id": "model-agv-f3d2fc8625ce283f"
+   }
+  ]
  }
 }
