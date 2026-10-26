@@ -11,7 +11,6 @@ import { buildKits, buildPools } from "@/lib/kit";
 import { bikeIndex, findBike } from "@/lib/bikes";
 import { TopTen, TabbedRow, HeroBanner, type Pick } from "./home-client";
 import { RaceLine } from "@/components/fx/race-line";
-import { FlipWords } from "@/components/fx/flip-words";
 import { MovieCards, type MovieKit } from "@/components/fx/movie-cards";
 import { Tread } from "@/components/fx/tread";
 import fx from "@/components/fx/fx.module.css";
@@ -101,24 +100,6 @@ export default async function Home() {
       products.find((p) => p.category === t.name && p.image.includes("cdn.shopify.com") && t.match.test(p.name)),
   }));
   // The pitch in one picture: real products sold at several stores, with what you save by picking the cheapest.
-  const candidates = new Map(
-    products
-      .filter((p) => ["Helmets", "Jackets", "Gloves", "Boots"].includes(p.category) && good(p))
-      .map((p) => {
-        const offers = rankedOffers(p)
-          .filter((o) => o.inStock !== false)
-          .slice(0, 3);
-        return {
-          p,
-          offers,
-          save: offers.length > 1 ? offers[offers.length - 1].price - offers[0].price : 0,
-        };
-      })
-      .filter((c) => c.save >= 200 && c.save < c.offers[0].price)
-      .sort((a, b) => b.save - a.save)
-      .map((c) => [c.p, c] as const),
-  );
-  const compares = pickVaried([...candidates.keys()], 3, 1).map((p) => candidates.get(p)!);
 
   const brandCounts = new Map<string, number>();
   for (const p of products) brandCounts.set(p.brand, (brandCounts.get(p.brand) || 0) + 1);
@@ -191,13 +172,13 @@ export default async function Home() {
       premium: k.premium,
       total: k.items.reduce((sum, i) => sum + (byId.has(i.id) ? price(byId.get(i.id)!) : 0), 0),
     }));
-  const bannerPicks = compares.map((c) => c.p);
-  const nowPicks = tiles.map((t) => t.product).filter((p): p is Product => !!p && p.image.includes("cdn.shopify.com")).slice(0, 5);
-  const festPicks = [...new Map([...bannerPicks, ...nowPicks].map((p) => [p.category, p])).values()].slice(0, 5);
   const slides = [
     <div key="now" className={`${styles.slideBody} ${styles.slideNow}`}>
-      {/* eslint-disable-next-line @next/next/no-img-element -- pre-sized WebP banners, faster than on-the-fly optimisation */}
-      <img src="/banners/now-1920.webp" srcSet="/banners/now-960.webp 960w, /banners/now-1920.webp 1920w" sizes="100vw" alt="" fetchPriority="high" className={styles.nowBg} />
+      {/* Pre-sized WebP banners, faster than on-the-fly optimisation; phones get the portrait version. */}
+      <picture>
+        <source media="(max-width: 760px)" srcSet="/banners/now-m640.webp 640w, /banners/now-m1080.webp 1080w" sizes="100vw" />
+        <img src="/banners/now-1920.webp" srcSet="/banners/now-960.webp 960w, /banners/now-1920.webp 1920w" sizes="100vw" alt="" fetchPriority="high" className={styles.nowBg} />
+      </picture>
       <div className={`wrap ${styles.slideInner}`}>
         <div className={styles.nowText}>
           <p className={styles.nowBrand}>RideCompare</p>
@@ -211,8 +192,10 @@ export default async function Home() {
       </div>
     </div>,
     <div key="track" className={`${styles.slideBody} ${styles.slideTrack}`}>
-      {/* eslint-disable-next-line @next/next/no-img-element -- pre-sized WebP banners */}
-      <img src="/banners/track-1920.webp" srcSet="/banners/track-960.webp 960w, /banners/track-1920.webp 1920w" sizes="100vw" alt="" className={styles.trackBg} />
+      <picture>
+        <source media="(max-width: 760px)" srcSet="/banners/track-m640.webp 640w, /banners/track-m1080.webp 1080w" sizes="100vw" />
+        <img src="/banners/track-1920.webp" srcSet="/banners/track-960.webp 960w, /banners/track-1920.webp 1920w" sizes="100vw" alt="" className={styles.trackBg} />
+      </picture>
       <div className={`wrap ${styles.slideInner}`}>
         <div className={styles.trackText}>
           <p className={styles.trackKicker}>Track day ready</p>
@@ -228,80 +211,6 @@ export default async function Home() {
         </div>
       </div>
     </div>,
-    <div key="sale" className={`${styles.slideBody} ${styles.slideFest}`}>
-      <div className={`wrap ${styles.slideInner}`}>
-        <Link href="/deals" className={styles.festBadge}>
-          <span className={styles.festRays} aria-hidden />
-          <span className={styles.festDisc}>
-            <span>The great</span>
-            <span>Indian</span>
-            <span>ride</span>
-            <span>sale</span>
-          </span>
-          {topDeal > 0 && (
-            <span className={styles.festRibbon}>
-              Up to <b>{topDeal}%</b> off
-            </span>
-          )}
-        </Link>
-        <div className={styles.festRow} aria-hidden>
-          {festPicks.map((p, i) => (
-            <span key={p.id} className={styles.festItem} data-i={i}>
-              <ProductImage p={p} width={300} />
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>,
-    compares.length > 0 && (
-      <div key="compare" className={`${styles.slideBody} ${styles.slideDark}`}>
-        <div className={`wrap ${styles.slideInner}`}>
-          <div className={styles.slideText}>
-            <h2 className={styles.slideTitle}>
-              Same helmet.
-              <br />
-              Different <em><FlipWords words={["price.", "store.", "discount."]} /></em>
-            </h2>
-            <p className={styles.slideLead}>We check {storeList.length} Indian stores every night and put the cheapest first.</p>
-            <Button asChild variant="light" size="lg" className="mt-6"><Link href="/gear">
-              Browse {products.length.toLocaleString("en-IN")} products
-            </Link></Button>
-          </div>
-          <div className={styles.deck}>
-            {compares.map(({ p, offers, save }, i) => (
-              <Link
-                key={p.id}
-                href={`/product/${encodeURIComponent(p.id)}`}
-                className={styles.compare}
-                data-i={i}
-                tabIndex={i === 0 ? 0 : -1}
-                aria-hidden={i !== 0}
-              >
-                <span className={styles.compareImage}>
-                  <span className={styles.compareTag}>Same item · {offers.length} stores</span>
-                  <ProductImage p={p} />
-                </span>
-                <span className={styles.compareBody}>
-                  <small>{p.brand}</small>
-                  <strong>{p.name}</strong>
-                  <span className={styles.compareRows}>
-                    {offers.map((o, j) => (
-                      <span key={o.storeId} data-low={j === 0}>
-                        {o.storeName}
-                        <b>{money(o.price)}</b>
-                      </span>
-                    ))}
-                  </span>
-                  <span className={styles.compareSave}>
-                    Save {money(save)} at {offers[0].storeName}
-                  </span>
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
-    ),
   ].filter(Boolean);
 
   const tileTone = ["#f3f3f2", "#ecfde6", "#f3f3f2", "#f3f3f2", "#ecfde6", "#f3f3f2", "#ecfde6", "#f3f3f2"];
