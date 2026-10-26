@@ -8,6 +8,7 @@ import { money, rankedOffers, type Offer, type Product } from "@/lib/catalog";
 import { findProduct } from "@/lib/catalog-server";
 import kits from "@/lib/reel-kits.json";
 import styles from "./page.module.css";
+import { BuyBar, type BuyItem } from "./buy-bar";
 
 export const revalidate = 21600;
 
@@ -46,6 +47,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function KitPage({ params }: Props) {
   const { kit, pieces } = await load(params);
   const total = pieces.reduce((sum, p) => sum + lowest(p.product), 0);
+  const save = kit.premium && kit.premium > total ? kit.premium - total : 0;
+  const buyItems = pieces.flatMap((p): BuyItem[] => {
+    const o = buyOffer(p.product);
+    return o ? [{ slot: p.slot, label: p.label, name: p.product.name, store: o.storeName, price: o.price, url: o.url }] : [];
+  });
   const build = `/build?budget=${Math.ceil(total / 1000) * 1000}&pieces=${["Helmet", "Jacket", "Gloves", "Pants", "Boots"].join(",")}`;
 
   return (
@@ -65,13 +71,14 @@ export default async function KitPage({ params }: Props) {
               <dt>Full kit</dt>
               <dd>{money(total)}</dd>
             </div>
-            {kit.premium && kit.premium > total && (
+            {save > 0 && (
               <div>
                 <dt>Premium version</dt>
-                <dd className={styles.premium}>{money(kit.premium)}</dd>
+                <dd className={styles.premium}>{money(kit.premium!)}</dd>
               </div>
             )}
           </dl>
+          {save > 0 && <p className={styles.save}>You save {money(save)}</p>}
           <div className={styles.actions}>
             <Button asChild size="lg"><a href="#pieces">See the pieces</a></Button>
             <Button asChild variant="outline" size="lg"><Link href={build}>Build your own kit</Link></Button>
@@ -124,12 +131,7 @@ export default async function KitPage({ params }: Props) {
         })}
       </section>
 
-      <a href="#pieces" className={styles.stickyBar}>
-        <span>
-          Full kit <strong>{money(total)}</strong>
-        </span>
-        <span className={styles.stickyCta}>Shop the pieces</span>
-      </a>
+      <BuyBar total={total} items={buyItems} />
     </main>
   );
 }

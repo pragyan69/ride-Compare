@@ -3,7 +3,8 @@ import { useEffect } from "react";
 
 const KEY = "rc-splash";
 // Runs before the splash markup is parsed, so a second load in the same tab never shows it.
-const splashGuard = `try{if(sessionStorage.getItem("${KEY}"))document.documentElement.classList.add("no-splash")}catch(e){}`;
+// Ad visitors and kit/product landings skip it: replays show they decide within the first second or two.
+const splashGuard = `try{if(sessionStorage.getItem("${KEY}")||/^\\/(kit|product)\\//.test(location.pathname)||/utm_source=/.test(location.search))document.documentElement.classList.add("no-splash")}catch(e){}`;
 
 const markup = `<script>${splashGuard}</script><div class="splash-mark"><img src="/brand/rc-logo.png" alt="" width="96" height="49"></div><p>Finding tonight&rsquo;s lowest prices…</p>`;
 
