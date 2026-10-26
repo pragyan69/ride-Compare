@@ -1562,3 +1562,67 @@
     backdrop-filter: blur(6px);
   }
 }
+
+/* Phones: image-led hero like Culture Circle, one short line of text and a compact button at the bottom. */
+@media (max-width: 640px) {
+  .ticker {
+    display: none;
+  }
+  .slideNow .slideInner,
+  .slideTrack .slideInner {
+    min-height: 0;
+    height: min(118vw, 520px);
+    align-content: end;
+    padding-bottom: 36px;
+  }
+  .slideNow::after,
+  .slideTrack::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 55%;
+    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.85));
+    pointer-events: none;
+  }
+  .nowText,
+  .trackText {
+    z-index: 2;
+  }
+  .nowBg {
+    object-position: 50% 50%;
+  }
+  .trackBg {
+    object-position: 50% 100%;
+  }
+  .nowBrand {
+    font-size: 14px;
+    letter-spacing: 0.12em;
+  }
+  .nowTitle {
+    font-size: 60px;
+  }
+  .nowSub,
+  .nowLead,
+  .slideTrack .slideLead {
+    display: none;
+  }
+  .trackText {
+    padding: 0;
+    background: none;
+    backdrop-filter: none;
+  }
+  .trackKicker {
+    font-size: 11px;
+  }
+  .trackTitle {
+    margin-top: 6px;
+    font-size: 34px;
+  }
+  .slideNow [data-slot="button"],
+  .slideTrack [data-slot="button"] {
+    height: 44px;
+    margin-top: 16px;
+    padding-inline: 20px;
+    font-size: 15px;
+  }
+}
