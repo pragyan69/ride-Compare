@@ -10,7 +10,7 @@ import { Gallery } from "./gallery";
 import { PriceChart, dateLabel, type HistoryPoint } from "./price-chart";
 import styles from "./page.module.css";
 
-export const revalidate = 21600;
+export const revalidate = 86400; // the catalog refreshes once a night
 export const dynamicParams = true;
 export function generateStaticParams() {
   return [];

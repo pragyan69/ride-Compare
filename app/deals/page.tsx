@@ -7,7 +7,7 @@ import { snapshot } from "@/lib/catalog-server";
 import { query } from "@/lib/db";
 import styles from "./page.module.css";
 
-export const revalidate = 3600;
+export const revalidate = 21600;
 
 export const metadata: Metadata = {
   title: "Motorcycle gear deals in India, checked nightly | RideCompare",

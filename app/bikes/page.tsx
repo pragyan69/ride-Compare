@@ -3,7 +3,7 @@ import { bikeIndex, bikes } from "@/lib/bikes";
 import { snapshot } from "@/lib/catalog-server";
 import { BikeList, type BikeGroup } from "./bike-list";
 
-export const revalidate = 21600;
+export const revalidate = 86400; // the catalog refreshes once a night
 
 export const metadata: Metadata = {
   title: "Motorcycle accessories by bike model | RideCompare",

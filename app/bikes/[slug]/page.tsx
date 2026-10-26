@@ -8,7 +8,7 @@ import { snapshot } from "@/lib/catalog-server";
 import { bikeIndex, bikes, findBike } from "@/lib/bikes";
 import styles from "../bikes.module.css";
 
-export const revalidate = 21600;
+export const revalidate = 86400; // the catalog refreshes once a night
 
 const pageSize = 48;
 
