@@ -3,7 +3,9 @@ import { useEffect } from "react";
 
 const KEY = "rc-splash";
 // Runs before the splash markup is parsed, so a second load in the same tab never shows it.
-export const splashGuard = `try{if(sessionStorage.getItem("${KEY}"))document.documentElement.classList.add("no-splash")}catch(e){}`;
+const splashGuard = `try{if(sessionStorage.getItem("${KEY}"))document.documentElement.classList.add("no-splash")}catch(e){}`;
+
+const markup = `<script>${splashGuard}</script><div class="splash-mark"><img src="/brand/rc-logo.png" alt="" width="96" height="49"></div><p>Finding tonight&rsquo;s lowest prices…</p>`;
 
 /** First-load splash: server-rendered, faded out once React has hydrated. CSS hides it anyway after 2.5s. */
 export function Splash() {
@@ -16,12 +18,7 @@ export function Splash() {
   }, []);
 
   return (
-    <div id="rc-splash" className="splash" aria-hidden>
-      <div className="splash-mark">
-        {/* eslint-disable-next-line @next/next/no-img-element -- must paint before hydration, no optimiser round trip */}
-        <img src="/brand/rc-logo.png" alt="" width={96} height={49} />
-      </div>
-      <p>Finding tonight&apos;s lowest prices…</p>
-    </div>
+    // Raw HTML so the guard runs while the page is parsed, without React rendering a <script> element.
+    <div id="rc-splash" className="splash" aria-hidden dangerouslySetInnerHTML={{ __html: markup }} />
   );
 }

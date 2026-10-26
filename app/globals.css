@@ -287,6 +287,8 @@ body:has(.intent) [data-slot="dialog-overlay"] { background: rgba(5, 6, 5, 0.62)
 .splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:var(--page);transition:opacity .4s ease,visibility .4s;animation:splash-out .4s ease 2.5s forwards}
 .splash[data-done]{opacity:0;visibility:hidden;pointer-events:none}
 .no-splash .splash{display:none}
+/* Kit pages are ad landings: show only this look, not the category strip. */
+body:has(main[data-kit]) .m-cats{display:none}
 .splash-mark{position:relative;display:grid;place-items:center;width:140px;height:140px;border-radius:50%;overflow:hidden;background:#fbfbf9;box-shadow:0 0 0 1px rgba(13,15,14,.06),0 10px 30px -12px rgba(13,15,14,.18);animation:splash-pulse 1.6s ease-in-out infinite}
 .splash-mark img{width:96px;height:auto;filter:grayscale(1);opacity:.32}
 .splash-mark::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.85) 50%,transparent 65%);transform:translateX(-100%);animation:splash-shine 1.4s ease-in-out infinite}

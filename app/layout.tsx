@@ -5,7 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { TabBar } from "@/components/tab-bar";
 import { MetaPixel } from "@/components/meta-pixel";
-import { Splash, splashGuard } from "@/components/splash";
+import { Splash } from "@/components/splash";
 import { IntentPopup } from "@/components/intent-popup";
 import { Analytics } from '@vercel/analytics/next';
 
@@ -23,10 +23,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en-IN" suppressHydrationWarning className={`${archivo.variable} ${serif.variable} ${round.variable}`}>
-      <head>
-        {/* PostHog inserts its loader before the first script, so this tag's attributes may differ at hydration. */}
-        <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: splashGuard }} />
-      </head>
       <body>
         <Splash />
         <SiteHeader />

@@ -14,15 +14,45 @@
 .pieces{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:40px 20px;padding:24px 0 96px;border-top:1px solid var(--line)}
 .piece{min-width:0;display:flex;flex-direction:column}
 .piece h2{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--ink-2)}
+.item{display:flex;flex-direction:column;gap:12px;color:inherit;flex:1}
+.itemImage{display:grid;place-items:center;aspect-ratio:1;border-radius:14px;background:#fff;overflow:hidden}
+.itemImage img{width:100%;height:100%;object-fit:contain;padding:10px}
+.itemBody{display:flex;flex-direction:column;gap:3px;min-width:0}
+.itemBrand{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.itemName{font-size:14px;line-height:1.3;color:var(--ink-2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.itemPrice{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-top:2px}
+.itemPrice strong{font-size:18px;font-variant-numeric:tabular-nums}
+.itemPrice small{font-size:12px;color:var(--brand);font-weight:600}
+.buy{margin-top:12px;width:100%;white-space:normal;height:auto;min-height:36px;padding-block:8px;line-height:1.2;text-align:center}
+.stickyBar{display:none}
 .step{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;display:flex;flex-direction:column;gap:2px}
 .step span{color:var(--ink-2)}
 .step a{font-weight:600;text-decoration:underline;text-underline-offset:3px}
 
 @media (max-width:1100px){.pieces{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:760px){
-  .top{grid-template-columns:1fr;gap:28px;padding:32px 0}
-  .cover{max-width:220px}
-  .totals{gap:28px}
-  .totals dd{font-size:24px}
-  .pieces{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 12px;padding-bottom:64px}
+  /* Phones: the visitor just watched the reel, so lead with the price and the pieces, not the poster. */
+  .top{grid-template-columns:72px minmax(0,1fr);grid-template-rows:auto auto auto;gap:4px 14px;align-items:start;padding:18px 0 14px}
+  .cover{grid-column:1;grid-row:1/span 2;width:72px;aspect-ratio:4/5;border-radius:12px}
+  .intro{display:contents}
+  .kicker{grid-column:2;grid-row:1;align-self:end;font-size:11px;margin:4px 0 0}
+  .intro h1{grid-column:2;grid-row:2;margin-top:2px;font-size:1.6rem}
+  .lede,.actions{display:none}
+  .totals{grid-column:1/-1;grid-row:3;gap:24px;margin-top:12px}
+  .totals dd{font-size:22px}
+  .pieces{grid-template-columns:1fr;gap:0;padding:0 0 calc(64px + 24px)}
+  .piece{display:grid;grid-template-columns:88px minmax(0,1fr);column-gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .piece h2{grid-column:2;grid-row:1;margin:0 0 2px;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+  .item{display:contents}
+  .itemImage{grid-column:1;grid-row:1/span 3;width:88px;height:88px;border-radius:12px}
+  .itemImage img{padding:6px}
+  .itemBody{grid-column:2;grid-row:2}
+  .buy{grid-column:2;grid-row:3;margin-top:8px;width:auto;justify-self:start}
+  .step{grid-column:1/-1}
+}
+@media (max-width:640px){
+  .stickyBar{position:fixed;left:12px;right:12px;bottom:calc(68px + env(safe-area-inset-bottom) + 10px);z-index:39;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 10px 10px 16px;border-radius:999px;background:var(--ink);color:#fff;font-size:14px;box-shadow:0 12px 28px -10px rgba(0,0,0,.5)}
+  .stickyBar strong{font-variant-numeric:tabular-nums;margin-left:4px}
+  .stickyCta{padding:8px 14px;border-radius:999px;background:var(--signal);color:var(--ink);font-weight:700;font-size:13px}
+  .pieces{padding-bottom:96px}
 }
