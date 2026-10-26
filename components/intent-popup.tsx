@@ -55,7 +55,7 @@ export function IntentPopup() {
         <DialogDescription className="intent-sub">We&apos;ll take you straight to the best prices across Indian stores.</DialogDescription>
         <div className="intent-grid">
           {choices.map((c) => (
-            <Link key={c.href} href={c.href} className="intent-card" onClick={() => close(false)}>
+            <Link key={c.href} href={c.href} className="intent-card" data-ph-capture-attribute-intent={c.label} onClick={() => close(false)}>
               {/* eslint-disable-next-line @next/next/no-img-element -- small static covers, already sized */}
               <img src={c.img} alt="" style={{ objectPosition: c.pos }} />
               <span className="intent-shade" />
@@ -66,7 +66,7 @@ export function IntentPopup() {
             </Link>
           ))}
         </div>
-        <button className="intent-skip" onClick={() => close(false)}>
+        <button className="intent-skip" data-ph-capture-attribute-intent="Just browsing" onClick={() => close(false)}>
           Just browsing
         </button>
       </DialogContent>

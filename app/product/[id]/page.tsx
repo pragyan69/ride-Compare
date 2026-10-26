@@ -176,7 +176,7 @@ export default async function ProductPage({ params }: Props) {
                     )}
                   </div>
                   <Button asChild size="lg" variant={isLowest || offers.length === 1 ? "default" : "outline"} className="store-cta">
-                    <a href={o.url} target="_blank" rel="noopener noreferrer nofollow">
+                    <a href={o.url} target="_blank" rel="noopener noreferrer nofollow" data-ph-capture-attribute-store-click={o.storeName} data-ph-capture-attribute-price={o.price}>
                       Go to store
                     </a>
                   </Button>
