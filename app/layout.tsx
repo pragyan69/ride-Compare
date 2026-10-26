@@ -4,6 +4,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { TabBar } from "@/components/tab-bar";
+import { MetaPixel } from "@/components/meta-pixel";
 import { IntentPopup } from "@/components/intent-popup";
 import { Analytics } from '@vercel/analytics/next';
 
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteFooter />
         <TabBar />
         <IntentPopup />
+        <MetaPixel />
         <Analytics />
       </body>
     </html>
