@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ProductCard } from "@/components/product-card";
 import { checkedLabel, money, type Offer, type Product } from "@/lib/catalog";
-import { snapshot } from "@/lib/catalog-server";
+import { catalogue } from "@/lib/catalog-server";
 import { query } from "@/lib/db";
 import styles from "./page.module.css";
 
@@ -129,7 +129,7 @@ export default async function DealsPage({ searchParams }: { searchParams: Promis
   const tab = tabs.find((t) => t.slug === (Array.isArray(raw) ? raw[0] : raw)) ?? tabs[0];
   const inTab = (p: Product) => !tab.includes.length || tab.includes.includes(p.category);
 
-  const data = await snapshot();
+  const data = await catalogue();
   const byId = new Map(data.products.map((p) => [p.id, p]));
 
   const allDrops = await priceDrops(byId);

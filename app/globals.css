@@ -54,6 +54,13 @@ body{margin:0;background:var(--page);color:var(--ink);font-family:var(--font-arc
 .search button{display:grid;place-items:center;width:32px;height:32px;border-radius:8px;color:var(--ink-3)}
 .search button:hover{background:var(--well);color:var(--ink)}
 
+/* Catalogue scope: what we stock vs everything we track */
+.scope{display:inline-flex;gap:4px;margin-top:24px;padding:4px;border:1px solid var(--line);border-radius:999px;background:var(--well)}
+.scope button{padding:8px 16px;border-radius:999px;font-size:14px;font-weight:600;color:var(--ink-2);transition:background .2s,color .2s}
+.scope button:hover{color:var(--ink)}
+.scope button[aria-pressed=true]{background:var(--ink);color:#fff}
+.scope button small{margin-left:6px;font-weight:500;opacity:.7}
+
 /* Categories */
 .categories{display:flex;flex-wrap:wrap;gap:8px;overflow-x:auto;padding:4px 0 20px;scrollbar-width:none;border-bottom:1px solid var(--line)}
 .categories::-webkit-scrollbar{display:none}

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { BadgeCheck, History, Scale, ShieldCheck } from "lucide-react";
-import { snapshot } from "@/lib/catalog-server";
+import { catalogue } from "@/lib/catalog-server";
 import { money, rankedOffers, type Product } from "@/lib/catalog";
 import { ProductImage } from "@/components/product-card";
 import { buildKits, buildPools } from "@/lib/kit";
@@ -84,7 +84,7 @@ function pickVaried(list: Product[], take: number, perBrand = 2) {
 }
 
 export default async function Home() {
-  const { products, stores } = await snapshot();
+  const { products, stores } = await catalogue();
   const price = (p: Product) => rankedOffers(p)[0].price;
 
   const helmets = products

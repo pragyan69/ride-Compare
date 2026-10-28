@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { bikeIndex, bikes } from "@/lib/bikes";
-import { snapshot } from "@/lib/catalog-server";
+import { catalogue } from "@/lib/catalog-server";
 import { BikeList, type BikeGroup } from "./bike-list";
 
 export const revalidate = 86400; // the catalog refreshes once a night
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function BikesPage() {
-  const index = bikeIndex((await snapshot()).products);
+  const index = bikeIndex((await catalogue()).products);
   const groups: BikeGroup[] = [];
   for (const b of bikes) {
     const count = index.get(b.slug)?.length ?? 0;

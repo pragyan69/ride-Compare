@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { failure, json } from "@/lib/api";
-import { snapshot } from "@/lib/catalog-server";
+import { catalogue } from "@/lib/catalog-server";
 import { buildKits, buildPools, pieces, ridingStyles, type Pools, type RidingStyle } from "@/lib/kit";
 
 const input = z.object({
@@ -14,7 +14,7 @@ let pools: Promise<Pools> | undefined;
 export async function POST(req: Request) {
   try {
     const { budget, style, pieces: wanted } = input.parse(await req.json());
-    pools ??= snapshot().then((s) => buildPools(s.products)).catch((e: unknown) => {
+    pools ??= catalogue().then((s) => buildPools(s.products)).catch((e: unknown) => {
       pools = undefined;
       throw e;
     });

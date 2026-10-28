@@ -12,7 +12,9 @@ import { categories, type Product, type Retailer } from "@/lib/catalog";
 import { ProductCard } from "@/components/product-card";
 
 type Brand = { name: string; count: number };
-type GearResult = { total: number; totalProducts: number; pageSize: number; products: Product[]; brands: Brand[]; stores: Retailer[] };
+type GearResult = { total: number; totalProducts: number; pageSize: number; products: Product[]; brands: Brand[]; stores: Retailer[]; catalogProductCount?: number; curatedCount?: number };
+/** "catalogue" is what RideCompare stocks; "all" is every product the crawler tracks (?all=1). */
+type Scope = "catalogue" | "all";
 
 const empty: GearResult = { total: 0, totalProducts: 0, pageSize: 24, products: [], brands: [], stores: [] };
 
@@ -70,7 +72,8 @@ function Gear() {
   const search = useSearchParams();
   const [data, setData] = useState<GearResult>(empty),
     [loading, setLoading] = useState(true),
-    [loadError, setLoadError] = useState("");
+    [loadError, setLoadError] = useState(""),
+    [scope, setScope] = useState<Scope>("catalogue");
   const [query, setQuery] = useState(""),
     [category, setCategory] = useState("All gear"),
     [sort, setSort] = useState("featured"),
@@ -94,6 +97,7 @@ function Gear() {
 
   const params = useMemo(() => {
     const p = new URLSearchParams({ category, sort, page: String(page) });
+    if (scope === "all") p.set("all", "1");
     if (deferred.trim()) p.set("q", deferred.trim());
     for (const b of brands) p.append("brand", b);
     if (storeFilter !== "all") p.set("store", storeFilter);
@@ -101,7 +105,14 @@ function Gear() {
     if (comparisonOnly) p.set("multi", "1");
     if (maxPrice) p.set("max", maxPrice);
     return p.toString();
-  }, [category, sort, page, deferred, brands, storeFilter, stockOnly, comparisonOnly, maxPrice]);
+  }, [scope, category, sort, page, deferred, brands, storeFilter, stockOnly, comparisonOnly, maxPrice]);
+  function changeScope(next: Scope) {
+    setScope(next);
+    const url = new URL(location.href);
+    if (next === "all") url.searchParams.set("all", "1");
+    else url.searchParams.delete("all");
+    history.replaceState(null, "", url);
+  }
   const [reloads, setReloads] = useState(0);
   const load = () => setReloads((n) => n + 1);
 
@@ -143,12 +154,13 @@ function Gear() {
     setQuery(search.get("q") ?? "");
     setBrands(search.get("brand") ? [search.get("brand")!] : []);
     setStoreFilter(search.get("store") ?? "all");
+    setScope(search.get("all") === "1" ? "all" : "catalogue");
   }, [search]);
 
   const allBrands = data.brands;
   const storesWithProducts = data.stores;
   // eslint-disable-next-line react-hooks/set-state-in-effect -- any filter change starts the results over
-  useEffect(() => setPage(1), [deferred, category, brands, storeFilter, stockOnly, comparisonOnly, maxPrice, sort]);
+  useEffect(() => setPage(1), [scope, deferred, category, brands, storeFilter, stockOnly, comparisonOnly, maxPrice, sort]);
 
   const totalPages = Math.max(1, Math.ceil(data.total / data.pageSize)),
     currentPage = Math.min(page, totalPages),
@@ -280,11 +292,13 @@ function Gear() {
       <Toaster position="bottom-right" />
       <main className="wrap">
             <section className="hero hero-small">
-              <h1>All gear</h1>
+              <h1>{scope === "all" ? "Everything we track" : "All gear"}</h1>
               <p>
-                {data.totalProducts
-                  ? `${data.totalProducts.toLocaleString("en-IN")} products from ${storesWithProducts.length} Indian stores, checked every night.`
-                  : "Prices from Indian riding gear stores, checked every night."}
+                {!data.totalProducts
+                  ? "Prices from Indian riding gear stores, checked every night."
+                  : scope === "all" || !data.catalogProductCount || data.catalogProductCount === data.totalProducts
+                    ? `${data.totalProducts.toLocaleString("en-IN")} products from ${storesWithProducts.length} Indian stores, checked every night.`
+                    : `${data.totalProducts.toLocaleString("en-IN")} products we stock, picked from the ${data.catalogProductCount.toLocaleString("en-IN")} we track across ${storesWithProducts.length} Indian stores. Prices checked every night.`}
               </p>
               <div className="search">
                 <Search size={20} aria-hidden />
@@ -294,6 +308,16 @@ function Gear() {
                     <X size={18} />
                   </button>
                 )}
+              </div>
+              <div className="scope" role="group" aria-label="Which products to show">
+                <button aria-pressed={scope === "catalogue"} onClick={() => changeScope("catalogue")}>
+                  Our catalogue
+                  {data.curatedCount ? <small>{data.curatedCount.toLocaleString("en-IN")}</small> : null}
+                </button>
+                <button aria-pressed={scope === "all"} onClick={() => changeScope("all")}>
+                  Everything we track
+                  {data.catalogProductCount ? <small>{data.catalogProductCount.toLocaleString("en-IN")}</small> : null}
+                </button>
               </div>
             </section>
 

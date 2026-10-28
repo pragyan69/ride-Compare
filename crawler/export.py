@@ -3,6 +3,7 @@ import collections,hashlib,json,re,sys
 from pathlib import Path
 from datetime import datetime,timezone
 from crawl import brand,slug,categorize
+from curate import apply as curate_apply,write_curated
 ROOT=Path(__file__).resolve().parents[1]
 def norm(s):return re.sub(r'[^a-z0-9]+',' ',s.lower()).strip()
 def gtin(s):
@@ -85,9 +86,11 @@ def main():
   key=norm(p['brand']);canonical_name=canonical.get(key,p['brand']);p['brand']=canonical_name
   d=brands[canonical_name];d['count']+=1;d['stores'].update(o['storeName'] for o in p['offers']);d['categories'].add(p['category'])
  brandlist=[{'name':b,'count':v['count'],'stores':sorted(v['stores']),'categories':sorted(v['categories'])} for b,v in sorted(brands.items(),key=lambda x:x[0].lower())]
- summary={'generatedAt':max((r.get('finishedAt','') for r in reports),default='') or datetime.now(timezone.utc).isoformat().replace('+00:00','Z'),'requestedStores':len(sites),'attemptedStores':sum(r['status']!='pending' for r in reports),'collectedStores':sum(r['productCount']>0 for r in reports),'productCount':len(result),'offerCount':sum(len(p['offers']) for p in result),'brandCount':len(brandlist),'categories':dict(cats),'method':'Python Playwright','scope':'Public catalog listings; each card shows one observed variant. Other sizes and colours remain on the retailer website.','matchedProducts':sum(len(p['offers'])>1 for p in result)}
+ curated_n=curate_apply(result)
+ summary={'generatedAt':max((r.get('finishedAt','') for r in reports),default='') or datetime.now(timezone.utc).isoformat().replace('+00:00','Z'),'requestedStores':len(sites),'attemptedStores':sum(r['status']!='pending' for r in reports),'collectedStores':sum(r['productCount']>0 for r in reports),'productCount':len(result),'offerCount':sum(len(p['offers']) for p in result),'brandCount':len(brandlist),'categories':dict(cats),'method':'Python Playwright','scope':'Public catalog listings; each card shows one observed variant. Other sizes and colours remain on the retailer website.','matchedProducts':sum(len(p['offers'])>1 for p in result),'curatedCount':curated_n}
  payload={'products':result,'stores':list(stores.values()),'brands':brandlist,'reports':reports,'summary':summary}
  dest=ROOT/'public/data/catalog.json';tmp=dest.with_suffix('.tmp');tmp.write_text(json.dumps(payload,ensure_ascii=False,separators=(',',':')));tmp.replace(dest)
+ write_curated(payload)
  (ROOT/'data/crawl/report.json').write_text(json.dumps({'summary':summary,'reports':reports},ensure_ascii=False,indent=2))
  (ROOT/'public/data/images.json').write_text(json.dumps({k:gallery[k] for k in products if k in gallery},ensure_ascii=False,separators=(',',':')))
  (ROOT/'public/data/brands.json').write_text(json.dumps(brandlist,ensure_ascii=False,indent=2))

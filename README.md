@@ -63,6 +63,10 @@ BASE_URL=http://127.0.0.1:5173 .venv/bin/python tests/browser_qa.py   # browser 
 
 On the server (`mimiq-prod`, clone at `/opt/ride-compare`) cron runs `crawler/run.sh` once a day. It crawls inside the `crawler/Dockerfile` image, refuses to publish if the catalog shrank by more than half, then commits the snapshot and pushes it; Vercel redeploys on the push. Log: `/var/log/ride-compare-crawl.log`. Run it by hand with `/opt/ride-compare/crawler/run.sh`.
 
+## Curated catalogue
+
+The site lists what RideCompare stocks, not everything the crawler sees. `data/curated/catalogue.json` holds the rules: the shortlist of product ids picked by the offline catalogue tools (10,000 riding gear + 10,000 bike accessories, whole brand ranges, premium first), the ids set aside as junk or non-India parts, and the owner's edits from the offline catalogue page (carry or drop a whole brand, add or remove a product). `crawler/curate.py` applies them: `export.py` calls it on every nightly snapshot, marking stocked products `curated: true` in `public/data/catalog.json` and writing `public/data/curated.json` with just those products. Pages read the curated file through `catalogue()` in `lib/catalog-server.ts`; `/gear` loads it by default and switches to the full catalog with `?all=1`. Product pages still resolve every id, so old links keep working. To change what is stocked, edit the rules file (or rebuild it with the offline tools) and run `python crawler/curate.py` to re-mark the current snapshot without a crawl.
+
 ## Hosting
 
 Vercel (plain Next.js, functions in `arn1`) with Postgres on the Dokploy server. Environment: `DATABASE_URL`, `ADMIN_TOKEN`. Tables are created on first request (`lib/db.ts`). Owner routes (`/api/stores`, `/api/import`, `/api/stores/sync`) take `Authorization: Bearer <ADMIN_TOKEN>`.

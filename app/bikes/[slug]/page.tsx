@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductCard } from "@/components/product-card";
 import { categories } from "@/lib/catalog";
-import { snapshot } from "@/lib/catalog-server";
+import { catalogue } from "@/lib/catalog-server";
 import { bikeIndex, bikes, findBike } from "@/lib/bikes";
 import styles from "../bikes.module.css";
 
@@ -20,7 +20,7 @@ type Props = {
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
 export async function generateStaticParams() {
-  const index = bikeIndex((await snapshot()).products);
+  const index = bikeIndex((await catalogue()).products);
   return bikes.filter((b) => index.has(b.slug)).map((b) => ({ slug: b.slug }));
 }
 
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BikePage({ params, searchParams }: Props) {
   const [{ slug }, sp] = await Promise.all([params, searchParams]);
   const bike = findBike(slug);
-  const all = bike && bikeIndex((await snapshot()).products).get(bike.slug);
+  const all = bike && bikeIndex((await catalogue()).products).get(bike.slug);
   if (!bike || !all) notFound();
 
   const counts = new Map<string, number>();

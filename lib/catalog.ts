@@ -1,8 +1,10 @@
 import snapshot from "./catalog-data.json";
 export type Offer={storeId:string;storeName:string;variant?:string;price:number;mrp?:number|null;shipping:number|null;inStock:boolean|null;url:string;checkedAt:string;source:"retailer"|"import"|"crawl";fetchUrl?:string;variantId?:number};
-export type Product={id:string;name:string;brand:string;category:string;variant:string;image:string;offers:Offer[];variantCount?:number|null;matchType?:string};
+export type Product={id:string;name:string;brand:string;category:string;variant:string;image:string;offers:Offer[];variantCount?:number|null;matchType?:string;curated?:boolean};
 export type Retailer={id:string;name:string;website:string;feedUrl?:string;lastSync?:string;builtin?:boolean};
 export const products=snapshot.products as Product[];
+/** The products RideCompare stocks (marked `curated` by crawler/curate.py); every product while nothing is marked yet. */
+export const curatedOnly=(list:Product[])=>{const c=list.filter(p=>p.curated);return c.length?c:list;};
 export const stores=snapshot.stores as Retailer[];
 export const categories=["All gear","Helmets","Jackets","Gloves","Pants","Boots","Luggage","Riding Apparel","Protection","Electronics","Helmet Accessories","Bike Accessories","Maintenance & Parts"];
 export const money=(v:number)=>new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:Number.isInteger(v)?0:2}).format(v);

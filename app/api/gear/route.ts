@@ -1,13 +1,15 @@
-import { snapshot } from "@/lib/catalog-server";
+import { catalogue, snapshot } from "@/lib/catalog-server";
 import { rankedOffers, type Product } from "@/lib/catalog";
 
 const pageSize = 24;
 const cheapest = (p: Product) => rankedOffers(p)[0]?.price ?? Infinity;
 
-/** Filters the nightly catalog on the server so the browser only downloads one page of products. */
+/** Filters the catalog on the server so the browser only downloads one page of products.
+ *  Serves what RideCompare stocks (the curated catalogue) unless `all=1` asks for everything the crawler tracks. */
 export async function GET(req: Request) {
   const sp = new URL(req.url).searchParams;
-  const { products, stores, summary } = await snapshot();
+  const all = sp.get("all") === "1";
+  const { products, stores, summary } = await (all ? snapshot() : catalogue());
   const category = sp.get("category") ?? "All gear";
   const q = (sp.get("q") ?? "").toLowerCase().trim();
   const brands = sp.getAll("brand");
@@ -41,6 +43,9 @@ export async function GET(req: Request) {
     {
       total: rows.length,
       totalProducts: products.length,
+      scope: all ? "all" : "catalogue",
+      catalogProductCount: all ? products.length : (summary?.catalogProductCount ?? products.length),
+      curatedCount: all ? (await catalogue()).products.length : products.length,
       page,
       pageSize,
       products: rows.slice((page - 1) * pageSize, page * pageSize),

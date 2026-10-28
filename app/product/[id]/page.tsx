@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/product-card";
 import { checkedLabel, money, rankedOffers, type Offer, type Product } from "@/lib/catalog";
-import { findProduct, productPhotos, snapshot } from "@/lib/catalog-server";
+import { catalogue, findProduct, productPhotos } from "@/lib/catalog-server";
 import { query } from "@/lib/db";
 import { Gallery } from "./gallery";
 import { PriceChart, dateLabel, type HistoryPoint } from "./price-chart";
@@ -91,7 +91,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProductPage({ params }: Props) {
   const p = await load(params);
   if (!p) notFound();
-  const [data, hist, photos] = await Promise.all([snapshot(), history(p.id), productPhotos(p)]);
+  const [data, hist, photos] = await Promise.all([catalogue(), history(p.id), productPhotos(p)]);
   const offers = rankedOffers(p);
   const lowest = offers.length > 1 && offers[0].inStock !== false && offers[0].price < offers[1].price ? offers[0] : undefined;
   const prices = p.offers.map((o) => o.price);

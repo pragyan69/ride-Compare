@@ -364,4 +364,4 @@ async def main(args):
     finally:await ctx.close()
   await asyncio.gather(*(one(s) for s in sites));await browser.close()
 if __name__=='__main__':
- a=argparse.ArgumentParser();a.add_argument('--max-feed-pages',type=int,default=40);a.add_argument('--max-html-pages',type=int,default=120);a.add_argument('--max-seconds',type=int,default=1200);a.add_argument('--browser');a.add_argument('--sites');a.add_argument('--resume',action='store_true');asyncio.run(main(a.parse_args()))
+ a=argparse.ArgumentParser();a.add_argument('--max-feed-pages',type=int,default=200);a.add_argument('--max-html-pages',type=int,default=120);a.add_argument('--max-seconds',type=int,default=1200);a.add_argument('--browser');a.add_argument('--sites');a.add_argument('--resume',action='store_true');asyncio.run(main(a.parse_args()))
