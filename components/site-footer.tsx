@@ -5,35 +5,28 @@ const columns = [
   {
     title: "Shop",
     links: [
-      ["Helmets", "/gear?category=Helmets"],
-      ["Jackets", "/gear?category=Jackets"],
-      ["Gloves", "/gear?category=Gloves"],
-      ["Boots", "/gear?category=Boots"],
-      ["Pants", "/gear?category=Pants"],
-      ["Luggage", "/gear?category=Luggage"],
-      ["Bike accessories", "/gear?category=Bike%20Accessories"],
+      ["Helmets", "/store?category=Helmets"],
+      ["Jackets", "/store?category=Jackets"],
+      ["Gloves", "/store?category=Gloves"],
+      ["Boots", "/store?category=Boots"],
+      ["Pants", "/store?category=Pants"],
     ],
   },
   {
-    title: "Popular bikes",
+    title: "Bike parts",
     links: [
-      ["Himalayan 450", "/bikes/royal-enfield-himalayan-450"],
-      ["Classic 350", "/bikes/royal-enfield-classic-350"],
-      ["Hunter 350", "/bikes/royal-enfield-hunter-350"],
-      ["Interceptor 650", "/bikes/royal-enfield-interceptor-650"],
-      ["Duke 390", "/bikes/ktm-duke-390"],
-      ["Speed 400", "/bikes/triumph-speed-400"],
-      ["Xpulse", "/bikes/hero-xpulse"],
+      ["Accessories", "/store?category=Bike%20Accessories"],
+      ["Maintenance and parts", "/store?category=Maintenance%20%26%20Parts"],
+      ["Luggage", "/store?category=Luggage"],
+      ["Electronics", "/store?category=Electronics"],
     ],
   },
   {
-    title: "Tools",
+    title: "Your order",
     links: [
-      ["Build a kit", "/build"],
-      ["Deals", "/deals"],
-      ["Shop by bike", "/bikes"],
-      ["All brands", "/brands"],
-      ["All gear", "/gear"],
+      ["Shop all", "/store"],
+      ["Cart", "/store/cart"],
+      ["Checkout", "/store/checkout"],
     ],
   },
 ];
@@ -43,11 +36,11 @@ export function SiteFooter() {
     <footer className="site-footer" data-dark>
       <div className="wrap footer-top">
         <div className="footer-brand">
-          <Link href="/" className="footer-logo" aria-label="RideCompare home">
+          <Link href="/" className="footer-logo" aria-label="GearCircle home">
             <Logo dark />
           </Link>
-          <p>Same gear. Lowest price. Checked every night across Indian stores.</p>
-          <a href="https://www.instagram.com/ridecompare26/" target="_blank" rel="noopener noreferrer" className="footer-social" aria-label="RideCompare on Instagram">
+          <p>Riding gear and motorcycle parts, delivered free across India.</p>
+          <a href="https://www.instagram.com/ridecompare26/" target="_blank" rel="noopener noreferrer" className="footer-social" aria-label="GearCircle on Instagram">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" />
               <circle cx="12" cy="12" r="4.2" />
@@ -73,16 +66,13 @@ export function SiteFooter() {
       <div className="footer-base">
         <div className="wrap">
           <div className="footer-base-inner">
-            <p>
-              Prices come from each store&apos;s public listings and are checked every night. Shipping, coupons and bank offers aren&apos;t included, so confirm
-              the final price at the store.
-            </p>
-            <p>© {new Date().getFullYear()} RideCompare. Made for riders in India.</p>
+            <p>Prices include all taxes. Questions about an order? Message us on Instagram.</p>
+            <p>© {new Date().getFullYear()} GearCircle. Made for riders in India.</p>
           </div>
         </div>
       </div>
       <div className="footer-giant" aria-hidden>
-        RideCompare
+        GearCircle
       </div>
     </footer>
   );

@@ -41,7 +41,7 @@ const fullName = (p: Product) => (p.name.toLowerCase().startsWith(p.brand.toLowe
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { kit } = await load(params);
-  return { title: `${kit.title}: the full kit | RideCompare`, description: `Every piece of ${kit.title}, with the lowest price across Indian riding gear stores.` };
+  return { title: `${kit.title}: the full kit | GearCircle`, description: `Every piece of ${kit.title}, with the lowest price across Indian riding gear stores.` };
 }
 
 export default async function KitPage({ params }: Props) {

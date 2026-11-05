@@ -79,11 +79,11 @@ function related(p: Product, all: Product[]) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const p = await load(params);
-  if (!p) return { title: "Product not found | RideCompare" };
+  if (!p) return { title: "Product not found | GearCircle" };
   const offers = rankedOffers(p);
   const n = offers.length;
   return {
-    title: `${displayName(p)} price in India | RideCompare`,
+    title: `${displayName(p)} price in India | GearCircle`,
     description: `${displayName(p)} (${p.variant}) from ${money(offers[0].price)} at ${offers[0].storeName}. Prices compared across ${n} ${n === 1 ? "store" : "stores"} in India.`,
   };
 }

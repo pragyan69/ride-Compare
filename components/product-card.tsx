@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { Package } from "lucide-react";
+import { Package, Plus } from "lucide-react";
 import { money, rankedOffers, type Product } from "@/lib/catalog";
 
 /** Store photos are often 1500-3000px wide. Shopify's CDN resizes on request; other stores go through
@@ -41,6 +41,9 @@ export function ProductCard({ p, note }: { p: Product; note?: React.ReactNode })
     <Link className="card" href={`/product/${encodeURIComponent(p.id)}`}>
       <span className="card-image">
         <ProductImage p={p} />
+        <span className="card-plus" aria-hidden>
+          <Plus size={18} strokeWidth={1.75} />
+        </span>
       </span>
       <span className="card-body">
         <span className="card-brand">{p.brand === "Unspecified" ? p.category : p.brand}</span>

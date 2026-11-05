@@ -1,5 +1,6 @@
+import { PublicOnly } from "@/components/public-only";
 import type { Metadata } from "next";
-import { Archivo, Instrument_Serif, Nunito } from "next/font/google";
+import { Geist, Instrument_Serif, Nunito } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -9,29 +10,33 @@ import { Splash } from "@/components/splash";
 import { IntentPopup } from "@/components/intent-popup";
 import { Analytics } from '@vercel/analytics/next';
 
-const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo" });
+const sans = Geist({ subsets: ["latin"], variable: "--font-sans" });
 const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: "italic", variable: "--font-serif" });
 // Rounded black weight for the hero NOW heading and the footer wordmark.
 const round = Nunito({ subsets: ["latin"], weight: "900", variable: "--font-round", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.SITE_URL || "https://ridecompare.store"),
-  title: "RideCompare | Motorcycle gear prices across Indian stores",
-  description: "Search helmets, riding jackets, gloves, boots and accessories from Indian motorcycle gear stores and see who sells it for less.",
+  title: "GearCircle | Riding gear and motorcycle parts",
+  description: "Helmets, riding jackets, boots and motorcycle parts with free delivery across India. Pay by UPI, card or netbanking.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-IN" suppressHydrationWarning className={`${archivo.variable} ${serif.variable} ${round.variable}`}>
+    <html lang="en-IN" suppressHydrationWarning className={`${sans.variable} ${serif.variable} ${round.variable}`}>
       <body>
-        <Splash />
-        <SiteHeader />
+        <PublicOnly>
+          <Splash />
+          <SiteHeader />
+        </PublicOnly>
         {children}
-        <SiteFooter />
-        <TabBar />
-        <IntentPopup />
-        <MetaPixel />
-        <Analytics />
+        <PublicOnly>
+          <SiteFooter />
+          <TabBar />
+          <IntentPopup />
+          <MetaPixel />
+          <Analytics />
+        </PublicOnly>
       </body>
     </html>
   );

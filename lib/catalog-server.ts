@@ -35,8 +35,11 @@ export async function productPhotos(p: Pick<Product, "id" | "image">) {
   return (await photos)[p.id] ?? (p.image ? [p.image] : []);
 }
 
+let byId: Promise<Map<string, Product>> | undefined;
+
 export async function findProduct(id: string) {
-  return (await snapshot()).products.find((p) => p.id === id);
+  byId ??= snapshot().then((s) => new Map(s.products.map((p) => [p.id, p])));
+  return (await byId).get(id);
 }
 
 export const productPath = (p: Pick<Product, "id">) => `/product/${encodeURIComponent(p.id)}`;

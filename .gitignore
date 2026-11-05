@@ -54,3 +54,12 @@ next-env.d.ts
 .gstack/
 /data/crawl/catalog.json
 /data/crawl/brands.json
+
+# store orders saved locally before launch
+/.data/
+
+# video workspace (6+ GB, kept out of git)
+/reels/
+
+# TypeScript build cache
+*.tsbuildinfo

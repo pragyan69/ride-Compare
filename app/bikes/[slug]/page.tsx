@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!bike) return {};
   const name = `${bike.make} ${bike.model}`;
   return {
-    title: `${name} accessories price in India | RideCompare`,
+    title: `${name} accessories price in India | GearCircle`,
     description: `Compare prices on crash guards, racks, exhausts, filters and parts for the ${name} across Indian stores.`,
   };
 }

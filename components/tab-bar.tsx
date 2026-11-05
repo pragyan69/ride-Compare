@@ -1,20 +1,20 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Search, Plus, Zap, Bike } from "lucide-react";
+import { Home, Search, ShoppingBag, HardHat, Bike } from "lucide-react";
 
 const tabs = [
   { href: "/", label: "Home", icon: Home },
-  { href: "/gear", label: "Gear", icon: Search },
-  { href: "/build", label: "Build kit", icon: Plus, main: true },
-  { href: "/deals", label: "Deals", icon: Zap },
-  { href: "/bikes", label: "Bikes", icon: Bike },
+  { href: "/store", label: "Shop", icon: Search },
+  { href: "/store/cart", label: "Cart", icon: ShoppingBag, main: true },
+  { href: "/store?category=Helmets", label: "Helmets", icon: HardHat },
+  { href: "/store?category=Bike%20Accessories", label: "Parts", icon: Bike },
 ];
 
-/** Phone-only bottom navigation; the kit builder sits in the middle. */
+/** Phone-only bottom navigation; the cart sits in the middle. */
 export function TabBar() {
   const path = usePathname();
-  const active = (href: string) => (href === "/" ? path === "/" : path.startsWith(href) || (href === "/gear" && path.startsWith("/product")));
+  const active = (href: string) => (href === "/" ? path === "/" : href === "/store/cart" ? path === href : href === "/store" && path.startsWith("/store") && path !== "/store/cart");
   return (
     <nav className="tab-bar" aria-label="Quick navigation">
       {tabs.map(({ href, label, icon: Icon, main }) => (

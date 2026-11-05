@@ -62,7 +62,7 @@ export function Builder({ start }: { start: BuilderStart }) {
   async function share() {
     const url = location.href;
     try {
-      if (navigator.share) await navigator.share({ title: "My riding kit on RideCompare", url });
+      if (navigator.share) await navigator.share({ title: "My riding kit on GearCircle", url });
       else {
         await navigator.clipboard.writeText(url);
         setShared(true);

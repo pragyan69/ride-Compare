@@ -1,14 +1,14 @@
 "use client";
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { money } from "@/lib/catalog";
 import { ProductImage } from "@/components/product-card";
 import styles from "./home.module.css";
 
-export type Pick = { id: string; name: string; brand: string; image: string; price: number; mrp: number | null; storeName: string; stores: number };
+export type Pick = { id: string; name: string; brand: string; image: string; price: number; mrp: number | null; note?: string };
 
-const href = (p: Pick) => `/product/${encodeURIComponent(p.id)}`;
+const href = (p: Pick) => `/store/${encodeURIComponent(p.id)}`;
 
 /** Full-width promo banner: slides change every 7s, pause on hover, arrows and dots to jump. */
 export function HeroBanner({ slides }: { slides: ReactNode[] }) {
@@ -89,11 +89,10 @@ export function TopTen({ items }: { items: Pick[] }) {
             <span className={styles.topPrice}>
               <b>{money(current.price)}</b>
               {current.mrp && current.mrp > current.price && <s>{money(current.mrp)}</s>}
-              <small>at {current.storeName}</small>
             </span>
           </div>
           <Link href={href(current)} className={styles.topCardButton}>
-            {current.stores > 1 ? `Compare ${current.stores} stores` : "See price and details"}
+            View product
           </Link>
         </div>
         <button aria-label="Next helmet" onClick={() => move(1)}>
@@ -105,7 +104,7 @@ export function TopTen({ items }: { items: Pick[] }) {
 }
 
 /** Category tabs over a horizontally scrolling row of white product cards. */
-export function TabbedRow({ tabs, light = false }: { tabs: { name: string; items: Pick[] }[]; light?: boolean }) {
+export function TabbedRow({ tabs, light = false, more }: { tabs: { name: string; items: Pick[] }[]; light?: boolean; more?: string }) {
   const [active, setActive] = useState(0);
   return (
     <>
@@ -121,6 +120,9 @@ export function TabbedRow({ tabs, light = false }: { tabs: { name: string; items
           <Link key={p.id} href={href(p)} className={styles.rowCard}>
             <span className={styles.rowImage}>
               <ProductImage p={p} />
+              <span className="card-plus" aria-hidden>
+                <Plus size={18} strokeWidth={1.75} />
+              </span>
             </span>
             <strong>{p.brand}</strong>
             <span className={styles.rowName}>{p.name}</span>
@@ -128,9 +130,15 @@ export function TabbedRow({ tabs, light = false }: { tabs: { name: string; items
               <b>{money(p.price)}</b>
               {p.mrp && p.mrp > p.price * 1.05 && <s>{money(p.mrp)}</s>}
             </span>
+            {p.note && <span className={styles.rowNote}>{p.note}</span>}
           </Link>
         ))}
       </div>
+      {more && (
+        <Link href={more} className={styles.moreBtn}>
+          View All
+        </Link>
+      )}
     </>
   );
 }

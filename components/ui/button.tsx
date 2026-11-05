@@ -16,7 +16,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
         outline:
-          "border border-(--line-strong) bg-white text-(--ink) shadow-xs hover:border-(--ink) hover:bg-(--well) dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+          "border border-[#d9d9d9] bg-white text-(--ink) hover:bg-[#f0f0f0] dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
@@ -26,13 +26,13 @@ const buttonVariants = cva(
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
         xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5",
+        sm: "h-9 gap-1.5 rounded-[10px] px-3.5 has-[>svg]:px-2.5",
         lg: "h-11 px-6 text-[15px] has-[>svg]:px-5",
-        xl: "h-14 rounded-full px-7 text-lg has-[>svg]:pl-7 has-[>svg]:pr-6",
+        xl: "h-14 rounded-xl px-7 text-lg has-[>svg]:pl-7 has-[>svg]:pr-6",
         icon: "size-9",
         "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
         "icon-sm": "size-8",
-        "icon-lg": "size-10 rounded-full",
+        "icon-lg": "size-10 rounded-xl",
       },
     },
     defaultVariants: {

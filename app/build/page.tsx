@@ -4,7 +4,7 @@ import { Builder, type BuilderStart } from "./builder";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
-  title: "Build a riding kit within your budget | RideCompare",
+  title: "Build a riding kit within your budget | GearCircle",
   description: "Set a budget and riding style, and get a helmet, jacket, gloves, pants and boots that fit it, priced from Indian gear stores.",
 };
 

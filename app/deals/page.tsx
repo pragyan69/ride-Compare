@@ -10,7 +10,7 @@ import styles from "./page.module.css";
 export const revalidate = 21600;
 
 export const metadata: Metadata = {
-  title: "Motorcycle gear deals in India, checked nightly | RideCompare",
+  title: "Motorcycle gear deals in India, checked nightly | GearCircle",
   description: "Real price drops we recorded and discounts against each store's listed MRP. No coupons, no bank offers.",
 };
 

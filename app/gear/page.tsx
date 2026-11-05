@@ -437,7 +437,7 @@ function Gear() {
             </label>
             <label className="full">
               Public JSON feed URL (optional)
-              <input type="url" value={feedUrl} onChange={(e) => setFeedUrl(e.target.value)} placeholder="https://retailer.in/ridecompare-feed.json" />
+              <input type="url" value={feedUrl} onChange={(e) => setFeedUrl(e.target.value)} placeholder="https://retailer.in/gearcircle-feed.json" />
             </label>
             <Button size="lg" className="w-full" disabled={busy}>
               Save retailer

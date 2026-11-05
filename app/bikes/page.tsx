@@ -6,7 +6,7 @@ import { BikeList, type BikeGroup } from "./bike-list";
 export const revalidate = 86400; // the catalog refreshes once a night
 
 export const metadata: Metadata = {
-  title: "Motorcycle accessories by bike model | RideCompare",
+  title: "Motorcycle accessories by bike model | GearCircle",
   description: "Crash guards, luggage racks, exhausts, filters and parts for Royal Enfield, KTM, Bajaj, Triumph and more, compared across Indian stores.",
 };
 

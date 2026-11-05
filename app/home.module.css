@@ -982,7 +982,7 @@
   }
 }
 
-/* Slide 1: "RideCompare NOW", dark with a mint orb, after Culture Circle's NOW banner */
+/* Slide 1: "GearCircle NOW", dark with a mint orb, after Culture Circle's NOW banner */
 .slideNow {
   position: relative;
   background: #000;
@@ -1625,4 +1625,98 @@
     padding-inline: 20px;
     font-size: 15px;
   }
+}
+
+/* ---------- Culture Circle pass: smaller type, eyebrow heads, tile cards ---------- */
+.section { padding-top: 64px; }
+.ccHead { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 4px; }
+.ccHeadText { min-width: 0; }
+.eyebrow { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #666; }
+.ccHead h2, .section .ccHead h2 { margin-top: 6px; font-size: 28px; font-weight: 500; line-height: 1.15; letter-spacing: -0.02em; color: #000; }
+.ccHead h2 em { font-family: var(--font-serif), Georgia, serif; font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
+.ccSub { margin-top: 4px; font-size: 14px; line-height: 20px; color: #666; }
+.ccViewAll { flex: none; display: inline-flex; align-items: center; gap: 4px; height: 44px; padding: 0 14px 0 18px; border-radius: 12px; border: 1px solid #d9d9d9; background: #fff; font-size: 15px; font-weight: 500; color: #000; transition: background 0.2s; }
+.ccViewAll:hover { background: #f0f0f0; }
+.ccHead[data-dark] .eyebrow, .ccHead[data-dark] .ccSub { color: #a3a3a3; }
+.ccHead[data-dark] h2 { color: #fff; }
+.ccHead[data-dark] h2 em { color: var(--signal); }
+.ccHead[data-dark] .ccViewAll { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); color: #fff; }
+
+.trustRow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding-top: 24px; }
+.trustCard { display: flex; flex-direction: column; gap: 4px; min-height: 96px; padding: 18px 20px; border-radius: 16px; background: #fff; }
+.trustCard strong { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.trustCard span { font-size: 13px; color: #666; }
+.trustCard[data-tone="signal"] { background: var(--signal); }
+.trustCard[data-tone="signal"] span { color: #1d4a10; }
+.trustCard[data-tone="ink"] { background: #000; color: #fff; }
+.trustCard[data-tone="ink"] span { color: #a3a3a3; }
+.trustCard[data-tone="grey"] { background: #eeeeee; }
+
+.gapBand { margin-top: 64px; padding: 48px 0 40px; background: #e8f9e1; }
+
+/* tabs + rails */
+.tabs { gap: 28px; margin-top: 22px; border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
+.tabs button { padding: 6px 0 12px; font-size: 14px; font-weight: 500; letter-spacing: 0.1em; color: #9a9a9a; border-bottom-width: 2px; margin-bottom: -1px; }
+.tabs button[aria-selected="true"] { font-weight: 600; }
+.tabsLight { border-bottom-color: #e5e5e5; }
+.tabsLight button { color: #8a8a8a; }
+.tabsLight button:hover, .tabsLight button[aria-selected="true"] { color: #000; border-color: #000; }
+.row { gap: 12px; margin-top: 20px; }
+.rowCard, .rowLight .rowCard { width: 232px; padding: 0; border-radius: 0; background: transparent; color: inherit; }
+.rowImage { position: relative; margin-bottom: 0; border-radius: 12px; background: #fff; overflow: hidden; }
+.rowImage img { padding: 12%; }
+.rowCard strong { margin-top: 10px; padding: 0 4px; font-size: 13px; font-weight: 600; }
+.rowName { padding: 0 4px; font-size: 12px; color: #666; }
+.rowPrice { margin-top: 4px; padding: 0 4px; }
+.rowPrice b { font-size: 15px; font-weight: 600; }
+.rowPrice s { font-size: 12px; color: #999; }
+.rowNote { padding: 0 4px; margin-top: 2px; font-size: 11px; color: #408020; }
+.band .rowName, .band .rowPrice s { color: #a3a3a3; }
+.band .rowNote { color: var(--signal); }
+.rowCard:hover :global(.card-plus) { background: #000; color: #fff; border-color: #000; }
+
+/* calmer type everywhere on the home page */
+.topSub { font-size: 16px; color: #666; }
+.nowBrand { font-size: clamp(1.2rem, 2vw, 1.7rem); }
+.nowTitle { font-size: clamp(4rem, 8vw, 6.6rem); }
+.nowSub { margin-top: 20px; font-size: clamp(1.1rem, 1.5vw, 1.35rem); font-weight: 600; }
+.nowLead { font-size: clamp(0.95rem, 1.2vw, 1.1rem); }
+.slideLead { font-size: 16px; }
+.bandHead h2, .bikes h2, .kitText h2, .honest h2 { font-size: 28px !important; font-weight: 500 !important; line-height: 1.15 !important; letter-spacing: -0.02em !important; }
+.bandHead p, .bikes > p, .kitText p { font-size: 14px !important; color: #666; }
+
+@media (max-width: 860px) {
+  .trustRow { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .trustCard { min-height: 84px; padding: 14px; }
+  .trustCard strong { font-size: 15px; }
+  .trustCard span { font-size: 12px; }
+  .ccHead h2, .section .ccHead h2 { font-size: 22px; }
+  .ccSub { font-size: 13px; }
+  .ccViewAll { height: 38px; padding: 0 10px 0 12px; font-size: 13px; }
+  .rowCard, .rowLight .rowCard { width: 156px; }
+  .rowCard strong { font-size: 12px; }
+  .rowName { font-size: 11px; }
+  .rowPrice b { font-size: 13px; }
+  .rowNote { font-size: 10px; }
+  .tabs { gap: 20px; }
+  .tabs button { font-size: 12px; }
+  .gapBand { margin-top: 48px; padding: 36px 0 28px; }
+}
+.trackTitle { font-size: clamp(2.2rem, 3.6vw, 3.2rem); font-weight: 800; }
+
+/* phone: Culture Circle rails = two rows scrolling sideways, View All at the bottom */
+.moreBtn { display: none; }
+@media (max-width: 860px) {
+  .ccViewAll { display: none; }
+  .row { display: grid; grid-auto-flow: column; grid-template-rows: repeat(2, auto); grid-auto-columns: 140px; gap: 16px 10px; margin-top: 16px; margin-left: -16px; margin-right: -16px; padding: 0 16px 6px; scroll-padding: 0 16px; }
+  .rowCard, .rowLight .rowCard { width: auto; }
+  .rowImage { border-radius: 10px; }
+  .rowImage :global(.card-plus) { width: 30px; height: 30px; right: 6px; bottom: 6px; border-radius: 8px; }
+  .rowCard strong { margin-top: 8px; padding: 0 2px; }
+  .rowName, .rowPrice, .rowNote { padding: 0 2px; }
+  .tabs button { text-transform: none; letter-spacing: 0; font-size: 14px; }
+  .moreBtn { display: grid; place-items: center; height: 46px; margin-top: 18px; border-radius: 12px; background: #ebebeb; font-size: 14px; font-weight: 500; color: #000; }
+  .band .moreBtn { background: rgba(255, 255, 255, 0.1); color: #fff; }
+  .gapBand .moreBtn { background: #d5f2c9; }
+  .section { padding-top: 44px; }
 }

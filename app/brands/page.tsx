@@ -3,8 +3,8 @@ import { catalogue } from "@/lib/catalog-server";
 import { BrandList } from "./brand-list";
 
 export const metadata: Metadata = {
-  title: "Motorcycle gear brands sold in India | RideCompare",
-  description: "Every helmet, riding gear and accessory brand in the RideCompare catalogue, with how many products each one has.",
+  title: "Motorcycle gear brands sold in India | GearCircle",
+  description: "Every helmet, riding gear and accessory brand in the GearCircle catalogue, with how many products each one has.",
 };
 
 export default async function BrandsPage() {
@@ -15,7 +15,7 @@ export default async function BrandsPage() {
     <main className="wrap">
       <section className="hero hero-small">
         <h1>Brands</h1>
-        <p>{brands.length.toLocaleString("en-IN")} brands in the RideCompare catalogue.</p>
+        <p>{brands.length.toLocaleString("en-IN")} brands in the GearCircle catalogue.</p>
       </section>
       <BrandList brands={brands} />
     </main>

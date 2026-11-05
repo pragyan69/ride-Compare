@@ -6,11 +6,11 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 
 const KEY = "rc-intent-seen";
 // Visitors on these pages already said what they want.
-const SKIP = /^\/(gear|bikes|product|kit|deals|compare|build)/;
+const SKIP = /^\/(gear|bikes|product|kit|deals|compare|build|store)/;
 
 const choices = [
-  { href: "/gear", label: "Riding gear", hint: "Helmets, jackets, gloves, boots", img: "/banners/now-960.webp", pos: "68% 50%" },
-  { href: "/bikes", label: "Bike parts", hint: "Crash guards, exhausts, racks, filters", img: "/banners/track-960.webp", pos: "62% 50%" },
+  { href: "/store?category=Helmets", label: "Riding gear", hint: "Helmets, jackets, gloves, boots", img: "/banners/now-960.webp", pos: "68% 50%" },
+  { href: "/store?category=Bike%20Accessories", label: "Bike parts", hint: "Crash guards, exhausts, racks, filters", img: "/banners/track-960.webp", pos: "62% 50%" },
 ];
 
 function seen() {
@@ -52,7 +52,7 @@ export function IntentPopup() {
       <DialogContent className="intent flex flex-col gap-0 border-white/10 p-7 sm:max-w-[620px]" data-dark onOpenAutoFocus={(e) => e.preventDefault()}>
         <p className="intent-kicker">Quick one</p>
         <DialogTitle className="intent-title">What are you shopping for?</DialogTitle>
-        <DialogDescription className="intent-sub">We&apos;ll take you straight to the best prices across Indian stores.</DialogDescription>
+        <DialogDescription className="intent-sub">We&apos;ll take you straight to it.</DialogDescription>
         <div className="intent-grid">
           {choices.map((c) => (
             <Link key={c.href} href={c.href} className="intent-card" data-ph-capture-attribute-intent={c.label} onClick={() => close(false)}>
