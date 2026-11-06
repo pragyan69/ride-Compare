@@ -38,7 +38,6 @@ export function SiteHeader() {
   const path = usePathname();
   const [hint, setHint] = useState(0);
   const [scrolled, setScrolled] = useState(false);
-  const [compact, setCompact] = useState(false);
   const [menu, setMenu] = useState(false);
   // Aceternity "resizable navbar": past the first 80px the bar shrinks into a floating glass pill.
   useEffect(() => {
@@ -47,7 +46,6 @@ export function SiteHeader() {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         setScrolled(window.scrollY > 80);
-        setCompact(window.scrollY > 200);
       });
     };
     onScroll();
@@ -84,17 +82,6 @@ export function SiteHeader() {
           </Button>
         </div>
       </header>
-      {/* Phones: once the header scrolls away, a slim menu + search bar slides in (Culture Circle style). */}
-      <div className="m-bar" data-show={compact || undefined} aria-hidden={!compact} inert={!compact}>
-        <button type="button" className="menu-btn" aria-label="Open menu" onClick={() => setMenu(true)}>
-          <Menu size={22} aria-hidden />
-        </button>
-        <form action="/store" role="search" className="header-search">
-          <Search size={18} aria-hidden />
-          <input name="q" aria-label="Search motorcycle gear" placeholder={`Search for ${hints[hint]}`} />
-        </form>
-        <CartButton />
-      </div>
       <nav className="cat-nav" aria-label="Sections">
         <div className="wrap">
           {nav.map((l) => (

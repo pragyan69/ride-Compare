@@ -77,3 +77,11 @@
   .plot{height:200px;padding-left:72px}
   .xAxis{padding-left:72px}
 }
+
+@media (max-width:640px){
+  .gallery{position:static;background:#fff;padding-bottom:12px}
+  .track{border-radius:0}
+  .image{background:#fff;border-radius:0}
+  .thumbs{padding:0 16px}
+  .thumbs button{width:56px;height:56px;background:#fff;border-color:var(--line)}
+}

@@ -274,17 +274,19 @@ body:has(.intent) [data-slot="dialog-overlay"] { background: rgba(5, 6, 5, 0.62)
 /* Phone header: menu + logo + compact CTA, full-width search, icon category strip */
 .menu-btn,.m-cats{display:none}
 @media (max-width:760px){
-  .site-header,.site-header[data-scrolled]{position:static;border-bottom:0;padding-top:0;background:var(--page)}
+  .site-header,.site-header[data-scrolled]{position:sticky;top:-56px;border-bottom:1px solid var(--line);padding-top:0;background:#fff}
+  .site-header .header-cta{display:none}
+  .site-header .cart-btn{width:40px;height:40px;border-radius:10px}
   .site-header .header-inner,.site-header[data-scrolled] .header-inner{flex-wrap:wrap;gap:8px 12px;padding:8px 16px 8px;max-width:none;border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none}
   .menu-btn{display:grid;place-items:center;width:40px;height:40px;margin-left:-8px;border-radius:10px;color:var(--ink)}
   .menu-btn:active{background:#ececea}
   .header-brand{margin-right:auto}
   .site-header .wordmark,.site-header[data-scrolled] .wordmark{height:30px;font-size:22px}
   .site-header .header-cta,.site-header[data-scrolled] .header-cta{height:38px;padding:0 16px;font-size:13px;border-radius:999px}
-  .site-header .header-search,.site-header[data-scrolled] .header-search{order:3;flex-basis:100%;height:40px;border-radius:12px;padding:0 14px}
+  .site-header .header-search,.site-header[data-scrolled] .header-search{order:3;flex-basis:100%;height:42px;border-radius:12px;padding:0 14px}
   .header-search input{font-size:15px}
   .cat-nav{display:none}
-  .m-cats{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;padding:0 8px 10px;border-bottom:1px solid var(--line);background:var(--page)}
+  .m-cats{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;padding:10px 8px 10px;border-bottom:1px solid var(--line);background:#fff}
   .m-cats::-webkit-scrollbar{display:none}
   .m-cats a{flex:none;display:flex;flex-direction:column;align-items:center;gap:3px;width:56px;font-size:10.5px;font-weight:600;color:var(--ink-2)}
   .m-cat-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:transparent;color:var(--ink)}
@@ -292,14 +294,7 @@ body:has(.intent) [data-slot="dialog-overlay"] { background: rgba(5, 6, 5, 0.62)
   .m-cats a[data-hot] .m-cat-icon{background:var(--ink);color:var(--signal);box-shadow:none}
   .m-cats a[data-hot]{color:var(--ink);font-weight:800}
   .m-cats a:active .m-cat-icon{transform:scale(.94)}
-  .m-bar{position:fixed;left:0;right:0;top:0;z-index:45;display:flex;align-items:center;gap:10px;padding:8px 16px;background:#fff;border-bottom:1px solid var(--line);transform:translateY(-100%);transition:transform .25s var(--ease)}
-  .m-bar[data-show]{transform:none}
-  .m-bar .menu-btn{flex:none}
-  .m-bar .header-search{flex:1;order:0;height:40px;border-radius:12px;padding:0 14px}
-  .m-bar .cart-btn{width:40px;height:40px;border-radius:10px}
 }
-.m-bar{display:none}
-@media (max-width:760px){.m-bar{display:flex}}
 .m-menu{background:var(--page);padding:20px 16px;gap:8px}
 .m-menu-logo .wordmark{height:36px;font-size:24px}
 .m-menu ul{display:flex;flex-direction:column;margin-top:16px}
@@ -327,3 +322,7 @@ body:has(main[data-kit]) .m-cats{display:none}
 .cart-btn{position:relative;flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:12px;border:1px solid #d9d9d9;background:#fff;color:var(--ink);transition:background .2s}
 .cart-btn:hover{background:var(--well)}
 .cart-btn span{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--signal);color:var(--ink);font-size:11px;font-weight:800;line-height:18px;text-align:center}
+
+/* Shop list on phones: Sort | Filters replaces the tab bar, and the icon strip gives way to the category chips. */
+body:has(main[data-listing]) .m-cats,body:has(main[data-pdp]) .m-cats{display:none}
+@media (max-width:640px){body:has(main[data-listing]) .tab-bar,body:has(main[data-pdp]) .tab-bar{display:none}}

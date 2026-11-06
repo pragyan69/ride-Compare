@@ -101,7 +101,7 @@ export default async function StorePage({ searchParams }: Props) {
   };
 
   return (
-    <main className={`wrap ${styles.page}`}>
+    <main className={`wrap ${styles.page}`} data-listing>
       <header className={styles.hero}>
         <p className={styles.kicker}>{brand ?? (words.length ? "Search" : "Shop")}</p>
         <h1>{words.length ? `Results for “${words.join(" ")}”` : bike ? `Parts for the ${bike}` : brand ? `${brand} gear and parts` : cat && counts.has(cat) ? cat : "Riding gear and bike parts."}</h1>
@@ -117,14 +117,15 @@ export default async function StorePage({ searchParams }: Props) {
         <Link href={href(undefined)} aria-current={!cat ? "page" : undefined}>
           All
         </Link>
-        {categories.map(([c, n]) => (
+        {/* The picked category comes first so it is on screen on phones. */}
+        {[...categories].sort((a, b) => Number(b[0] === cat) - Number(a[0] === cat)).map(([c, n]) => (
           <Link key={c} href={href(c)} aria-current={cat === c ? "page" : undefined}>
             {c}{!words.length && <span>{n.toLocaleString("en-IN")}</span>}
           </Link>
         ))}
       </nav>
 
-      <FilterBar facets={facets} active={activeFilters} />
+      <FilterBar facets={facets} active={activeFilters} total={items.length} />
 
       <div className={styles.grid}>
         {shown.map((it) => (

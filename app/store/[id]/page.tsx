@@ -28,7 +28,7 @@ export default async function StoreProduct({ params }: Props) {
   if (!it) redirect("/store");
   const off = it.mrp ? Math.round(((it.mrp - it.price) / it.mrp) * 100) : 0;
   return (
-    <main className={`wrap ${styles.page}`}>
+    <main className={`wrap ${styles.page}`} data-pdp>
       <nav className={styles.crumbs} aria-label="Breadcrumb">
         <Link href="/store">Store</Link>
         <span aria-hidden>/</span>

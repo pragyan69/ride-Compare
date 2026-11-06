@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cart } from "@/lib/cart";
+import { money } from "@/lib/catalog";
 import styles from "../store.module.css";
 
 type Props = { item: { id: string; name: string; brand: string; image: string; price: number; sizes: string[] } };
@@ -53,6 +54,10 @@ export function BuyBox({ item }: Props) {
         </div>
       )}
       <div className={styles.actions}>
+        <span className={styles.barPrice}>
+          {money(item.price)}
+          <small>{size ? `Size ${size}` : item.sizes.length ? "Pick a size" : "Free delivery"}</small>
+        </span>
         <Button variant="outline" onClick={add}>Add to cart</Button>
         <Button onClick={() => add() && router.push("/store/checkout")}>Buy now</Button>
       </div>
