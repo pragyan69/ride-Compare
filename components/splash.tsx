@@ -6,7 +6,7 @@ const KEY = "rc-splash";
 // Ad visitors and kit/product landings skip it: replays show they decide within the first second or two.
 const splashGuard = `try{if(sessionStorage.getItem("${KEY}")||/^\\/(kit|product|store)\\//.test(location.pathname)||/utm_source=/.test(location.search))document.documentElement.classList.add("no-splash")}catch(e){}`;
 
-const markup = `<script>${splashGuard}</script><div class="splash-mark"><span>G<b>C</b></span></div><p>Loading the store…</p>`;
+const markup = `<script>${splashGuard}</script><div class="splash-mark"><span>GEAR</span></div>`;
 
 /** First-load splash: server-rendered, faded out once React has hydrated. CSS hides it anyway after 2.5s. */
 export function Splash() {
