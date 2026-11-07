@@ -6,6 +6,7 @@ import path from "node:path";
 import { ChevronRight, Crown, Mountain, TrendingUp, Wrench, type LucideIcon } from "lucide-react";
 import { ProductImage } from "@/components/product-card";
 import { storeCards, type StoreCard } from "@/lib/shop";
+import { hasWhiteBackground } from "@/lib/white-bg";
 import { TopTen, TabbedRow, HeroBanner, type Pick } from "./home-client";
 import { RaceLine } from "@/components/fx/race-line";
 import { Tread } from "@/components/fx/tread";
@@ -47,7 +48,11 @@ export default async function Home() {
   const rows = (cats: string[], pick: (cat: string) => StoreCard[], perBrand = 2) =>
     cats.map((name) => ({ name, items: pickVaried(pick(name), 12, perBrand).map(toPick) })).filter((t) => t.items.length >= 4);
 
-  const topTen = pickVaried(inCat("Helmets").sort(popular), 10, 2).map(toPick);
+  // Top 10 only uses photos shot on white, so each helmet floats on the page instead of sitting in a grey box.
+  const candidates = pickVaried(inCat("Helmets").sort(popular), 30, 2);
+  const white = await Promise.all(candidates.map((c) => hasWhiteBackground(c.image)));
+  const clean = candidates.filter((_, i) => white[i]);
+  const topTen = (clean.length >= 5 ? clean : candidates).slice(0, 10).map(toPick);
   const trendingTabs = rows(["Helmets", "Jackets", "Boots", "Pants", "Gloves"], (c) => inCat(c).sort(popular));
   const partsTabs = rows(["Bike Accessories", "Maintenance & Parts", "Luggage", "Electronics"], (c) => inCat(c).sort(popular));
   const premiumBrands = ["AGV", "Shoei", "Arai", "Alpinestars", "Dainese", "HJC", "Shark", "Rev'it", "Klim", "Akrapovic"];
