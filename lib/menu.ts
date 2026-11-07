@@ -12,7 +12,7 @@ export const PRICES = [
   { value: "100000-", label: "Over ₹1,00,000", min: 100000, max: Infinity },
 ];
 
-export type MenuLink = { label: string; href: string };
+export type MenuLink = { label: string; href: string; logo?: string | null };
 export type CategoryMenu = { category: string; brands: MenuLink[]; bikes: MenuLink[]; sizes: MenuLink[]; prices: MenuLink[]; count: number };
 export type MenuBrand = { name: string; count: number; logo: string | null };
 export type Menu = { brands: MenuBrand[]; featured: MenuBrand[]; categories: Record<string, CategoryMenu> };
@@ -48,7 +48,7 @@ export async function buildMenu(): Promise<Menu> {
     categories[category] = {
       category,
       count: p.prices.length,
-      brands: top(p.brands, 12).map((b) => ({ label: b, href: q({ category, brand: b }) })),
+      brands: top(p.brands, 12).map((b) => ({ label: b, href: q({ category, brand: b }), logo: logoFor(b) })),
       bikes: top(p.bikes, 12).map((b) => ({ label: b, href: q({ category, bike: b }) })),
       // Letter sizes in wearing order; numeric sizes (boots, gloves) by number.
       sizes: top(p.sizes, 12)

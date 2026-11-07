@@ -2,7 +2,7 @@
 import { Suspense, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import type { Menu } from "@/lib/menu";
+import type { Menu, MenuLink } from "@/lib/menu";
 
 export type NavItem = { href: string; label: string; category?: string; brands?: true };
 
@@ -131,18 +131,26 @@ function CategoryPanel({ menu, item }: { menu: Menu; item: NavItem }) {
     { title: "Top brands", links: c.brands },
     { title: "Shop by price", links: c.prices },
     c.bikes.length > 0 ? { title: "Fits your bike", links: c.bikes } : c.sizes.length > 0 && { title: "Shop by size", links: c.sizes },
-  ].filter((x): x is { title: string; links: { label: string; href: string }[] } => Boolean(x));
+  ].filter((x): x is { title: string; links: MenuLink[] } => Boolean(x));
   return (
     <div className="mega-cat">
       <div className="mega-cols">
         {cols.map((col) => (
           <div key={col.title}>
             <h3 className="mega-title">{col.title}</h3>
-            {col.links.map((l) => (
-              <Link key={l.href} href={l.href}>
-                {l.label}
-              </Link>
-            ))}
+            {col.links.map((l) =>
+              l.logo !== undefined ? (
+                <Link key={l.href} href={l.href} className="mega-az-brand">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  {l.logo ? <img src={l.logo} alt="" loading="lazy" /> : <i aria-hidden>{l.label[0]}</i>}
+                  {l.label}
+                </Link>
+              ) : (
+                <Link key={l.href} href={l.href}>
+                  {l.label}
+                </Link>
+              ),
+            )}
           </div>
         ))}
       </div>
