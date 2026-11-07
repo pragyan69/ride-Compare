@@ -3,19 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Package, Plus } from "lucide-react";
 import { money, rankedOffers, type Product } from "@/lib/catalog";
-
-/** Store photos are often 1500-3000px wide. Shopify's CDN resizes on request; other stores go through
- *  wsrv.nl, a free resizing cache. If that fails we fall back to the store's original photo. */
-function sized(src: string, width: number) {
-  if (/cdn\.shopify\.com|\/cdn\/shop\//.test(src)) {
-    const url = new URL(src);
-    url.searchParams.set("width", String(width));
-    return url.toString();
-  }
-  // Only stores that serve large originals and allow wsrv to fetch them (Big Bad Bikes blocks it; its photos are small).
-  if (/customelements\.in|helmetracing\.in/.test(src)) return `https://wsrv.nl/?url=${encodeURIComponent(src)}&w=${width}&output=webp&q=80`;
-  return src;
-}
+import { sized } from "@/lib/image";
 
 export function ProductImage({ p, width = 600 }: { p: Pick<Product, "image">; width?: number }) {
   // 0: resized copy, 1: store original, 2: give up and show the placeholder

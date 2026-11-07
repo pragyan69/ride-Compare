@@ -1,4 +1,5 @@
 "use client";
+import { sized } from "@/lib/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { money } from "@/lib/catalog";
@@ -26,7 +27,7 @@ export default function CartPage() {
             {lines.map((l) => (
               <div key={`${l.id}:${l.size}`} className={styles.line}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                {l.image ? <img src={l.image} alt="" referrerPolicy="no-referrer" /> : <span />}
+                {l.image ? <img src={sized(l.image, 240)} alt="" referrerPolicy="no-referrer" /> : <span />}
                 <div>
                   <Link href={`/store/${encodeURIComponent(l.id)}`} className={styles.lineName}>
                     {l.brand} {l.name}

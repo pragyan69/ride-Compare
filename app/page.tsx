@@ -52,6 +52,8 @@ export default async function Home() {
   const partsTabs = rows(["Bike Accessories", "Maintenance & Parts", "Luggage", "Electronics"], (c) => inCat(c).sort(popular));
   const premiumBrands = ["AGV", "Shoei", "Arai", "Alpinestars", "Dainese", "HJC", "Shark", "Rev'it", "Klim", "Akrapovic"];
   const premiumTabs = rows(premiumBrands, (b) => gear.filter((c) => c.brand === b).sort(popular), 12).slice(0, 6);
+  // The trending banner shows a part, not another helmet: the hero and Top 10 already lead with helmets.
+  const exhaust = pickVaried(all.filter((c) => /exhaust|silencer|slip-?on|muffler/i.test(c.name) && c.image).sort(popular), 1, 1).map(toPick)[0];
   const touring = /touring|adventure|waterproof|\bwp\b|all.?season|rally|tour/i;
   const roadTabs = rows(["Jackets", "Gloves", "Boots", "Luggage", "Helmets"], (c) => inCat(c).filter((x) => touring.test(x.name)), 3);
 
@@ -66,7 +68,7 @@ export default async function Home() {
   for (const c of all) if (c.brand !== "Unspecified") brandCounts.set(c.brand, (brandCounts.get(c.brand) ?? 0) + 1);
   const logoFor = (b: string) => {
     const slug = b.toLowerCase().replace(/\s+/g, "-");
-    return existsSync(path.join(process.cwd(), "public/brand-logos", `${slug}.png`)) ? `/brand-logos/${slug}.png` : null;
+    return existsSync(path.join(process.cwd(), "public/brand-logos", `${slug}.webp`)) ? `/brand-logos/${slug}.webp` : null;
   };
   const brandGrid = [...brandCounts]
     .map(([name, n]) => ({ name, n, logo: logoFor(name) }))
@@ -115,7 +117,7 @@ export default async function Home() {
     </div>,
   ];
 
-  const tileTone = ["#fff1e6", "#e8f0ff", "#ecfdf3", "#f5ecff", "#fff8db", "#ffe9ef", "#e6fbff", "#f3f3f2"];
+  const tileTone = ["#f3f3f2", "#ecfde6", "#f3f3f2", "#f3f3f2", "#ecfde6", "#f3f3f2", "#ecfde6", "#f3f3f2"];
 
   return (
     <main>
@@ -144,33 +146,35 @@ export default async function Home() {
       )}
 
       {trendingTabs.length > 0 && (
-        <Feature tone="sunset" art={["Fresh", "drops"]} line="What riders are buying this week" href="/store" pick={trendingTabs[0].items[0]}>
-          <Head icon={TrendingUp} tone="sunset" eyebrow="What's new" title="Trending in riding gear" sub="What riders buy most." href="/store" />
-          <TabbedRow tabs={trendingTabs} light />
+        <Feature tone="sunset" art={["Bike", "parts"]} line="Exhausts, crash guards, racks and more" href={shop({ category: "Bike Accessories" })} pick={exhaust}>
+          <FeatureHead icon={TrendingUp} tone="sunset" eyebrow="What's new" title="Trending in riding gear" sub="What riders buy most." href="/store" />
+          <TabbedRow tabs={trendingTabs} light arrows />
         </Feature>
       )}
 
       <Tread />
 
       {premiumTabs.length > 0 && (
-        <Feature tone="electric" art={["Race", "grade"]} line="The helmets and leathers racers use" href="/store" pick={premiumTabs[0].items[0]}>
-          <Head icon={Crown} tone="electric" eyebrow="Premium brands" title={<>Shop <em>premium.</em></>} sub="AGV, Shoei, Arai, Alpinestars, Dainese and more." href="/store" />
-          <TabbedRow tabs={premiumTabs} light />
-        </Feature>
+        <section className={styles.band} data-dark>
+          <div className="wrap">
+            <Head icon={Crown} eyebrow="Race grade" title={<>Shop <em>premium.</em></>} sub="The helmets, leathers and exhausts racers use." href="/store" dark />
+            <TabbedRow tabs={premiumTabs} more="/store" />
+          </div>
+        </section>
       )}
 
       {partsTabs.length > 0 && (
         <section className={`wrap ${styles.section}`}>
-          <Head icon={Wrench} tone="mint" eyebrow="For your motorcycle" title={<>Parts and <em>accessories.</em></>} sub="Crash guards, exhausts, racks, luggage and more." href={shop({ category: "Bike Accessories" })} />
-          <TabbedRow tabs={partsTabs} light />
+          <Head icon={Wrench} eyebrow="For your motorcycle" title={<>Parts and <em>accessories.</em></>} sub="Crash guards, exhausts, racks, luggage and more." href={shop({ category: "Bike Accessories" })} />
+          <TabbedRow tabs={partsTabs} light more={shop({ category: "Bike Accessories" })} />
         </section>
       )}
 
       {roadTabs.length > 0 && (
-        <Feature tone="sand" art={["Go", "further"]} line="Waterproof, all-season gear for long days" href={shop({ q: "touring" })} pick={roadTabs[0].items[0]} flip>
-          <Head icon={Mountain} tone="sand" eyebrow="Touring and adventure" title={<>Built for <em>the road.</em></>} sub="Waterproof, all-season gear made for long days." href={shop({ q: "touring" })} />
-          <TabbedRow tabs={roadTabs} light />
-        </Feature>
+        <section className={`wrap ${styles.section}`}>
+          <Head icon={Mountain} eyebrow="Touring & adventure" title={<>Built for <em>the road.</em></>} sub="Waterproof, all-season gear made for long days." href={shop({ q: "touring" })} />
+          <TabbedRow tabs={roadTabs} light more={shop({ q: "touring" })} />
+        </section>
       )}
 
       <section className={`${styles.section} ${styles.mosaicWrap}`}>
@@ -211,10 +215,31 @@ export default async function Home() {
   );
 }
 
+/** Culture Circle style section head: small eyebrow, title, grey sub line, View all on the right. */
+function Head({ icon: Icon, eyebrow, title, sub, href, dark = false }: { icon?: LucideIcon; eyebrow: string; title: React.ReactNode; sub?: string; href?: string; dark?: boolean }) {
+  return (
+    <div className={styles.ccHead} data-dark={dark || undefined}>
+      <div className={styles.ccHeadText}>
+        <p className={styles.eyebrow}>
+          {Icon && <Icon size={14} aria-hidden />}
+          {eyebrow}
+        </p>
+        <h2>{title}</h2>
+        {sub && <p className={styles.ccSub}>{sub}</p>}
+      </div>
+      {href && (
+        <Link href={href} className={styles.ccViewAll}>
+          View all <ChevronRight size={16} aria-hidden />
+        </Link>
+      )}
+    </div>
+  );
+}
+
 type Tone = "sunset" | "electric" | "mint" | "sand";
 
-/** Culture Circle style section head: icon disc, small eyebrow, title, grey sub line, View all on the right. */
-function Head({ icon: Icon, eyebrow, title, sub, href, tone }: { icon?: LucideIcon; eyebrow: string; title: React.ReactNode; sub?: string; href?: string; tone?: Tone }) {
+/** Section head used beside a Feature banner: icon disc, coloured eyebrow, title, View all. */
+function FeatureHead({ icon: Icon, eyebrow, title, sub, href, tone }: { icon?: LucideIcon; eyebrow: string; title: React.ReactNode; sub?: string; href?: string; tone?: Tone }) {
   return (
     <div className={styles.ccHead} data-tone={tone}>
       {Icon && (

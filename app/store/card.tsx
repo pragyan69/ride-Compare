@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { money } from "@/lib/catalog";
+import { ProductImage } from "@/components/product-card";
 import type { StoreCard } from "@/lib/shop";
 import styles from "./store.module.css";
 
@@ -9,8 +10,7 @@ export function ProductTile({ it }: { it: StoreCard }) {
   return (
     <Link href={`/store/${encodeURIComponent(it.id)}`} className={styles.card}>
       <div className={styles.cardImg}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={it.image} alt="" loading="lazy" referrerPolicy="no-referrer" />
+        <ProductImage p={it} width={480} />
         <span className="card-plus" aria-hidden>
           <Plus size={18} strokeWidth={1.75} />
         </span>

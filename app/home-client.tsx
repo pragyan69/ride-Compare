@@ -104,7 +104,7 @@ export function TopTen({ items }: { items: Pick[] }) {
 }
 
 /** Category tabs over a horizontally scrolling row of white product cards, with arrows and a scroll bar like Culture Circle's. */
-export function TabbedRow({ tabs, light = false }: { tabs: { name: string; items: Pick[] }[]; light?: boolean }) {
+export function TabbedRow({ tabs, light = false, more, arrows = false }: { tabs: { name: string; items: Pick[] }[]; light?: boolean; more?: string; arrows?: boolean }) {
   const [active, setActive] = useState(0);
   const row = useRef<HTMLDivElement>(null);
   const [view, setView] = useState({ at: 0, size: 1 });
@@ -151,7 +151,7 @@ export function TabbedRow({ tabs, light = false }: { tabs: { name: string; items
           </Link>
         ))}
       </div>
-      {view.size < 0.99 && (
+      {arrows && view.size < 0.99 && (
         <div className={styles.rowNav} data-dark={!light || undefined}>
           <button type="button" aria-label="Scroll left" onClick={() => nudge(-1)} disabled={view.at <= 0.01}>
             <ChevronLeft size={18} />
@@ -163,6 +163,11 @@ export function TabbedRow({ tabs, light = false }: { tabs: { name: string; items
             <ChevronRight size={18} />
           </button>
         </div>
+      )}
+      {!arrows && more && (
+        <Link href={more} className={styles.moreBtn}>
+          View All
+        </Link>
       )}
     </>
   );

@@ -17,10 +17,10 @@ export type CategoryMenu = { category: string; brands: MenuLink[]; bikes: MenuLi
 export type MenuBrand = { name: string; count: number; logo: string | null };
 export type Menu = { brands: MenuBrand[]; featured: MenuBrand[]; categories: Record<string, CategoryMenu> };
 
-/** A brand's logo in public/brand-logos, named by slug (e.g. "hepco-becker.png"), if we have one. */
+/** A brand's logo in public/brand-logos, named by slug (e.g. "hepco-becker.webp"), if we have one. */
 const logoFor = (brand: string) => {
   const slug = brand.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  return existsSync(path.join(process.cwd(), "public/brand-logos", `${slug}.png`)) ? `/brand-logos/${slug}.png` : null;
+  return existsSync(path.join(process.cwd(), "public/brand-logos", `${slug}.webp`)) ? `/brand-logos/${slug}.webp` : null;
 };
 
 const SIZE_ORDER = ["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"];
