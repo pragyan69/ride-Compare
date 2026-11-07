@@ -1,24 +1,28 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Search, Zap, Menu, HardHat, Shirt, Hand, Footprints, Backpack, Wrench, Bike, ShoppingBag, type LucideIcon } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "./ui/sheet";
 import { Logo } from "./logo";
 import { Button } from "./ui/button";
+import { DeliveryPin } from "./delivery-pin";
+import { SupportMenu } from "./support-menu";
+import { MegaNav, type NavItem } from "./mega-menu";
+import type { Menu as MenuData } from "@/lib/menu";
 
-const nav: { href: string; label: string; hot?: boolean }[] = [
+const nav: NavItem[] = [
   { href: "/store", label: "Shop all" },
-  { href: "/store?category=Helmets", label: "Helmets" },
-  { href: "/store?category=Jackets", label: "Jackets" },
-  { href: "/store?category=Boots", label: "Boots" },
-  { href: "/store?category=Pants", label: "Pants" },
-  { href: "/store?category=Gloves", label: "Gloves" },
-  { href: "/store?category=Bike%20Accessories", label: "Bike parts" },
-  { href: "/store?category=Maintenance%20%26%20Parts", label: "Maintenance" },
-  { href: "/store?category=Luggage", label: "Luggage" },
-  { href: "/store?category=Electronics", label: "Electronics" },
+  { href: "/store?brands", label: "Brands", brands: true },
+  { href: "/store?category=Helmets", label: "Helmets", category: "Helmets" },
+  { href: "/store?category=Jackets", label: "Jackets", category: "Jackets" },
+  { href: "/store?category=Boots", label: "Boots", category: "Boots" },
+  { href: "/store?category=Pants", label: "Pants", category: "Pants" },
+  { href: "/store?category=Gloves", label: "Gloves", category: "Gloves" },
+  { href: "/store?category=Bike%20Accessories", label: "Bike parts", category: "Bike Accessories" },
+  { href: "/store?category=Maintenance%20%26%20Parts", label: "Maintenance", category: "Maintenance & Parts" },
+  { href: "/store?category=Luggage", label: "Luggage", category: "Luggage" },
+  { href: "/store?category=Electronics", label: "Electronics", category: "Electronics" },
 ];
 // Phone-only category strip under the search bar.
 const strip: { href: string; label: string; icon: LucideIcon; hot?: boolean }[] = [
@@ -34,8 +38,7 @@ const strip: { href: string; label: string; icon: LucideIcon; hot?: boolean }[] 
 ];
 const hints = ["Himalayan 450 crash guard", "AGV K1 S", "waterproof riding boots", "Akrapovic exhaust", "chain lube"];
 
-export function SiteHeader() {
-  const path = usePathname();
+export function SiteHeader({ menu: menuData }: { menu: MenuData | null }) {
   const [hint, setHint] = useState(0);
   const [scrolled, setScrolled] = useState(false);
   const [menu, setMenu] = useState(false);
@@ -59,7 +62,6 @@ export function SiteHeader() {
     const t = setInterval(() => setHint((h) => (h + 1) % hints.length), 2600);
     return () => clearInterval(t);
   }, []);
-  const active = (href: string) => href === "/store" && path.startsWith("/store");
   return (
     <>
       <header className="site-header" data-scrolled={scrolled || undefined}>
@@ -71,27 +73,20 @@ export function SiteHeader() {
             <Link href="/" aria-label="GearCircle home">
               <Logo />
             </Link>
+            <DeliveryPin />
           </div>
           <form action="/store" role="search" className="header-search">
             <Search size={18} aria-hidden />
             <input name="q" aria-label="Search motorcycle gear" placeholder={`Search for ${hints[hint]}`} />
           </form>
+          <SupportMenu />
           <CartButton />
           <Button asChild size="lg" className="header-cta">
             <Link href="/store">Shop now</Link>
           </Button>
         </div>
       </header>
-      <nav className="cat-nav" aria-label="Sections">
-        <div className="wrap">
-          {nav.map((l) => (
-            <Link key={l.href} href={l.href} aria-current={active(l.href) ? "page" : undefined} className={l.hot ? "hot" : undefined}>
-              {l.hot && <Zap size={15} aria-hidden />}
-              {l.label}
-            </Link>
-          ))}
-        </div>
-      </nav>
+      <MegaNav nav={nav} menu={menuData} />
       <nav className="m-cats" aria-label="Shop by category">
         {strip.map(({ href, label, icon: Icon, hot }) => (
           <Link key={href} href={href} data-hot={hot || undefined}>
@@ -110,10 +105,9 @@ export function SiteHeader() {
             <Logo />
           </Link>
           <ul>
-            {nav.map((l) => (
+            {nav.filter((l) => !l.brands).map((l) => (
               <li key={l.href}>
-                <Link href={l.href} onClick={() => setMenu(false)} data-hot={l.hot || undefined}>
-                  {l.hot && <Zap size={15} aria-hidden />}
+                <Link href={l.href} onClick={() => setMenu(false)}>
                   {l.label}
                 </Link>
               </li>

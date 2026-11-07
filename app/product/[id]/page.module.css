@@ -78,10 +78,20 @@
   .xAxis{padding-left:72px}
 }
 
+/* Store gallery: thumbnails in a column beside a white photo card; on phones a full-width swipe strip. */
+.gallery,.image{position:static;max-width:none}
+.gallery{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;align-items:start}
+.track{grid-column:2;grid-row:1;border-radius:20px;background:#fff}
+.image{background:#fff;border-radius:20px}
+.image img{padding:12%}
+.count{display:none}
+.thumbs{grid-column:1;grid-row:1;flex-direction:column;margin:0;max-height:calc(100vh - 140px);overflow-y:auto}
+.thumbs button{width:96px;height:96px;border:1.5px solid transparent;border-radius:14px;background:#fff}
+.thumbs button[aria-current="true"]{border-color:var(--ink)}
 @media (max-width:640px){
-  .gallery{position:static;background:#fff;padding-bottom:12px}
-  .track{border-radius:0}
-  .image{background:#fff;border-radius:0}
-  .thumbs{padding:0 16px}
-  .thumbs button{width:56px;height:56px;background:#fff;border-color:var(--line)}
+  .gallery{display:block;position:relative;background:#fff;padding-bottom:12px}
+  .track,.image{border-radius:0}
+  .count{display:block;top:auto;bottom:84px;right:16px}
+  .thumbs{flex-direction:row;max-height:none;margin-top:8px;padding:0 16px}
+  .thumbs button{width:56px;height:56px;border-color:var(--line)}
 }

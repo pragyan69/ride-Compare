@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Instrument_Serif, Nunito } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
+import { buildMenu, type Menu } from "@/lib/menu";
 import { SiteFooter } from "@/components/site-footer";
 import { TabBar } from "@/components/tab-bar";
 import { MetaPixel } from "@/components/meta-pixel";
@@ -21,13 +22,15 @@ export const metadata: Metadata = {
   description: "Helmets, riding jackets, boots and motorcycle parts with free delivery across India. Pay by UPI, card or netbanking.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // The mega menu is a nice-to-have: if the catalogue can't load, the header falls back to plain links.
+  const menu: Menu | null = await buildMenu().catch(() => null);
   return (
     <html lang="en-IN" suppressHydrationWarning className={`${sans.variable} ${serif.variable} ${round.variable}`}>
       <body>
         <PublicOnly>
           <Splash />
-          <SiteHeader />
+          <SiteHeader menu={menu} />
         </PublicOnly>
         {children}
         <PublicOnly>

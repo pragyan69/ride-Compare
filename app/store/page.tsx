@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Plus } from "lucide-react";
-import { money } from "@/lib/catalog";
 import { storeCards, type StoreCard } from "@/lib/shop";
 import { FilterBar, type Facet } from "./filter-bar";
+import { ProductTile } from "./card";
+import { PRICES } from "@/lib/menu";
 import styles from "./store.module.css";
 
 export const metadata: Metadata = {
@@ -22,14 +22,6 @@ const SORTS: { value: string; label: string; by: (a: StoreCard, b: StoreCard) =>
   { value: "price-asc", label: "Price: low to high", by: (a, b) => a.price - b.price },
   { value: "price-desc", label: "Price: high to low", by: (a, b) => b.price - a.price },
   { value: "discount", label: "Biggest discount", by: (a, b) => off(b) - off(a) },
-];
-const PRICES = [
-  { value: "0-5000", label: "Under ₹5,000", min: 0, max: 5000 },
-  { value: "5000-10000", label: "₹5,000 to ₹10,000", min: 5000, max: 10000 },
-  { value: "10000-25000", label: "₹10,000 to ₹25,000", min: 10000, max: 25000 },
-  { value: "25000-50000", label: "₹25,000 to ₹50,000", min: 25000, max: 50000 },
-  { value: "50000-100000", label: "₹50,000 to ₹1,00,000", min: 50000, max: 100000 },
-  { value: "100000-", label: "Over ₹1,00,000", min: 100000, max: Infinity },
 ];
 const SIZE_ORDER = ["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"];
 
@@ -103,16 +95,25 @@ export default async function StorePage({ searchParams }: Props) {
   return (
     <main className={`wrap ${styles.page}`} data-listing>
       <header className={styles.hero}>
-        <p className={styles.kicker}>{brand ?? (words.length ? "Search" : "Shop")}</p>
-        <h1>{words.length ? `Results for “${words.join(" ")}”` : bike ? `Parts for the ${bike}` : brand ? `${brand} gear and parts` : cat && counts.has(cat) ? cat : "Riding gear and bike parts."}</h1>
-        <p>{items.length.toLocaleString("en-IN")} products, free delivery across India.</p>
-        <ul className={styles.perks}>
-          <li>Free delivery</li>
-          <li>UPI, cards, netbanking</li>
-          <li>Real help on Instagram</li>
-        </ul>
+        <nav className={styles.crumbs} aria-label="Breadcrumb">
+          <Link href="/">Home</Link>
+          <span aria-hidden>/</span>
+          <Link href="/store">Shop</Link>
+          {cat && counts.has(cat) && (
+            <>
+              <span aria-hidden>/</span>
+              <span>{cat}</span>
+            </>
+          )}
+        </nav>
+        <h1>{words.length ? `Results for “${words.join(" ")}”` : bike ? `Parts for the ${bike}` : brand ? `${brand}` : cat && counts.has(cat) ? cat : "All products"}</h1>
+        <p>
+          Showing {items.length.toLocaleString("en-IN")} {items.length === 1 ? "result" : "results"}
+        </p>
       </header>
 
+      <div className={styles.chipRow}>
+      <FilterBar facets={facets} active={activeFilters} total={items.length} />
       <nav className={styles.tabs} aria-label="Store categories">
         <Link href={href(undefined)} aria-current={!cat ? "page" : undefined}>
           All
@@ -124,28 +125,11 @@ export default async function StorePage({ searchParams }: Props) {
           </Link>
         ))}
       </nav>
-
-      <FilterBar facets={facets} active={activeFilters} total={items.length} />
+      </div>
 
       <div className={styles.grid}>
         {shown.map((it) => (
-            <Link key={it.id} href={`/store/${encodeURIComponent(it.id)}`} className={styles.card}>
-              <div className={styles.cardImg}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={it.image} alt="" loading="lazy" referrerPolicy="no-referrer" />
-                <span className="card-plus" aria-hidden>
-                  <Plus size={18} strokeWidth={1.75} />
-                </span>
-              </div>
-              <div className={styles.cardBody}>
-                <span className={styles.cardBrand}>{it.brand}</span>
-                <span className={styles.cardName}>{it.name}</span>
-                <span className={styles.cardPrice}>
-                  {money(it.price)}
-                  {it.mrp && <s>{money(it.mrp)}</s>}
-                </span>
-              </div>
-            </Link>
+          <ProductTile key={it.id} it={it} />
         ))}
       </div>
       {shown.length === 0 && <p className={styles.empty}>Nothing matches. Try a shorter search or another category.</p>}

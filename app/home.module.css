@@ -142,12 +142,12 @@
 .compareRows span[data-low="true"] b {
   color: var(--ink);
   text-decoration: none;
-  font-weight: 800;
+  font-weight:600;
 }
 .compareSave {
   margin-top: 12px;
   font-size: 13px;
-  font-weight: 800;
+  font-weight:600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--brand);
@@ -170,8 +170,8 @@
 .outline {
   white-space: nowrap;
   font-size: clamp(5rem, 13vw, 10rem);
-  font-weight: 900;
-  font-variation-settings: "wdth" 125;
+  font-weight:700;
+  
   line-height: 0.9;
   color: #fff;
   -webkit-text-stroke: 3px var(--ink);
@@ -291,7 +291,7 @@
   border-radius: 999px;
   background: var(--signal);
   font-size: 12px;
-  font-weight: 800;
+  font-weight:600;
   margin-bottom: 8px;
 }
 .topCardBody strong {
@@ -445,7 +445,7 @@
 }
 .section h2 {
   font-size: clamp(2rem, 3.6vw, 3rem);
-  font-weight: 800;
+  font-weight:600;
   line-height: 1;
   letter-spacing: -0.03em;
 }
@@ -633,7 +633,7 @@
 }
 .slideTitle {
   font-size: clamp(2.8rem, 5.4vw, 4.8rem);
-  font-weight: 800;
+  font-weight:600;
   line-height: 0.98;
   letter-spacing: -0.035em;
 }
@@ -730,7 +730,7 @@
 }
 .dealTileSub {
   font-size: 16px;
-  font-weight: 800;
+  font-weight:600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--signal);
@@ -897,7 +897,7 @@
 .brandRow span {
   padding: 6px;
   font-size: 11px;
-  font-weight: 800;
+  font-weight:600;
   text-transform: uppercase;
   line-height: 1.05;
   overflow-wrap: anywhere;
@@ -1085,8 +1085,8 @@
   background: radial-gradient(circle at 50% 35%, #ffffff, #e2fbec);
   box-shadow: inset 0 0 0 6px #0d0f0e, 0 18px 40px -12px rgba(0, 0, 0, 0.45);
   color: #0d0f0e;
-  font-weight: 900;
-  font-variation-settings: "wdth" 125;
+  font-weight:700;
+  
   text-transform: uppercase;
   line-height: 0.9;
   text-align: center;
@@ -1106,7 +1106,7 @@
   background: #0d0f0e;
   color: #fff;
   font-size: 22px;
-  font-weight: 800;
+  font-weight:600;
   text-transform: uppercase;
   box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.5);
   rotate: -3deg;
@@ -1173,10 +1173,10 @@
 }
 .bandHead h2 {
   font-size: clamp(3rem, 6.4vw, 5.6rem);
-  font-weight: 800;
+  font-weight:600;
   line-height: 0.95;
   letter-spacing: -0.035em;
-  font-variation-settings: "wdth" 100;
+  
 }
 .bandHead h2 em {
   font-family: var(--font-serif), Georgia, serif;
@@ -1211,8 +1211,8 @@
 }
 .poster span {
   font-size: clamp(4rem, 7vw, 6rem);
-  font-weight: 900;
-  font-variation-settings: "wdth" 125;
+  font-weight:700;
+  
   text-transform: uppercase;
   line-height: 0.85;
   letter-spacing: -0.02em;
@@ -1493,7 +1493,7 @@
 }
 .honest h2 {
   font-size: clamp(2rem, 3.6vw, 3rem);
-  font-weight: 800;
+  font-weight:600;
   line-height: 1;
   letter-spacing: -0.03em;
 }
@@ -1540,8 +1540,8 @@
 .trackTitle {
   margin-top: 12px;
   font-size: clamp(2.8rem, 5.4vw, 4.8rem);
-  font-weight: 900;
-  font-variation-settings: "wdth" 125;
+  font-weight:700;
+  
   text-transform: uppercase;
   line-height: 0.9;
   letter-spacing: -0.02em;
@@ -1689,7 +1689,7 @@
   .tabs button { font-size: 12px; }
   .gapBand { margin-top: 48px; padding: 36px 0 28px; }
 }
-.trackTitle { font-size: clamp(2.2rem, 3.6vw, 3.2rem); font-weight: 800; }
+.trackTitle { font-size: clamp(2.2rem, 3.6vw, 3.2rem); font-weight:600; }
 
 /* phone: Culture Circle rails = two rows scrolling sideways, View All at the bottom */
 .moreBtn { display: none; }
