@@ -7,9 +7,6 @@
 .tabs a[aria-current="page"]{background:var(--ink);border-color:var(--ink);color:#fff}
 .tabs a[aria-current="page"] span{color:#bbb}
 .mBar{display:none}
-.pager{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;margin-top:40px;font-size:14px;color:var(--ink-3)}
-.pager a{justify-self:start;padding:10px 18px;border-radius:12px;border:1px solid var(--line-strong);background:#fff;font-weight:700;color:var(--ink)}
-.pager a:last-child{justify-self:end}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px 12px;margin-top:24px}
 .card{display:flex;flex-direction:column}
 .card:hover .cardImg img{transform:scale(1.04)}
@@ -38,7 +35,14 @@
 .box{display:flex;flex-direction:column;gap:22px}
 .sizeHead{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--ink-2)}
 .sizeHead b{color:var(--ink)}
-.sizeHead a{display:inline-flex;align-items:center;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.sizeLink{display:inline-flex;align-items:center;padding:0;border:0;background:none;font:inherit;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.guide{display:flex!important;flex-direction:column;gap:16px!important;max-width:460px!important;padding:28px!important;border:0!important;border-radius:20px!important}
+.guideTitle{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:600}
+.guideText{font-size:14px;line-height:1.55;color:var(--ink-2)}
+.guideTable{width:100%;border-collapse:collapse;font-size:14px}
+.guideTable th{padding:10px 12px;background:var(--well);text-align:left;font-weight:600}
+.guideTable td{padding:10px 12px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.guideNote{font-size:13px;color:var(--ink-3)}
 .sizes{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .sizes button{min-width:72px;height:52px;padding:0 14px;border-radius:12px;border:1px solid var(--line-strong);background:#fff;font:inherit;font-weight:500;font-size:16px;cursor:pointer;transition:border-color .15s}
 .sizes button:hover{border-color:var(--ink)}
@@ -220,3 +224,11 @@
   .fsPanel{width:auto!important;max-height:85dvh;border-radius:20px 20px 0 0}
   .fsTabs{padding-top:20px}
 }
+.skeleton{aspect-ratio:1/1.32;border-radius:16px;background:linear-gradient(100deg,#efefef 30%,#f7f7f7 50%,#efefef 70%);background-size:200% 100%;animation:shimmer 1.2s linear infinite}
+@keyframes shimmer{to{background-position:-200% 0}}
+.more{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:36px;font-size:14px;color:var(--ink-3)}
+.more progress{width:200px;height:3px;appearance:none;border:0;border-radius:3px;background:var(--line);overflow:hidden}
+.more progress::-webkit-progress-bar{background:var(--line)}
+.more progress::-webkit-progress-value{background:var(--ink)}
+.more progress::-moz-progress-bar{background:var(--ink)}
+.more button{height:42px;padding:0 18px;border:1px solid var(--line-strong);border-radius:12px;background:#fff;font:inherit;font-weight:600;color:var(--ink);cursor:pointer}

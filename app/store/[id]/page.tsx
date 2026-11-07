@@ -79,7 +79,7 @@ export default async function StoreProduct({ params }: Props) {
           </section>
 
           <section className={styles.panel}>
-            <BuyBox item={{ id: it.id, name: it.name, brand: it.brand, image: it.image, price: it.price, mrp: it.mrp, sizes: it.sizes }} instagram={INSTAGRAM} />
+            <BuyBox item={{ id: it.id, name: it.name, brand: it.brand, category: it.category, image: it.image, price: it.price, mrp: it.mrp, sizes: it.sizes }} instagram={INSTAGRAM} />
           </section>
 
           <section className={styles.panel}>

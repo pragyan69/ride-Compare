@@ -93,7 +93,9 @@ function BrandsPanel({ menu }: { menu: Menu }) {
             <div key={k} data-letter={k}>
               <h3>{k}</h3>
               {bs.map((b) => (
-                <Link key={b.name} href={brandHref(b.name)}>
+                <Link key={b.name} href={brandHref(b.name)} className="mega-az-brand">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  {b.logo ? <img src={b.logo} alt="" loading="lazy" /> : <i aria-hidden>{b.name[0]}</i>}
                   {b.name}
                 </Link>
               ))}
@@ -112,8 +114,9 @@ function BrandsPanel({ menu }: { menu: Menu }) {
         <h3 className="mega-title">Featured brands</h3>
         <div className="mega-circles">
           {menu.featured.map((b) => (
-            <Link key={b} href={brandHref(b)} title={b}>
-              <span>{b}</span>
+            <Link key={b.name} href={brandHref(b.name)} title={b.name} aria-label={b.name}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              {b.logo ? <img src={b.logo} alt="" loading="lazy" /> : <span>{b.name}</span>}
             </Link>
           ))}
         </div>

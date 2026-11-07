@@ -1,4 +1,6 @@
 import "server-only";
+import { existsSync } from "node:fs";
+import path from "node:path";
 import { importedCards } from "./shop";
 
 export const PRICES = [
@@ -12,7 +14,14 @@ export const PRICES = [
 
 export type MenuLink = { label: string; href: string };
 export type CategoryMenu = { category: string; brands: MenuLink[]; bikes: MenuLink[]; sizes: MenuLink[]; prices: MenuLink[]; count: number };
-export type Menu = { brands: { name: string; count: number }[]; featured: string[]; categories: Record<string, CategoryMenu> };
+export type MenuBrand = { name: string; count: number; logo: string | null };
+export type Menu = { brands: MenuBrand[]; featured: MenuBrand[]; categories: Record<string, CategoryMenu> };
+
+/** A brand's logo in public/brand-logos, named by slug (e.g. "hepco-becker.png"), if we have one. */
+const logoFor = (brand: string) => {
+  const slug = brand.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  return existsSync(path.join(process.cwd(), "public/brand-logos", `${slug}.png`)) ? `/brand-logos/${slug}.png` : null;
+};
 
 const SIZE_ORDER = ["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"];
 const sizeRank = (v: string) => (SIZE_ORDER.includes(v) ? SIZE_ORDER.indexOf(v) : 100 + (parseInt(v.replace(/\D/g, ""), 10) || 0));
@@ -48,9 +57,11 @@ export async function buildMenu(): Promise<Menu> {
       prices: PRICES.filter((r) => p.prices.some((x) => x >= r.min && x < r.max)).map((r) => ({ label: r.label, href: q({ category, price: r.value }) })),
     };
   }
+  const brands = [...brandCount].map(([name, count]) => ({ name, count, logo: logoFor(name) }));
   return {
-    brands: [...brandCount].map(([name, count]) => ({ name, count })).sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" })),
-    featured: top(brandCount, 24),
+    brands: [...brands].sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" })),
+    // The biggest brands, those with a logo first so the grid reads like Culture Circle's.
+    featured: [...brands].sort((a, b) => Number(Boolean(b.logo)) - Number(Boolean(a.logo)) || b.count - a.count).slice(0, 24),
     categories,
   };
 }

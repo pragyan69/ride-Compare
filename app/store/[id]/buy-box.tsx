@@ -6,9 +6,10 @@ import { ArrowDown, ChevronRight, CreditCard, Headphones, MessageCircle, ShieldC
 import { cart } from "@/lib/cart";
 import { money } from "@/lib/catalog";
 import styles from "../store.module.css";
+import { SizeGuide } from "./size-guide";
 
 type Props = {
-  item: { id: string; name: string; brand: string; image: string; price: number; mrp: number | null; sizes: string[] };
+  item: { id: string; name: string; brand: string; category: string; image: string; price: number; mrp: number | null; sizes: string[] };
   instagram: string;
 };
 
@@ -36,9 +37,7 @@ export function BuyBox({ item, instagram }: Props) {
             <span>
               Selected: <b>{size ?? "pick a size"}</b>
             </span>
-            <a href={instagram} target="_blank" rel="noopener noreferrer">
-              Size help <ChevronRight size={16} aria-hidden />
-            </a>
+            <SizeGuide category={item.category} brand={item.brand} />
           </div>
           <div className={styles.sizes} role="group" aria-label="Size" data-missing={state === "needSize" || undefined}>
             {item.sizes.map((s) => (
