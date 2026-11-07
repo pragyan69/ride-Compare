@@ -1642,15 +1642,6 @@
 .ccHead[data-dark] h2 em { color: var(--signal); }
 .ccHead[data-dark] .ccViewAll { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); color: #fff; }
 
-.trustRow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding-top: 24px; }
-.trustCard { display: flex; flex-direction: column; gap: 4px; min-height: 96px; padding: 18px 20px; border-radius: 16px; background: #fff; }
-.trustCard strong { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
-.trustCard span { font-size: 13px; color: #666; }
-.trustCard[data-tone="signal"] { background: var(--signal); }
-.trustCard[data-tone="signal"] span { color: #1d4a10; }
-.trustCard[data-tone="ink"] { background: #000; color: #fff; }
-.trustCard[data-tone="ink"] span { color: #a3a3a3; }
-.trustCard[data-tone="grey"] { background: #eeeeee; }
 
 .gapBand { margin-top: 64px; padding: 48px 0 40px; background: #e8f9e1; }
 
@@ -1686,10 +1677,6 @@
 .bandHead p, .bikes > p, .kitText p { font-size: 14px !important; color: #666; }
 
 @media (max-width: 860px) {
-  .trustRow { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-  .trustCard { min-height: 84px; padding: 14px; }
-  .trustCard strong { font-size: 15px; }
-  .trustCard span { font-size: 12px; }
   .ccHead h2, .section .ccHead h2 { font-size: 22px; }
   .ccSub { font-size: 13px; }
   .ccViewAll { height: 38px; padding: 0 10px 0 12px; font-size: 13px; }

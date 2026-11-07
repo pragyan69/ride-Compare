@@ -130,20 +130,6 @@ export default async function Home() {
 
       <HeroBanner slides={slides} />
 
-      <section className={`wrap ${styles.trustRow}`} aria-label="Why GearCircle">
-        {[
-          { t: "Free delivery", s: "Ships across India", tone: "signal" },
-          { t: "Real help", s: "Message us on Instagram, a person replies", tone: "ink" },
-          { t: "Pay your way", s: "UPI, cards and netbanking via Razorpay", tone: "paper" },
-          { t: `${total} products`, s: `${brandCounts.size} brands, parts for 60+ bikes`, tone: "grey" },
-        ].map((c) => (
-          <div key={c.t} className={styles.trustCard} data-tone={c.tone}>
-            <strong>{c.t}</strong>
-            <span>{c.s}</span>
-          </div>
-        ))}
-      </section>
-
       {topTen.length >= 5 && (
         <section className={styles.paper}>
           <div className="wrap">
