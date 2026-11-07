@@ -1760,3 +1760,8 @@
   .rowNav { display: none; }
 }
 .feature .rowNote { color: #737373; }
+
+/* Phones: the hero sits as an inset rounded card, Culture Circle style */
+@media (max-width: 640px) {
+  .banner { margin: 12px 12px 0; border-radius: 18px; isolation: isolate; }
+}

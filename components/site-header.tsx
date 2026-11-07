@@ -7,6 +7,7 @@ import { Sheet, SheetContent, SheetTitle, SheetDescription } from "./ui/sheet";
 import { Logo } from "./logo";
 import { Button } from "./ui/button";
 import { DeliveryPin } from "./delivery-pin";
+import { sized } from "@/lib/image";
 import { SupportMenu } from "./support-menu";
 import { MegaNav, type NavItem } from "./mega-menu";
 import type { Menu as MenuData } from "@/lib/menu";
@@ -25,16 +26,17 @@ const nav: NavItem[] = [
   { href: "/store?category=Electronics", label: "Electronics", category: "Electronics" },
 ];
 // Phone-only category strip under the search bar.
-const strip: { href: string; label: string; icon: LucideIcon; hot?: boolean }[] = [
+const strip: { href: string; label: string; icon: LucideIcon; category?: string }[] = [
   { href: "/store", label: "Shop all", icon: ShoppingBag },
-  { href: "/store?category=Helmets", label: "Helmets", icon: HardHat },
-  { href: "/store?category=Jackets", label: "Jackets", icon: Shirt },
-  { href: "/store?category=Gloves", label: "Gloves", icon: Hand },
-  { href: "/store?category=Boots", label: "Boots", icon: Footprints },
-  { href: "/store?category=Bike%20Accessories", label: "Bike parts", icon: Bike },
-  { href: "/store?category=Maintenance%20%26%20Parts", label: "Maintenance", icon: Wrench },
-  { href: "/store?category=Luggage", label: "Luggage", icon: Backpack },
-  { href: "/store?category=Electronics", label: "Electronics", icon: Zap },
+  { href: "/store?category=Helmets", label: "Helmets", icon: HardHat, category: "Helmets" },
+  { href: "/store?category=Jackets", label: "Jackets", icon: Shirt, category: "Jackets" },
+  { href: "/store?category=Gloves", label: "Gloves", icon: Hand, category: "Gloves" },
+  { href: "/store?category=Boots", label: "Boots", icon: Footprints, category: "Boots" },
+  { href: "/store?category=Pants", label: "Pants", icon: Shirt, category: "Pants" },
+  { href: "/store?category=Bike%20Accessories", label: "Bike parts", icon: Bike, category: "Bike Accessories" },
+  { href: "/store?category=Maintenance%20%26%20Parts", label: "Maintenance", icon: Wrench, category: "Maintenance & Parts" },
+  { href: "/store?category=Luggage", label: "Luggage", icon: Backpack, category: "Luggage" },
+  { href: "/store?category=Electronics", label: "Electronics", icon: Zap, category: "Electronics" },
 ];
 const hints = ["Himalayan 450 crash guard", "AGV K1 S", "waterproof riding boots", "Akrapovic exhaust", "chain lube"];
 
@@ -88,14 +90,18 @@ export function SiteHeader({ menu: menuData }: { menu: MenuData | null }) {
       </header>
       <MegaNav nav={nav} menu={menuData} />
       <nav className="m-cats" aria-label="Shop by category">
-        {strip.map(({ href, label, icon: Icon, hot }) => (
-          <Link key={href} href={href} data-hot={hot || undefined}>
-            <span className="m-cat-icon">
-              <Icon size={22} strokeWidth={1.8} aria-hidden />
-            </span>
-            {label}
-          </Link>
-        ))}
+        {strip.map(({ href, label, icon: Icon, category }) => {
+          const thumb = category ? menuData?.categories[category]?.thumb : null;
+          return (
+            <Link key={href} href={href}>
+              <span className="m-cat-icon" data-photo={thumb ? "" : undefined}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {thumb ? <img src={sized(thumb, 160)} alt="" loading="lazy" referrerPolicy="no-referrer" /> : <Icon size={22} strokeWidth={1.8} aria-hidden />}
+              </span>
+              {label}
+            </Link>
+          );
+        })}
       </nav>
       <Sheet open={menu} onOpenChange={setMenu}>
         <SheetContent side="left" className="m-menu">

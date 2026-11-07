@@ -431,3 +431,12 @@ body:has(main[data-listing]) .m-cats,body:has(main[data-pdp]) .m-cats{display:no
 .pin-locate:hover{background:var(--well)}
 .pin-locate:disabled{opacity:.6;cursor:progress}
 @media (max-width:520px){.pin-dialog{padding:22px!important;border-radius:20px!important}.pin-confirm{padding:0 18px}}
+
+/* Phone category strip with product photos, Culture Circle style */
+@media (max-width:760px){
+  .m-cats{gap:6px;padding:12px 12px 14px}
+  .m-cats a{width:64px;gap:6px;font-size:11px;font-weight:500;color:var(--ink)}
+  .m-cat-icon{width:56px;height:56px;border-radius:16px;background:#f2f2f2}
+  .m-cat-icon[data-photo]{background:#fff;box-shadow:0 0 0 1px var(--line)}
+  .m-cat-icon img{width:84%;height:84%;object-fit:contain;mix-blend-mode:multiply}
+}

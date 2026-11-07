@@ -13,7 +13,7 @@ export const PRICES = [
 ];
 
 export type MenuLink = { label: string; href: string; logo?: string | null };
-export type CategoryMenu = { category: string; brands: MenuLink[]; bikes: MenuLink[]; sizes: MenuLink[]; prices: MenuLink[]; count: number };
+export type CategoryMenu = { category: string; brands: MenuLink[]; bikes: MenuLink[]; sizes: MenuLink[]; prices: MenuLink[]; count: number; thumb: string | null };
 export type MenuBrand = { name: string; count: number; logo: string | null };
 export type Menu = { brands: MenuBrand[]; featured: MenuBrand[]; categories: Record<string, CategoryMenu> };
 
@@ -33,21 +33,24 @@ const q = (params: Record<string, string>) => `/store?${new URLSearchParams(para
 export async function buildMenu(): Promise<Menu> {
   const cards = await importedCards();
   const brandCount = new Map<string, number>();
-  const per = new Map<string, { brands: Map<string, number>; bikes: Map<string, number>; sizes: Map<string, number>; prices: number[] }>();
+  const per = new Map<string, { brands: Map<string, number>; bikes: Map<string, number>; sizes: Map<string, number>; prices: number[]; thumb: { image: string; score: number } | null }>();
   for (const c of cards) {
     bump(brandCount, c.brand);
     let p = per.get(c.category);
-    if (!p) per.set(c.category, (p = { brands: new Map(), bikes: new Map(), sizes: new Map(), prices: [] }));
+    if (!p) per.set(c.category, (p = { brands: new Map(), bikes: new Map(), sizes: new Map(), prices: [], thumb: null }));
     bump(p.brands, c.brand);
     for (const b of c.bikes) bump(p.bikes, b);
     for (const z of c.sizes) bump(p.sizes, z);
     p.prices.push(c.price);
+    // The category's photo is its most widely sold product, like Culture Circle's photo strip.
+    if (c.image && (!p.thumb || c.others.length > p.thumb.score)) p.thumb = { image: c.image, score: c.others.length };
   }
   const categories: Record<string, CategoryMenu> = {};
   for (const [category, p] of per) {
     categories[category] = {
       category,
       count: p.prices.length,
+      thumb: p.thumb?.image ?? null,
       brands: top(p.brands, 12).map((b) => ({ label: b, href: q({ category, brand: b }), logo: logoFor(b) })),
       bikes: top(p.bikes, 12).map((b) => ({ label: b, href: q({ category, bike: b }) })),
       // Letter sizes in wearing order; numeric sizes (boots, gloves) by number.
