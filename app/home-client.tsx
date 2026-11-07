@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { money } from "@/lib/catalog";
@@ -103,9 +103,26 @@ export function TopTen({ items }: { items: Pick[] }) {
   );
 }
 
-/** Category tabs over a horizontally scrolling row of white product cards. */
-export function TabbedRow({ tabs, light = false, more }: { tabs: { name: string; items: Pick[] }[]; light?: boolean; more?: string }) {
+/** Category tabs over a horizontally scrolling row of white product cards, with arrows and a scroll bar like Culture Circle's. */
+export function TabbedRow({ tabs, light = false }: { tabs: { name: string; items: Pick[] }[]; light?: boolean }) {
   const [active, setActive] = useState(0);
+  const row = useRef<HTMLDivElement>(null);
+  const [view, setView] = useState({ at: 0, size: 1 });
+  const measure = () => {
+    const el = row.current;
+    if (!el) return;
+    const max = el.scrollWidth - el.clientWidth;
+    setView({ at: max > 0 ? el.scrollLeft / max : 0, size: el.scrollWidth ? el.clientWidth / el.scrollWidth : 1 });
+  };
+  useEffect(() => {
+    const el = row.current;
+    if (!el) return;
+    el.scrollLeft = 0;
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [active]);
+  const nudge = (dir: number) => row.current?.scrollBy({ left: dir * row.current.clientWidth * 0.9, behavior: "smooth" });
   return (
     <>
       <div className={`${styles.tabs} ${light ? styles.tabsLight : ""}`} role="tablist">
@@ -115,7 +132,7 @@ export function TabbedRow({ tabs, light = false, more }: { tabs: { name: string;
           </button>
         ))}
       </div>
-      <div className={`${styles.row} ${light ? styles.rowLight : ""}`} role="tabpanel">
+      <div ref={row} onScroll={measure} className={`${styles.row} ${light ? styles.rowLight : ""}`} role="tabpanel">
         {tabs[active].items.map((p) => (
           <Link key={p.id} href={href(p)} className={styles.rowCard}>
             <span className={styles.rowImage}>
@@ -134,10 +151,18 @@ export function TabbedRow({ tabs, light = false, more }: { tabs: { name: string;
           </Link>
         ))}
       </div>
-      {more && (
-        <Link href={more} className={styles.moreBtn}>
-          View All
-        </Link>
+      {view.size < 0.99 && (
+        <div className={styles.rowNav} data-dark={!light || undefined}>
+          <button type="button" aria-label="Scroll left" onClick={() => nudge(-1)} disabled={view.at <= 0.01}>
+            <ChevronLeft size={18} />
+          </button>
+          <span className={styles.rowBar} aria-hidden>
+            <i style={{ width: `${view.size * 100}%`, left: `${view.at * (1 - view.size) * 100}%` }} />
+          </span>
+          <button type="button" aria-label="Scroll right" onClick={() => nudge(1)} disabled={view.at >= 0.99}>
+            <ChevronRight size={18} />
+          </button>
+        </div>
       )}
     </>
   );

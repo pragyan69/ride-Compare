@@ -1707,3 +1707,55 @@
   .gapBand .moreBtn { background: #d5f2c9; }
   .section { padding-top: 44px; }
 }
+
+/* ---- Culture Circle style sections with a wider palette ---- */
+.featureArt[data-tone="sunset"], .ccHead[data-tone="sunset"] { --t1: #ffb38a; --t2: #ff8fa3; --t3: #c9a7ff; --tint: #fff1ea; --ink-t: #c2410c; }
+.featureArt[data-tone="electric"], .ccHead[data-tone="electric"] { --t1: #2b4cff; --t2: #6d3bff; --t3: #c13cff; --tint: #eef0ff; --ink-t: #3b3bd6; }
+.featureArt[data-tone="mint"], .ccHead[data-tone="mint"] { --t1: #7ef0c5; --t2: #6ad8f5; --t3: #9fb8ff; --tint: #e9fbf4; --ink-t: #047857; }
+.featureArt[data-tone="sand"], .ccHead[data-tone="sand"] { --t1: #ffe08a; --t2: #ffb36b; --t3: #ff8a7a; --tint: #fff6e0; --ink-t: #b45309; }
+
+.ccHead { align-items: center; gap: 18px; }
+.ccHeadText { flex: 1; }
+.ccIcon { flex: none; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--tint, #f0f0f0); color: var(--ink-t, #000); }
+.ccHead[data-tone] .eyebrow { color: var(--ink-t); font-weight: 600; }
+.ccHead h2 { font-size: 30px; }
+.ccViewAll { border: 0; background: #ececec; }
+.ccViewAll:hover { background: #e2e2e2; }
+
+.feature { display: grid; grid-template-columns: minmax(280px, 380px) minmax(0, 1fr); gap: 32px; align-items: stretch; }
+.feature[data-flip] { grid-template-columns: minmax(0, 1fr) minmax(280px, 380px); }
+.feature[data-flip] .featureArt { order: 2; }
+.featureBody { min-width: 0; }
+.featureArt { position: relative; display: flex; flex-direction: column; justify-content: flex-start; padding-top: 56px !important; gap: 14px; min-height: 560px; padding: 32px; border-radius: 22px; overflow: hidden; color: #fff; background: linear-gradient(165deg, var(--t1), var(--t2) 55%, var(--t3)); }
+.featureArt::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 60% at 0% 0%, rgba(255,255,255,.45), transparent 60%); }
+.featureWord, .featureLine, .featureCta { position: relative; z-index: 2; }
+.featureWord { font-family: var(--font-round), system-ui, sans-serif; font-size: clamp(46px, 4.4vw, 64px); font-weight: 900; line-height: .86; letter-spacing: -0.03em; text-transform: uppercase; text-shadow: 0 6px 24px rgba(0,0,0,.18); }
+.featureLine { max-width: 260px; font-family: var(--font-serif), Georgia, serif; font-style: italic; font-size: 26px; line-height: 1.1; color: rgba(255,255,255,.95); }
+.featurePick { position: absolute; right: -24px; bottom: 76px; width: 230px; height: 230px; z-index: 1; mix-blend-mode: multiply; transform: rotate(-8deg); transition: transform .5s var(--ease); }
+.featurePick img { width: 100%; height: 100%; object-fit: contain; }
+.featureArt:hover .featurePick { transform: rotate(-4deg) scale(1.04); }
+.featureCta { position: absolute; left: 32px; bottom: 28px; display: inline-flex; align-items: center; gap: 4px; height: 42px; padding: 0 16px 0 18px; border-radius: 999px; background: rgba(255,255,255,.92); color: #000; font-size: 14px; font-weight: 600; }
+
+.rowNav { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 22px; }
+.rowNav button { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #d4d4d4; background: #fff; color: #000; cursor: pointer; transition: opacity .2s, background .2s; }
+.rowNav button:hover:not(:disabled) { background: #f0f0f0; }
+.rowNav button:disabled { opacity: .35; cursor: default; }
+.rowBar { position: relative; width: min(420px, 50%); height: 3px; border-radius: 3px; background: #e2e2e2; overflow: hidden; }
+.rowBar i { position: absolute; top: 0; bottom: 0; border-radius: 3px; background: #000; transition: left .1s linear; }
+
+@media (max-width: 900px) {
+  .feature, .feature[data-flip] { grid-template-columns: 1fr; gap: 20px; }
+  .feature[data-flip] .featureArt { order: 0; }
+  .featureArt { min-height: 200px; padding: 24px; }
+  .featureWord { font-size: 44px; }
+  .featureLine { font-size: 19px; max-width: 200px; }
+  .featurePick { width: 150px; height: 150px; right: -10px; bottom: 14px; }
+  .featureArt { padding-top: 24px !important; }
+  .featureLine { max-width: 170px; }
+  .featureCta { position: static; width: fit-content; margin-top: 4px; height: 38px; }
+  .ccIcon { width: 48px; height: 48px; }
+  .ccIcon svg { width: 20px; height: 20px; }
+  .ccHead h2 { font-size: 22px; }
+  .rowNav { display: none; }
+}
+.rowNote { color: #737373 !important; }

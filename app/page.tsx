@@ -115,7 +115,7 @@ export default async function Home() {
     </div>,
   ];
 
-  const tileTone = ["#f3f3f2", "#ecfde6", "#f3f3f2", "#f3f3f2", "#ecfde6", "#f3f3f2", "#ecfde6", "#f3f3f2"];
+  const tileTone = ["#fff1e6", "#e8f0ff", "#ecfdf3", "#f5ecff", "#fff8db", "#ffe9ef", "#e6fbff", "#f3f3f2"];
 
   return (
     <main>
@@ -144,35 +144,33 @@ export default async function Home() {
       )}
 
       {trendingTabs.length > 0 && (
-        <section className={`wrap ${styles.section}`}>
-          <Head icon={TrendingUp} eyebrow="What's new &" title="Trending in riding gear" sub="What riders buy most." href="/store" />
-          <TabbedRow tabs={trendingTabs} light more="/store" />
-        </section>
+        <Feature tone="sunset" art={["Fresh", "drops"]} line="What riders are buying this week" href="/store" pick={trendingTabs[0].items[0]}>
+          <Head icon={TrendingUp} tone="sunset" eyebrow="What's new" title="Trending in riding gear" sub="What riders buy most." href="/store" />
+          <TabbedRow tabs={trendingTabs} light />
+        </Feature>
       )}
 
       <Tread />
 
       {premiumTabs.length > 0 && (
-        <section className={styles.band} data-dark>
-          <div className="wrap">
-            <Head icon={Crown} eyebrow="Race grade" title={<>Shop <em>premium.</em></>} sub="The helmets, leathers and exhausts racers use." href="/store" dark />
-            <TabbedRow tabs={premiumTabs} more="/store" />
-          </div>
-        </section>
+        <Feature tone="electric" art={["Race", "grade"]} line="The helmets and leathers racers use" href="/store" pick={premiumTabs[0].items[0]}>
+          <Head icon={Crown} tone="electric" eyebrow="Premium brands" title={<>Shop <em>premium.</em></>} sub="AGV, Shoei, Arai, Alpinestars, Dainese and more." href="/store" />
+          <TabbedRow tabs={premiumTabs} light />
+        </Feature>
       )}
 
       {partsTabs.length > 0 && (
         <section className={`wrap ${styles.section}`}>
-          <Head icon={Wrench} eyebrow="For your motorcycle" title={<>Parts and <em>accessories.</em></>} sub="Crash guards, exhausts, racks, luggage and more." href={shop({ category: "Bike Accessories" })} />
-          <TabbedRow tabs={partsTabs} light more={shop({ category: "Bike Accessories" })} />
+          <Head icon={Wrench} tone="mint" eyebrow="For your motorcycle" title={<>Parts and <em>accessories.</em></>} sub="Crash guards, exhausts, racks, luggage and more." href={shop({ category: "Bike Accessories" })} />
+          <TabbedRow tabs={partsTabs} light />
         </section>
       )}
 
       {roadTabs.length > 0 && (
-        <section className={`wrap ${styles.section}`}>
-          <Head icon={Mountain} eyebrow="Touring & adventure" title={<>Built for <em>the road.</em></>} sub="Waterproof, all-season gear made for long days." href={shop({ q: "touring" })} />
-          <TabbedRow tabs={roadTabs} light more={shop({ q: "touring" })} />
-        </section>
+        <Feature tone="sand" art={["Go", "further"]} line="Waterproof, all-season gear for long days" href={shop({ q: "touring" })} pick={roadTabs[0].items[0]} flip>
+          <Head icon={Mountain} tone="sand" eyebrow="Touring and adventure" title={<>Built for <em>the road.</em></>} sub="Waterproof, all-season gear made for long days." href={shop({ q: "touring" })} />
+          <TabbedRow tabs={roadTabs} light />
+        </Feature>
       )}
 
       <section className={`${styles.section} ${styles.mosaicWrap}`}>
@@ -213,15 +211,19 @@ export default async function Home() {
   );
 }
 
-/** Culture Circle style section head: small eyebrow, title, grey sub line, View all on the right. */
-function Head({ icon: Icon, eyebrow, title, sub, href, dark = false }: { icon?: LucideIcon; eyebrow: string; title: React.ReactNode; sub?: string; href?: string; dark?: boolean }) {
+type Tone = "sunset" | "electric" | "mint" | "sand";
+
+/** Culture Circle style section head: icon disc, small eyebrow, title, grey sub line, View all on the right. */
+function Head({ icon: Icon, eyebrow, title, sub, href, tone }: { icon?: LucideIcon; eyebrow: string; title: React.ReactNode; sub?: string; href?: string; tone?: Tone }) {
   return (
-    <div className={styles.ccHead} data-dark={dark || undefined}>
+    <div className={styles.ccHead} data-tone={tone}>
+      {Icon && (
+        <span className={styles.ccIcon} aria-hidden>
+          <Icon size={24} strokeWidth={1.75} />
+        </span>
+      )}
       <div className={styles.ccHeadText}>
-        <p className={styles.eyebrow}>
-          {Icon && <Icon size={14} aria-hidden />}
-          {eyebrow}
-        </p>
+        <p className={styles.eyebrow}>{eyebrow}</p>
         <h2>{title}</h2>
         {sub && <p className={styles.ccSub}>{sub}</p>}
       </div>
@@ -231,5 +233,30 @@ function Head({ icon: Icon, eyebrow, title, sub, href, dark = false }: { icon?: 
         </Link>
       )}
     </div>
+  );
+}
+
+/** A tall colour banner beside a section, like Culture Circle's "Cultured Kids Club" block. */
+function Feature({ tone, art, line, href, pick, flip, children }: { tone: Tone; art: [string, string]; line: string; href: string; pick?: Pick; flip?: boolean; children: React.ReactNode }) {
+  return (
+    <section className={`wrap ${styles.section} ${styles.feature}`} data-flip={flip || undefined}>
+      <Link href={href} className={styles.featureArt} data-tone={tone}>
+        <span className={styles.featureWord}>
+          {art[0]}
+          <br />
+          {art[1]}
+        </span>
+        <span className={styles.featureLine}>{line}</span>
+        {pick && (
+          <span className={styles.featurePick}>
+            <ProductImage p={pick} />
+          </span>
+        )}
+        <span className={styles.featureCta}>
+          Shop now <ChevronRight size={16} aria-hidden />
+        </span>
+      </Link>
+      <div className={styles.featureBody}>{children}</div>
+    </section>
   );
 }
